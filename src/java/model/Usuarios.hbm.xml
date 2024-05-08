@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Usuarios" table="USUARIOS" schema="ABD" optimistic-lock="version">
+        <id name="login" type="string">
+            <column name="LOGIN" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="nombre" type="string">
+            <column name="NOMBRE" length="40" not-null="true" />
+        </property>
+        <property name="clave" type="string">
+            <column name="CLAVE" length="40" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" />
+        </property>
+        <property name="rol" type="string">
+            <column name="ROL" length="10" not-null="true" />
+        </property>
+        <property name="vigenteHasta" type="date">
+            <column name="VIGENTE_HASTA" length="7" />
+        </property>
+        <property name="claveAnterior" type="string">
+            <column name="CLAVE_ANTERIOR" length="40" />
+        </property>
+        <property name="uniNeg" type="string">
+            <column name="UNI_NEG" length="20" />
+        </property>
+        <property name="codigoPersona" type="string">
+            <column name="CODIGO_PERSONA" length="20" />
+        </property>
+        <property name="tc" type="string">
+            <column name="TC" length="1" />
+        </property>
+        <property name="numeroSucursal" type="java.lang.Byte">
+            <column name="NUMERO_SUCURSAL" precision="2" scale="0" />
+        </property>
+        <property name="imprimeFac" type="string">
+            <column name="IMPRIME_FAC" precision="1" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.FacturasDgi" table="FACTURAS_DGI" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.FacturasDgiId">
+            <key-property name="autorizacion" type="string">
+                <column name="AUTORIZACION" length="20" />
+            </key-property>
+            <key-property name="numero" type="string">
+                <column name="NUMERO" length="8" />
+            </key-property>
+        </composite-id>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" />
+        </property>
+        <property name="nit" type="string">
+            <column name="NIT" length="20" />
+        </property>
+        <property name="razonSocial" type="string">
+            <column name="RAZON_SOCIAL" length="150" />
+        </property>
+        <property name="importe" type="big_decimal">
+            <column name="IMPORTE" precision="16" scale="4" />
+        </property>
+        <property name="debitoFiscal" type="big_decimal">
+            <column name="DEBITO_FISCAL" precision="16" scale="4" />
+        </property>
+        <property name="estado" type="string">
+            <column name="ESTADO" length="1" />
+        </property>
+        <property name="codigoControl" type="string">
+            <column name="CODIGO_CONTROL" length="20" />
+        </property>
+        <property name="gestion" type="string">
+            <column name="GESTION" length="4" />
+        </property>
+        <property name="periodo" type="string">
+            <column name="PERIODO" length="2" />
+        </property>
+        <property name="tipo" type="string">
+            <column name="TIPO" length="20" />
+        </property>
+        <property name="numeroOrden" type="string">
+            <column name="NUMERO_ORDEN" length="8" />
+        </property>
+        <property name="login" type="string">
+            <column name="LOGIN" length="20" />
+        </property>
+        <property name="fechaMod" type="date">
+            <column name="FECHA_MOD" length="7" />
+        </property>
+        <property name="detalee" type="string">
+            <column name="DETALEE" length="100" />
+        </property>
+        <property name="fechaTope" type="date">
+            <column name="FECHA_TOPE" length="7" />
+        </property>
+        <property name="qrcode" type="string">
+            <column name="QRCODE" length="2000" />
+        </property>
+        <property name="qrphoto" type="blob">
+            <column name="QRPHOTO" />
+        </property>
+        <property name="qr" type="string">
+            <column name="QR" length="0" />
+        </property>
+        <property name="almacen" type="string">
+            <column name="ALMACEN" length="20" />
+        </property>
+        <property name="numeroAutorizacion" type="string">
+            <column name="NUMERO_AUTORIZACION" length="20" />
+        </property>
+        <property name="gsEstado" type="string">
+            <column name="GS_ESTADO" length="1" />
+        </property>
+        <property name="gsCodigoRecepcion" type="string">
+            <column name="GS_CODIGO_RECEPCION" length="100" />
+        </property>
+        <property name="gsFechaEmision" type="string">
+            <column name="GS_FECHA_EMISION" length="30" />
+        </property>
+        <property name="gsCuf" type="string">
+            <column name="GS_CUF" length="200" />
+        </property>
+        <property name="gsCodigoControl" type="string">
+            <column name="GS_CODIGO_CONTROL" length="30" />
+        </property>
+        <property name="gsCuis" type="string">
+            <column name="GS_CUIS" length="200" />
+        </property>
+        <property name="gsCufd" type="string">
+            <column name="GS_CUFD" length="200" />
+        </property>
+        <property name="gsLinkQr" type="string">
+            <column name="GS_LINK_QR" length="400" />
+        </property>
+        <property name="gsCodigoError" type="string">
+            <column name="GS_CODIGO_ERROR" length="20" />
+        </property>
+        <property name="gsArchivoTxt" type="string">
+            <column name="GS_ARCHIVO_TXT" length="50" />
+        </property>
+        <property name="gsAnulaArchivoTxt" type="string">
+            <column name="GS_ANULA_ARCHIVO_TXT" length="50" />
+        </property>
+        <property name="gsFechaAnulacion" type="string">
+            <column name="GS_FECHA_ANULACION" length="30" />
+        </property>
+        <property name="gsMensaje" type="string">
+            <column name="GS_MENSAJE" length="100" />
+        </property>
+        <property name="gsLeyenda" type="string">
+            <column name="GS_LEYENDA" length="200" />
+        </property>
+    </class>
+</hibernate-mapping>

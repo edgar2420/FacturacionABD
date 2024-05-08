@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:pm="http://primefaces.org/mobile"
+        xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        contentType="text/html">    
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:body> 
+        <pm:content>
+
+        </pm:content>        
+        <pm:footer title="©2022 Laboratorios ABD" fixed="true"  style="background-color: #3572E2; color: white; font-size: 8px; font-family: Verdada, Arial, Tahoma  " >
+            <p:panel id="myDataSesion"  header="DATOS DE LA SESION" closeTitle="DATOS DE LA SESIÓN"  toggleable="true" collapsed="true" style="font-weight:  bolder;  text-align:  center; font-size: 12px"  > 
+                <p:panelGrid columns="4"   style="background:  beige;  ">                    
+                     <p:outputLabel value="Usuario" style="font-size: 12px; font: serif" />
+                     <p:outputLabel id="usuario" value="#{loginBean.usuario.nombre}"  style="font-size: 10px; font: serif; color:  #045491; font-weight: bold " />    
+                     <p:outputLabel value="Unidad" style="font-size: 12px; font: serif" />
+                     <p:outputLabel id="unidad" value="#{loginBean.usuario.uniNeg}"  style="font-size: 10px; font: serif; color:  #045491; font-weight: bold " />    
+                     <p:outputLabel value="Ciudad" style="font-size: 12px; font: bolder  serif"/>
+                     <p:outputLabel id="ciudad" value="#{loginBean.usuario.claveAnterior}"  style="font-size: 10px; font: serif; color:  #045491; font-weight: bold" />                    
+                     <p:outputLabel value="Rol" style="font-size: 12px; font: bolder  serif"/>
+                     <p:outputLabel id="rol" value="#{loginBean.usuario.rol}"  style="font-size: 10px; font:  serif; color:  #045491; font-weight: bold" />                             
+                     <p:outputLabel value="Base Datos" style="font-size: 12px; font: bolder  serif"/>
+                     <p:outputLabel id="baseDatos" value="#{loginBean.dbname}"  style="font-size: 10px; font:  serif; color:  #045491; font-weight: bold" />                             
+                     <p:outputLabel value="Versión" style="font-size: 12px; font: bolder  serif"/>
+                     <p:outputLabel id="version" value="Oracle v.#{loginBean.dbversion}"  style="font-size: 10px; font:  serif; color:  #045491; font-weight: bold" />                             
+                </p:panelGrid>
+            </p:panel>        
+        </pm:footer>
+    </h:body>        
+</html>
+

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.AudControlLoginGeo" table="AUD_CONTROL_LOGIN_GEO" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.AudControlLoginGeoId">
+            <key-property name="codUsuario" type="string">
+                <column name="COD_USUARIO" length="30" />
+            </key-property>
+            <key-property name="fechareg" type="string">
+                <column name="FECHAREG" length="30" />
+            </key-property>
+        </composite-id>
+        <property name="geoLatitud" type="string">
+            <column name="GEO_LATITUD" length="30" />
+        </property>
+        <property name="geoLongitud" type="string">
+            <column name="GEO_LONGITUD" length="30" />
+        </property>
+        <property name="valEstado" type="string">
+            <column name="VAL_ESTADO" length="30" />
+        </property>
+        <property name="ip" type="string">
+            <column name="IP" length="30" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" />
+        </property>
+        <property name="userDb" type="string">
+            <column name="USER_DB" length="30" />
+        </property>
+    </class>
+</hibernate-mapping>

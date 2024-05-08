@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.OracleDialect</property>
+    <property name="hibernate.connection.driver_class">oracle.jdbc.OracleDriver</property>
+    <property name="hibernate.connection.url">jdbc:oracle:thin:@192.168.0.5:1521:ABD</property>
+     <!--<property name="hibernate.connection.url">jdbc:oracle:thin:@//154.53.61.54:1521/pdbtst.contaboserver.net</property>-->
+    <!--<property name="hibernate.connection.url">jdbc:oracle:thin:@//192.168.0.5:1521:ABD</property>-->
+    <property name="hibernate.connection.username">abd</property>
+    <property name="hibernate.connection.password">abdlab</property>
+    <property name="hibernate.connection.CharSet">utf8</property>
+    <property name="hibernate.connection.characterEncoding">utf8</property>
+    <property name="hibernate.connection.useUnicode">true</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="format_sql">true</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <property name="hibernate.enable_lazy_load_no_trans">true</property>
+    <mapping resource="model/Facturas.hbm.xml"/>
+    <mapping resource="model/Sucursal.hbm.xml"/>
+    <mapping resource="model/SegRolesUsuarios.hbm.xml"/>
+    <mapping resource="model/LinFacturas.hbm.xml"/>
+    <mapping resource="model/Comprobantes.hbm.xml"/>
+    <mapping resource="model/Items.hbm.xml"/>
+    <mapping resource="model/FacturasDgi.hbm.xml"/>
+    <mapping resource="model/SegRoles.hbm.xml"/>
+    <mapping resource="model/Leyenda.hbm.xml"/>
+    <mapping resource="model/Personas.hbm.xml"/>
+    <mapping resource="model/Usuarios.hbm.xml"/>
+    <mapping resource="model/AudControlPassword.hbm.xml"/>
+    <mapping resource="model/LogErrores.hbm.xml"/>
+    <mapping resource="model/Claves.hbm.xml"/>
+    <mapping resource="model/CfgParametros.hbm.xml"/>
+    <mapping resource="model/DimTiempo.hbm.xml"/>
+    <mapping resource="model/AudControlLoginGeo.hbm.xml"/>
+    <mapping resource="model/FacturasQr.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

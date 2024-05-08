@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Items" table="ITEMS" schema="ABD" optimistic-lock="version">
+        <id name="codigo" type="string">
+            <column name="CODIGO" length="30" />
+            <generator class="assigned" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="DESCRIPCION" length="80" not-null="true" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" />
+        </property>
+        <property name="unidad" type="string">
+            <column name="UNIDAD" length="20" />
+        </property>
+        <property name="altUnidad" type="string">
+            <column name="ALT_UNIDAD" length="3" />
+        </property>
+        <property name="codigoAlterno" type="string">
+            <column name="CODIGO_ALTERNO" length="30" />
+        </property>
+        <property name="proveedor" type="string">
+            <column name="PROVEEDOR" length="20" />
+        </property>
+        <property name="fechaUltCompra" type="date">
+            <column name="FECHA_ULT_COMPRA" length="7" />
+        </property>
+        <property name="fechaUltSalida" type="date">
+            <column name="FECHA_ULT_SALIDA" length="7" />
+        </property>
+        <property name="ubicacion" type="string">
+            <column name="UBICACION" length="20" />
+        </property>
+        <property name="cuentaGasto" type="string">
+            <column name="CUENTA_GASTO" length="20" />
+        </property>
+        <property name="cuentaAlmacen" type="string">
+            <column name="CUENTA_ALMACEN" length="20" />
+        </property>
+        <property name="paquete" type="string">
+            <column name="PAQUETE" length="1" />
+        </property>
+        <property name="estado" type="string">
+            <column name="ESTADO" length="1" not-null="true" />
+        </property>
+        <property name="descripcionTecnica" type="string">
+            <column name="DESCRIPCION_TECNICA" length="200" />
+        </property>
+        <property name="factor" type="big_decimal">
+            <column name="FACTOR" precision="16" scale="4" not-null="true" />
+        </property>
+        <property name="pathGrafico" type="string">
+            <column name="PATH_GRAFICO" length="100" />
+        </property>
+        <property name="numeroParte" type="string">
+            <column name="NUMERO_PARTE" length="50" />
+        </property>
+        <property name="numeroSerie" type="string">
+            <column name="NUMERO_SERIE" length="50" />
+        </property>
+        <property name="fechaModificacion" type="date">
+            <column name="FECHA_MODIFICACION" length="7" />
+        </property>
+        <property name="login" type="string">
+            <column name="LOGIN" length="20" />
+        </property>
+        <property name="empresa" type="string">
+            <column name="EMPRESA" length="20" />
+        </property>
+        <property name="marca" type="string">
+            <column name="MARCA" length="40" />
+        </property>
+        <property name="modelo" type="string">
+            <column name="MODELO" length="20" />
+        </property>
+        <property name="concentracion" type="big_decimal">
+            <column name="CONCENTRACION" precision="16" scale="4" />
+        </property>
+        <property name="peso" type="big_decimal">
+            <column name="PESO" precision="16" scale="4" />
+        </property>
+        <property name="espesor" type="big_decimal">
+            <column name="ESPESOR" precision="16" scale="4" />
+        </property>
+        <property name="largo" type="big_decimal">
+            <column name="LARGO" precision="16" scale="4" />
+        </property>
+        <property name="ancho" type="big_decimal">
+            <column name="ANCHO" precision="16" scale="4" />
+        </property>
+        <property name="valorF1" type="big_decimal">
+            <column name="VALOR_F1" precision="16" scale="4" />
+        </property>
+        <property name="valorF2" type="big_decimal">
+            <column name="VALOR_F2" precision="16" scale="4" />
+        </property>
+        <property name="valorF3" type="big_decimal">
+            <column name="VALOR_F3" precision="16" scale="4" />
+        </property>
+        <property name="p2Unitario" type="big_decimal">
+            <column name="P2_UNITARIO" precision="16" scale="4" />
+        </property>
+        <property name="p2Bruto" type="big_decimal">
+            <column name="P2_BRUTO" precision="16" scale="4" />
+        </property>
+        <property name="p2Comparado" type="big_decimal">
+            <column name="P2_COMPARADO" precision="16" scale="4" />
+        </property>
+        <property name="tipoProducto" type="string">
+            <column name="TIPO_PRODUCTO" length="2" />
+        </property>
+        <property name="cuentaVenta" type="string">
+            <column name="CUENTA_VENTA" length="20" />
+        </property>
+        <property name="codigoLote" type="string">
+            <column name="CODIGO_LOTE" length="20" />
+        </property>
+        <property name="descuento" type="string">
+            <column name="DESCUENTO" length="20" />
+        </property>
+        <property name="cuentaCosto" type="string">
+            <column name="CUENTA_COSTO" length="20" />
+        </property>
+        <property name="especialidad" type="string">
+            <column name="ESPECIALIDAD" length="50" />
+        </property>
+        <property name="fabricante" type="string">
+            <column name="FABRICANTE" length="50" />
+        </property>
+        <property name="tipoProdComision" type="string">
+            <column name="TIPO_PROD_COMISION" length="20" />
+        </property>
+        <property name="codigoSiat" type="string">
+            <column name="CODIGO_SIAT" length="20" />
+        </property>
+        <property name="cuentaExport" type="string">
+            <column name="CUENTA_EXPORT" length="20" />
+        </property>
+        <set name="linFacturases" table="LIN_FACTURAS" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CODIGO_ITEM" length="30" not-null="true" />
+            </key>
+            <one-to-many class="model.LinFacturas" />
+        </set>
+    </class>
+</hibernate-mapping>

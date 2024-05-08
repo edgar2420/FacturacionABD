@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Comprobantes" table="COMPROBANTES" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.ComprobantesId">
+            <key-property name="gestion" type="string">
+                <column name="GESTION" length="4" />
+            </key-property>
+            <key-property name="periodo" type="string">
+                <column name="PERIODO" length="2" />
+            </key-property>
+            <key-property name="clasificador" type="string">
+                <column name="CLASIFICADOR" length="20" />
+            </key-property>
+            <key-property name="contabilidad" type="string">
+                <column name="CONTABILIDAD" length="1" />
+            </key-property>
+            <key-property name="tipo" type="string">
+                <column name="TIPO" length="20" />
+            </key-property>
+            <key-property name="numero" type="string">
+                <column name="NUMERO" length="8" />
+            </key-property>
+        </composite-id>
+        <property name="estado" type="string">
+            <column name="ESTADO" length="1" not-null="true" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" not-null="true" />
+        </property>
+        <property name="moneda" type="string">
+            <column name="MONEDA" length="2" not-null="true" />
+        </property>
+        <property name="cotizacion" type="big_decimal">
+            <column name="COTIZACION" precision="16" scale="4" not-null="true" />
+        </property>
+        <property name="glosa1" type="string">
+            <column name="GLOSA_1" length="200" />
+        </property>
+        <property name="glosa2" type="string">
+            <column name="GLOSA_2" length="200" />
+        </property>
+        <property name="glosa3" type="string">
+            <column name="GLOSA_3" length="2000" />
+        </property>
+        <property name="login" type="string">
+            <column name="LOGIN" length="20" />
+        </property>
+        <property name="origen" type="string">
+            <column name="ORIGEN" length="6" />
+        </property>
+        <property name="fechaCreacion" type="date">
+            <column name="FECHA_CREACION" length="7" />
+        </property>
+        <property name="glosa" type="string">
+            <column name="GLOSA" length="400" />
+        </property>
+        <property name="numeroRev" type="string">
+            <column name="NUMERO_REV" length="8" />
+        </property>
+        <property name="fechaModificacion" type="date">
+            <column name="FECHA_MODIFICACION" length="7" />
+        </property>
+        <property name="loginModificacion" type="string">
+            <column name="LOGIN_MODIFICACION" length="20" />
+        </property>
+        <property name="marca" type="string">
+            <column name="MARCA" length="1" />
+        </property>
+    </class>
+</hibernate-mapping>

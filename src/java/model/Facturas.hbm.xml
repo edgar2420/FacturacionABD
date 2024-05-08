@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Facturas" table="FACTURAS" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.FacturasId">
+            <key-property name="almacen" type="string">
+                <column name="ALMACEN" length="20" />
+            </key-property>
+            <key-property name="tipo" type="string">
+                <column name="TIPO" length="3" />
+            </key-property>
+            <key-property name="numero" type="string">
+                <column name="NUMERO" length="8" />
+            </key-property>
+            <key-property name="numeroOrden" type="string">
+                <column name="NUMERO_ORDEN" length="20" />
+            </key-property>
+        </composite-id>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" not-null="true" />
+        </property>
+        <property name="moneda" type="string">
+            <column name="MONEDA" length="20" not-null="true" />
+        </property>
+        <property name="cotizacion" type="big_decimal">
+            <column name="COTIZACION" precision="16" scale="4" not-null="true" />
+        </property>
+        <property name="estado" type="string">
+            <column name="ESTADO" length="1" not-null="true" />
+        </property>
+        <property name="almacenDespacho" type="string">
+            <column name="ALMACEN_DESPACHO" length="20" />
+        </property>
+        <property name="tipoCliente" type="string">
+            <column name="TIPO_CLIENTE" length="20" />
+        </property>
+        <property name="formaPago" type="string">
+            <column name="FORMA_PAGO" length="15" />
+        </property>
+        <property name="cuenta" type="string">
+            <column name="CUENTA" length="20" />
+        </property>
+        <property name="tipoAnalitico" type="string">
+            <column name="TIPO_ANALITICO" length="20" />
+        </property>
+        <property name="codigoAnalitico" type="string">
+            <column name="CODIGO_ANALITICO" length="20" />
+        </property>
+        <property name="codigoCliente" type="string">
+            <column name="CODIGO_CLIENTE" length="20" />
+        </property>
+        <property name="codigoVendedor" type="string">
+            <column name="CODIGO_VENDEDOR" length="20" />
+        </property>
+        <property name="nombre" type="string">
+            <column name="NOMBRE" length="40" />
+        </property>
+        <property name="ruc" type="string">
+            <column name="RUC" length="20" />
+        </property>
+        <property name="glosa" type="string">
+            <column name="GLOSA" length="40" />
+        </property>
+        <property name="monto" type="big_decimal">
+            <column name="MONTO" precision="16" scale="4" />
+        </property>
+        <property name="incServicios" type="big_decimal">
+            <column name="INC_SERVICIOS" precision="16" scale="4" />
+        </property>
+        <property name="desEspecial" type="big_decimal">
+            <column name="DES_ESPECIAL" precision="16" scale="4" />
+        </property>
+        <property name="comision" type="big_decimal">
+            <column name="COMISION" precision="16" scale="4" />
+        </property>
+        <property name="seguros" type="big_decimal">
+            <column name="SEGUROS" precision="16" scale="4" />
+        </property>
+        <property name="transporte" type="big_decimal">
+            <column name="TRANSPORTE" precision="16" scale="4" />
+        </property>
+        <property name="desVolumen" type="big_decimal">
+            <column name="DES_VOLUMEN" precision="16" scale="4" />
+        </property>
+        <property name="otrosCargos" type="big_decimal">
+            <column name="OTROS_CARGOS" precision="16" scale="4" />
+        </property>
+        <property name="numeroFactura" type="string">
+            <column name="NUMERO_FACTURA" length="8" />
+        </property>
+        <property name="autorizadoPor" type="string">
+            <column name="AUTORIZADO_POR" length="20" />
+        </property>
+        <property name="promotor" type="string">
+            <column name="PROMOTOR" length="20" />
+        </property>
+        <property name="pdt" type="string">
+            <column name="PDT" length="3" />
+        </property>
+        <property name="clasificador" type="string">
+            <column name="CLASIFICADOR" length="20" />
+        </property>
+        <property name="gestionCc" type="string">
+            <column name="GESTION_CC" length="4" />
+        </property>
+        <property name="periodoCc" type="string">
+            <column name="PERIODO_CC" length="2" />
+        </property>
+        <property name="tipoCc" type="string">
+            <column name="TIPO_CC" length="20" />
+        </property>
+        <property name="numeroCc" type="string">
+            <column name="NUMERO_CC" length="8" />
+        </property>
+        <property name="cuentasPor" type="string">
+            <column name="CUENTAS_POR" length="1" />
+        </property>
+        <property name="gestionCm" type="string">
+            <column name="GESTION_CM" length="4" />
+        </property>
+        <property name="periodoCm" type="string">
+            <column name="PERIODO_CM" length="2" />
+        </property>
+        <property name="tipoCm" type="string">
+            <column name="TIPO_CM" length="20" />
+        </property>
+        <property name="numeroCm" type="string">
+            <column name="NUMERO_CM" length="8" />
+        </property>
+        <property name="contabilidadCm" type="string">
+            <column name="CONTABILIDAD_CM" length="1" />
+        </property>
+        <property name="fechaModificacion" type="date">
+            <column name="FECHA_MODIFICACION" length="7" />
+        </property>
+        <property name="login" type="string">
+            <column name="LOGIN" length="20" />
+        </property>
+        <property name="neto" type="big_decimal">
+            <column name="NETO" precision="16" scale="4" />
+        </property>
+        <property name="cuotaInicial" type="big_decimal">
+            <column name="CUOTA_INICIAL" precision="16" scale="4" />
+        </property>
+        <property name="loginModificacion" type="string">
+            <column name="LOGIN_MODIFICACION" length="20" />
+        </property>
+        <property name="fechaCreacion" type="date">
+            <column name="FECHA_CREACION" length="7" />
+        </property>
+        <property name="loginAnulacion" type="string">
+            <column name="LOGIN_ANULACION" length="20" />
+        </property>
+        <property name="fechaAnulacion" type="date">
+            <column name="FECHA_ANULACION" length="7" />
+        </property>
+        <property name="nroFactura" type="java.lang.Long">
+            <column name="NRO_FACTURA" precision="14" scale="0" />
+        </property>
+        <property name="ordenCompra" type="string">
+            <column name="ORDEN_COMPRA" length="20" />
+        </property>
+        <property name="flagFactura" type="string">
+            <column name="FLAG_FACTURA" length="1" />
+        </property>
+        <property name="motivoAnulacion" type="string">
+            <column name="MOTIVO_ANULACION" length="100" />
+        </property>
+        <property name="placa" type="string">
+            <column name="PLACA" length="8" />
+        </property>
+        <property name="chofer" type="string">
+            <column name="CHOFER" length="30" />
+        </property>
+        <property name="nroContrato" type="java.lang.Integer">
+            <column name="NRO_CONTRATO" precision="8" scale="0" />
+        </property>
+        <property name="archivoTxt" type="string">
+            <column name="ARCHIVO_TXT" length="50" />
+        </property>
+        <property name="gsEstado" type="string">
+            <column name="GS_ESTADO" length="20" />
+        </property>
+        <property name="anArchivoTxt" type="string">
+            <column name="AN_ARCHIVO_TXT" length="50" />
+        </property>
+        <property name="gsEstadoAnulacion" type="string">
+            <column name="GS_ESTADO_ANULACION" length="20" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.LinFacturas" table="LIN_FACTURAS" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.LinFacturasId">
+            <key-property name="almacen" type="string">
+                <column name="ALMACEN" length="20" />
+            </key-property>
+            <key-property name="tipo" type="string">
+                <column name="TIPO" length="3" />
+            </key-property>
+            <key-property name="numero" type="string">
+                <column name="NUMERO" length="8" />
+            </key-property>
+            <key-property name="numeroOrden" type="string">
+                <column name="NUMERO_ORDEN" length="20" />
+            </key-property>
+            <key-property name="codigoItem" type="string">
+                <column name="CODIGO_ITEM" length="30" />
+            </key-property>
+            <key-property name="porDespachar" type="string">
+                <column name="POR_DESPACHAR" length="20" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="items" class="model.Items" update="false" insert="false" fetch="select">
+            <column name="CODIGO_ITEM" length="30" not-null="true" />
+        </many-to-one>
+        <property name="paquete" type="string">
+            <column name="PAQUETE" length="20" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" not-null="true" />
+        </property>
+        <property name="estado" type="string">
+            <column name="ESTADO" length="1" not-null="true" />
+        </property>
+        <property name="almDespacho" type="string">
+            <column name="ALM_DESPACHO" length="20" />
+        </property>
+        <property name="codigoCliente" type="string">
+            <column name="CODIGO_CLIENTE" length="20" />
+        </property>
+        <property name="codigoVendedor" type="string">
+            <column name="CODIGO_VENDEDOR" length="20" />
+        </property>
+        <property name="cantidad" type="big_decimal">
+            <column name="CANTIDAD" precision="16" scale="4" />
+        </property>
+        <property name="unidad" type="string">
+            <column name="UNIDAD" length="3" />
+        </property>
+        <property name="precioMe" type="big_decimal">
+            <column name="PRECIO_ME" precision="16" scale="4" />
+        </property>
+        <property name="precioBs" type="big_decimal">
+            <column name="PRECIO_BS" precision="16" scale="4" />
+        </property>
+        <property name="importeMe" type="big_decimal">
+            <column name="IMPORTE_ME" precision="16" scale="4" />
+        </property>
+        <property name="importeBs" type="big_decimal">
+            <column name="IMPORTE_BS" precision="16" scale="4" />
+        </property>
+        <property name="desItemsMe" type="big_decimal">
+            <column name="DES_ITEMS_ME" precision="16" scale="4" />
+        </property>
+        <property name="desItemsBs" type="big_decimal">
+            <column name="DES_ITEMS_BS" precision="16" scale="4" />
+        </property>
+        <property name="incSerMe" type="big_decimal">
+            <column name="INC_SER_ME" precision="16" scale="4" />
+        </property>
+        <property name="incSerBs" type="big_decimal">
+            <column name="INC_SER_BS" precision="16" scale="4" />
+        </property>
+        <property name="desEspecialMe" type="big_decimal">
+            <column name="DES_ESPECIAL_ME" precision="16" scale="4" />
+        </property>
+        <property name="desEspecialBs" type="big_decimal">
+            <column name="DES_ESPECIAL_BS" precision="16" scale="4" />
+        </property>
+        <property name="comisionMe" type="big_decimal">
+            <column name="COMISION_ME" precision="16" scale="4" />
+        </property>
+        <property name="comisionBs" type="big_decimal">
+            <column name="COMISION_BS" precision="16" scale="4" />
+        </property>
+        <property name="segurosMe" type="big_decimal">
+            <column name="SEGUROS_ME" precision="16" scale="4" />
+        </property>
+        <property name="segurosBs" type="big_decimal">
+            <column name="SEGUROS_BS" precision="16" scale="4" />
+        </property>
+        <property name="transporteMe" type="big_decimal">
+            <column name="TRANSPORTE_ME" precision="16" scale="4" />
+        </property>
+        <property name="transporteBs" type="big_decimal">
+            <column name="TRANSPORTE_BS" precision="16" scale="4" />
+        </property>
+        <property name="descVolumenMe" type="big_decimal">
+            <column name="DESC_VOLUMEN_ME" precision="16" scale="4" />
+        </property>
+        <property name="descVolumenBs" type="big_decimal">
+            <column name="DESC_VOLUMEN_BS" precision="16" scale="4" />
+        </property>
+        <property name="otrosCargosMe" type="big_decimal">
+            <column name="OTROS_CARGOS_ME" precision="16" scale="4" />
+        </property>
+        <property name="otrosCargosBs" type="big_decimal">
+            <column name="OTROS_CARGOS_BS" precision="16" scale="4" />
+        </property>
+        <property name="porcDcto" type="big_decimal">
+            <column name="PORC_DCTO" precision="16" scale="4" />
+        </property>
+        <property name="costo" type="big_decimal">
+            <column name="COSTO" precision="16" scale="4" />
+        </property>
+        <property name="clasificador" type="string">
+            <column name="CLASIFICADOR" length="20" />
+        </property>
+        <property name="cuenta" type="string">
+            <column name="CUENTA" length="20" />
+        </property>
+        <property name="netoMe" type="big_decimal">
+            <column name="NETO_ME" precision="16" scale="4" />
+        </property>
+        <property name="netoBs" type="big_decimal">
+            <column name="NETO_BS" precision="16" scale="4" />
+        </property>
+        <property name="cantidadEntregada" type="big_decimal">
+            <column name="CANTIDAD_ENTREGADA" precision="16" scale="4" />
+        </property>
+        <property name="lote" type="string">
+            <column name="LOTE" length="20" />
+        </property>
+        <property name="venddedorComision" type="string">
+            <column name="VENDDEDOR_COMISION" length="20" />
+        </property>
+        <property name="nroContrato" type="java.lang.Integer">
+            <column name="NRO_CONTRATO" precision="8" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

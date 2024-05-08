@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.SegRoles" table="SEG_ROLES" schema="ABD" optimistic-lock="version">
+        <id name="codRol" type="string">
+            <column name="COD_ROL" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="nomRol" type="string">
+            <column name="NOM_ROL" length="60" />
+        </property>
+        <property name="descRol" type="string">
+            <column name="DESC_ROL" length="100" />
+        </property>
+        <property name="numOrden" type="big_decimal">
+            <column name="NUM_ORDEN" precision="22" scale="0" />
+        </property>
+        <property name="numDiasPassword" type="big_decimal">
+            <column name="NUM_DIAS_PASSWORD" precision="22" scale="0" />
+        </property>
+        <property name="fecCreacion" type="date">
+            <column name="FEC_CREACION" length="7" />
+        </property>
+        <property name="usuarioCreacion" type="string">
+            <column name="USUARIO_CREACION" length="30" />
+        </property>
+        <property name="ipCreacion" type="string">
+            <column name="IP_CREACION" length="15" />
+        </property>
+        <property name="fecModificacion" type="date">
+            <column name="FEC_MODIFICACION" length="7" />
+        </property>
+        <property name="usuarioModificacion" type="string">
+            <column name="USUARIO_MODIFICACION" length="30" />
+        </property>
+        <property name="ipModificacion" type="string">
+            <column name="IP_MODIFICACION" length="15" />
+        </property>
+    </class>
+</hibernate-mapping>

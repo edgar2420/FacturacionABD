@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.FacturasQr" table="FACTURAS_QR" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.FacturasQrId">
+            <key-property name="autorizacion" type="string">
+                <column name="AUTORIZACION" length="20" />
+            </key-property>
+            <key-property name="numero" type="string">
+                <column name="NUMERO" length="8" />
+            </key-property>
+        </composite-id>
+        <property name="qr" type="blob">
+            <column name="QR" />
+        </property>
+        <property name="fecCreacion" type="date">
+            <column name="FEC_CREACION" length="7" />
+        </property>
+        <property name="usuarioCreacion" type="string">
+            <column name="USUARIO_CREACION" length="30" />
+        </property>
+        <property name="ipCreacion" type="string">
+            <column name="IP_CREACION" length="15" />
+        </property>
+        <property name="fecModificacion" type="date">
+            <column name="FEC_MODIFICACION" length="7" />
+        </property>
+        <property name="usuarioModificacion" type="string">
+            <column name="USUARIO_MODIFICACION" length="30" />
+        </property>
+        <property name="ipModificacion" type="string">
+            <column name="IP_MODIFICACION" length="15" />
+        </property>
+    </class>
+</hibernate-mapping>

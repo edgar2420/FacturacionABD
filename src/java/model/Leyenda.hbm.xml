@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Leyenda" table="LEYENDA" schema="ABD" optimistic-lock="version">
+        <id name="leyenda" type="string">
+            <column name="LEYENDA" length="200" />
+            <generator class="assigned" />
+        </id>
+        <property name="codigoActividad" type="string">
+            <column name="CODIGO_ACTIVIDAD" length="20" />
+        </property>
+        <property name="descripcionActividad" type="string">
+            <column name="DESCRIPCION_ACTIVIDAD" length="200" />
+        </property>
+    </class>
+</hibernate-mapping>

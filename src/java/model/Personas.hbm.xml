@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Personas" table="PERSONAS" schema="ABD" optimistic-lock="version">
+        <id name="codigo" type="string">
+            <column name="CODIGO" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="nombre" type="string">
+            <column name="NOMBRE" length="100" not-null="true" />
+        </property>
+        <property name="razonSocial" type="string">
+            <column name="RAZON_SOCIAL" length="200" not-null="true" />
+        </property>
+        <property name="ruc" type="string">
+            <column name="RUC" length="40" />
+        </property>
+        <property name="pais" type="string">
+            <column name="PAIS" length="40" not-null="true" />
+        </property>
+        <property name="ciudad" type="string">
+            <column name="CIUDAD" length="40" not-null="true" />
+        </property>
+        <property name="zip" type="string">
+            <column name="ZIP" length="20" />
+        </property>
+        <property name="email" type="string">
+            <column name="EMAIL" length="100" />
+        </property>
+        <property name="casilla" type="string">
+            <column name="CASILLA" length="20" />
+        </property>
+        <property name="contacto" type="string">
+            <column name="CONTACTO" length="40" />
+        </property>
+        <property name="estado" type="string">
+            <column name="ESTADO" length="20" not-null="true" />
+        </property>
+        <property name="direccionDom" type="string">
+            <column name="DIRECCION_DOM" length="200" />
+        </property>
+        <property name="telefonoDom" type="string">
+            <column name="TELEFONO_DOM" length="100" />
+        </property>
+        <property name="refPer1Nombre" type="string">
+            <column name="REF_PER1_NOMBRE" length="40" />
+        </property>
+        <property name="refPer1Dir" type="string">
+            <column name="REF_PER1_DIR" length="40" />
+        </property>
+        <property name="refPer1Tel" type="string">
+            <column name="REF_PER1_TEL" length="20" />
+        </property>
+        <property name="refPer2Nombre" type="string">
+            <column name="REF_PER2_NOMBRE" length="40" />
+        </property>
+        <property name="refPer2Dir" type="string">
+            <column name="REF_PER2_DIR" length="40" />
+        </property>
+        <property name="refPer2Tel" type="string">
+            <column name="REF_PER2_TEL" length="20" />
+        </property>
+        <property name="refCom1Nombre" type="string">
+            <column name="REF_COM1_NOMBRE" length="40" />
+        </property>
+        <property name="refCom1Dir" type="string">
+            <column name="REF_COM1_DIR" length="40" />
+        </property>
+        <property name="refCom1Tel" type="string">
+            <column name="REF_COM1_TEL" length="20" />
+        </property>
+        <property name="refCom2Nombre" type="string">
+            <column name="REF_COM2_NOMBRE" length="40" />
+        </property>
+        <property name="refCom2Dir" type="string">
+            <column name="REF_COM2_DIR" length="40" />
+        </property>
+        <property name="refCom2Tel" type="string">
+            <column name="REF_COM2_TEL" length="20" />
+        </property>
+        <property name="zonaVendedor" type="string">
+            <column name="ZONA_VENDEDOR" length="20" />
+        </property>
+        <property name="limiteCredito" type="big_decimal">
+            <column name="LIMITE_CREDITO" precision="16" scale="4" not-null="true" />
+        </property>
+        <property name="descAutorizado" type="big_decimal">
+            <column name="DESC_AUTORIZADO" precision="16" scale="4" not-null="true" />
+        </property>
+        <property name="anosRubro" type="int">
+            <column name="ANOS_RUBRO" precision="8" scale="0" not-null="true" />
+        </property>
+        <property name="local" type="string">
+            <column name="LOCAL" length="20" />
+        </property>
+        <property name="actividad" type="string">
+            <column name="ACTIVIDAD" length="20" />
+        </property>
+        <property name="codigoAccionista" type="string">
+            <column name="CODIGO_ACCIONISTA" length="20" />
+        </property>
+        <property name="codigoCliente" type="string">
+            <column name="CODIGO_CLIENTE" length="20" />
+        </property>
+        <property name="codigoVendedor" type="string">
+            <column name="CODIGO_VENDEDOR" length="20" />
+        </property>
+        <property name="codigoProveedor" type="string">
+            <column name="CODIGO_PROVEEDOR" length="20" />
+        </property>
+        <property name="codigoEmpleado" type="string">
+            <column name="CODIGO_EMPLEADO" length="20" />
+        </property>
+        <property name="catCliente" type="string">
+            <column name="CAT_CLIENTE" length="20" />
+        </property>
+        <property name="fechaNacimiento" type="date">
+            <column name="FECHA_NACIMIENTO" length="7" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="FECHA" length="7" not-null="true" />
+        </property>
+        <property name="login" type="string">
+            <column name="LOGIN" length="10" not-null="true" />
+        </property>
+        <property name="apellidoPaterno" type="string">
+            <column name="APELLIDO_PATERNO" length="20" />
+        </property>
+        <property name="apellidoMaterno" type="string">
+            <column name="APELLIDO_MATERNO" length="20" />
+        </property>
+        <property name="pathFoto" type="string">
+            <column name="PATH_FOTO" length="20" />
+        </property>
+        <property name="codigoCanero" type="string">
+            <column name="CODIGO_CANERO" length="20" />
+        </property>
+        <property name="codigoAgricultor" type="string">
+            <column name="CODIGO_AGRICULTOR" length="20" />
+        </property>
+        <property name="maxNotas" type="java.lang.Integer">
+            <column name="MAX_NOTAS" precision="8" scale="0" />
+        </property>
+        <property name="cliEspecial" type="string">
+            <column name="CLI_ESPECIAL" length="1" />
+        </property>
+        <property name="cuenta" type="string">
+            <column name="CUENTA" length="20" />
+        </property>
+        <property name="complementoCi" type="string">
+            <column name="COMPLEMENTO_CI" length="20" />
+        </property>
+    </class>
+</hibernate-mapping>

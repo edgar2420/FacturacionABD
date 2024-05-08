@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Sucursal" table="SUCURSAL" schema="ABD" optimistic-lock="version">
+        <id name="numeroSucursal" type="byte">
+            <column name="NUMERO_SUCURSAL" precision="2" scale="0" />
+            <generator class="assigned" />
+        </id>
+        <property name="direccion" type="string">
+            <column name="DIRECCION" length="200" />
+        </property>
+        <property name="municipio" type="string">
+            <column name="MUNICIPIO" length="200" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="TELEFONO" length="20" />
+        </property>
+        <property name="nit" type="string">
+            <column name="NIT" length="20" />
+        </property>
+        <property name="cuf" type="string">
+            <column name="CUF" length="2000" />
+        </property>
+        <property name="cuis" type="string">
+            <column name="CUIS" length="2000" />
+        </property>
+    </class>
+</hibernate-mapping>

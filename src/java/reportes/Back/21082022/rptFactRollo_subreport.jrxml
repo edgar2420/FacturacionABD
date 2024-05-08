@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptFactRollo_subreport" language="groovy" pageWidth="339" pageHeight="100" columnWidth="339" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0c7453e7-6c08-4ece-b3c7-dc4fef0c54ad">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_ALMACEN" class="java.lang.String">
+		<defaultValueExpression><![CDATA["AL-VEN-ABD-CB1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_TIPO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["VD1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NUMERO_ORDEN" class="java.lang.String">
+		<defaultValueExpression><![CDATA["106198"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NUMERO_AUTORIZACION" class="java.lang.String">
+		<defaultValueExpression><![CDATA["CBB2016"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT almacen alm ,tipo,numero,numero_orden,T.DESCRIPCION ,L.UNIDAD,L.CODIGO_ITEM,
+       SUM(L.CANTIDAD)  Q,
+       L.PRECIO_BS PR,
+       SUM(L.NETO_BS)   BS,
+       SUM(L.NETO_BS)/SUM(L.CANTIDAD) PUNIT
+  FROM IBSVENTA.items t, IBSVENTA.LIN_FACTURAS L
+ WHERE T.CODIGO     = L.CODIGO_ITEM
+   and almacen      = $P{P_ALMACEN}
+   and tipo         = $P{P_TIPO}
+   and numero       = $P{P_NUMERO_ORDEN}
+   and numero_orden = $P{P_NUMERO_AUTORIZACION}
+GROUP BY  almacen,tipo,numero,numero_orden,T.DESCRIpcion,L.UNIDAD,L.PRECIO_BS,L.CODIGO_ITEM]]>
+	</queryString>
+	<field name="ALM" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="NUMERO" class="java.lang.String"/>
+	<field name="NUMERO_ORDEN" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="UNIDAD" class="java.lang.String"/>
+	<field name="CODIGO_ITEM" class="java.lang.String"/>
+	<field name="Q" class="java.math.BigDecimal"/>
+	<field name="PR" class="java.math.BigDecimal"/>
+	<field name="BS" class="java.math.BigDecimal"/>
+	<field name="PUNIT" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="36" y="0" width="28" height="12" uuid="b8737ff7-7499-43f7-a90e-87076464dc6b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Q}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="12" isPrintWhenDetailOverflows="true" uuid="35c76d33-3216-4267-8ec9-77fea774a2a2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_ITEM}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="64" y="0" width="123" height="12" uuid="7e7da8c8-0411-4fb1-ba29-755816b1377a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###.00" isBlankWhenNull="true">
+				<reportElement x="240" y="0" width="43" height="12" uuid="c3ac8c46-63a4-4b38-bc9b-673f951f5af2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="187" y="0" width="28" height="12" uuid="934c7192-6442-4998-a840-7274d79caeb5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="215" y="0" width="25" height="12" uuid="54f6d59b-9cd0-4b50-a31d-39aec73f4341"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNIT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

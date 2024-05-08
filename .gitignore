@@ -1,0 +1,27 @@
+# Directorios
+/dist/
+/target/
+/out/
+/build/
+
+#Archivos generados
+*.class
+*.war
+*.ear
+
+#Arhivos IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vsproject/
+.project
+.classpath
+.settings/
+
+#Archivos de logs
+*.log
+
+#Otros Archivos generados
+/nbproject/
+

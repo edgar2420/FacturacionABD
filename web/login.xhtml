@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:pm="http://primefaces.org/mobile"
+        xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        contentType="text/html">    
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:head>
+        <script name="jquery/jquery.js" library="primefaces"></script>
+        <title>Laboratorios ABD</title>
+        <link rel="icon" type="images/ico" href="resources/images/icons/favicon.ico" />
+        <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css"/>     
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    </h:head>
+    
+    <h:body onload="clearInputs()"  >    
+        <h:form id="loginForm">   
+            <pm:page id="loginPage" title="Laboratorios ABD">
+                <pm:header title="FACTURACION ABD" fixed="true"    style="background-color: #3572E2; color: white; font-size: 14px; font-family:   serif " />
+                <p:messages id="msg"  showDetail="true" autoUpdate="true" closable="true" redisplay="true"/>
+                <pm:content>
+                    <p:growl id="mensajes" showDetail="true" life="80000" />
+                    <p:outputLabel value="#{loginBean.mensajeInicial}" style="font-size: 12px"/>
+                    <p:outputLabel value="" style="background-color:#FDFDFD" styleClass="fa fa-user"></p:outputLabel>
+                    <p:inputText id="usuario" value="#{loginBean.nomUsuario}"  lang="es" placeholder="Usuario" type="text" style=" font-size: 11px"/>
+                    <p:message for="usuario" ></p:message>            
+                    <p:outputLabel value="" style="background-color:#FDFDFD"  styleClass="fa fa-key"/>
+                    <p:password id="password" value="#{loginBean.passUsuario}" autocomplete="false" feedback="false"   lang="es" placeholder="Contraseña" style=" font-size: 11px"  />
+                    <p:message for="password" ></p:message>
+                    <!--<center>
+                        <p:captcha label="Captcha" language="es" validatorMessage="Por favor, haga clic en la casilla 'No soy robot' "  />  
+                    </center>-->
+                    <p:panelGrid columns="2">
+                        <p:column>
+                            <p:commandButton id="loginButton" value="Ingresar" ajax="true"   actionListener="#{loginBean.login(event)}"  update="mensajes"  oncomplete="handleLoginRequest(xhr, status, args)"    style="background-color: #085061; color: white; font-size: 11px">
+                                <f:param name="browser" value="M" />
+                            </p:commandButton>                                 
+                            <p:remoteCommand name="refreshIt" update="latitud longitud" action="#{loginBean.refreshIt()}" />                    
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Cancelar" type="reset"     style="background-color: #085061; color: white;  font-size: 11px"   />
+                        </p:column>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" >
+                        <p:column>
+                            <p:outputLabel id="latitud" value="Lat:#{loginBean.lat}" style=" font-size:7px "/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel id="longitud"  value="Lon:#{loginBean.lng}" style="font-size:7px"/>
+                        </p:column>
+                    </p:panelGrid>                     
+                    <p:spacer></p:spacer>
+                        
+                 
+ 
+                    
+                </pm:content>
+                <script type="text/javascript">
+                   var geocoder;
+                   function refresh() {
+                       navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                refreshIt([{name:'lat', value:position.coords.latitude}, {name:'lng', value:position.coords.longitude}]);
+                            },
+                            function(error) {
+                                alert(error.message);
+                            },
+                            {
+                               enableHighAccuracy: true
+                            });
+                       }            
+                </script>                 
+   
+                <CENTER>
+                    <p:graphicImage value="/resources/images/icons/logo-dark.png" width="25%"  height="25%"  cache="true"/>
+                </CENTER>
+                <pm:footer title="© 2022 Laboratorios ABD" fixed="true"  style="background-color: #3572E2; color: white; font-size: 8px; font-family: Verdada, Arial, Tahoma  " >
+                </pm:footer>
+            </pm:page> 
+        </h:form> 
+        <script>
+          function onSubmit(token) {
+            document.getElementById("demo-form").submit();
+          }
+        </script>         
+    </h:body>     
+</html>

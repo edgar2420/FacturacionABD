@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:pm="http://primefaces.org/mobile"
+        xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        contentType="text/html">    
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:head>
+        <script name="jquery/jquery.js" library="primefaces"></script>
+        <title> Laboratorios ABD</title>
+        <link rel="icon" type="images/ico" href="resources/images/icons/favicon.ico" />
+        <link rel="stylesheet" href="../resources/font-awesome/css/font-awesome.min.css"/>   
+    </h:head>
+    
+    <h:body>    
+        <h:form id="facturacionForm">   
+            <pm:page id="facturacionPage">
+                <pm:header   fixed="true"    style="background-color: #3572E2; color: white; font-size: 14px; font-family:   serif " />
+                <p:messages id="msg"  showDetail="true" autoUpdate="true" closable="true" redisplay="true"/>
+                <p:growl id="mensajes" showDetail="true" life="40000" />
+                <ui:include src="cabecera.xhtml" />
+                <pm:content>
+                    <p:tabMenu activeIndex="0"  style="background: #085061; color: white;font-size: 12px  " >                     
+                        <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
+                        <p:menuitem value="Facturar" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
+                        <p:menuitem value="Cobranzas" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                    </p:tabMenu>                       
+                    <p:panel header="Datos Busqueda Factura:" id="myDataFiltro">
+                        <p:panelGrid columns="1" >
+                            <p:outputLabel value="Tipo" style="background-color:#FDFDFD; " ></p:outputLabel>
+                            <p:inputText id="tipo" value="#{facturasBean.tipo}" disabled="true"   lang="es"   />
+                            <p:outputLabel value="Número" style="background-color:#FDFDFD;" ></p:outputLabel>
+                            <p:inputText id="numero" value="#{facturasBean.numero}" type="number"    placeholder="Numero" required="true" requiredMessage="Debe ingresar el numero de Orden"  />
+                            <p:outputLabel value="Fecha" style="background-color:#FDFDFD;" ></p:outputLabel>
+                            <p:inputText id="fecha" value="#{facturasBean.fecha}"    placeholder="Fecha" required="true" requiredMessage="Debe ingresar la fecha de la Orden" />
+                            <p:outputLabel value="Almacen" style="background-color:#FDFDFD; "  ></p:outputLabel>
+                            <p:inputText id="almacen" value="#{facturasBean.almacen}"   required="true" requiredMessage="Debe ingresar un almacen" lang="es" placeholder="Almacen" type="text" />
+                            <p:outputLabel value="Correo Electrónico: *"  />       
+                            <h:panelGrid>               
+                                <h:panelGroup>
+                                    <p:inputText id="email" value="#{facturasBean.correo}" size="100" required="true" requiredMessage="Ingrese correo electrónico."  validatorMessage="No es una dirección válida.!!" style="text-transform:lowercase;">
+                                        <p:ajax event="blur"
+                                                onstart="$('#progressind').css('visibility','visible');"
+                                                oncomplete="$('#progressind').css('visibility','hidden');"
+                                                listener="#{facturasBean.validateEmail}"
+                                                update="email" />
+                                    </p:inputText>  
+                                    <p:message for="email" />
+                                </h:panelGroup>    
+                            </h:panelGrid>   
+                        </p:panelGrid>
+                    
+                        <center>
+                            <h:panelGrid columns="2"  >
+                                <p:column>
+                                    <p:commandButton id="buscarFacturaBoton" ajax="true" value="Buscar" update="mensajes myDataFiltro myDataFactura myDataTotal" type="submit" actionListener="#{facturasBean.buscarFactura(event)}" action="facturacion"  icon="ui-icon-search"  />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="Cancelar" type="reset" icon="ui-icon-forbidden"  />
+                                </p:column>
+                            </h:panelGrid> 
+                        </center>
+                   </p:panel>                   
+                 
+                   <p:panel  id="myDataFactura" header="Datos Recibo" closeTitle="DATOS DEL RECIBO" toggleSpeed="10000" toggleable="true" collapsed="false" 
+                             style="font-weight:  bolder; text-align:  center; font-size: 12px">        
+                        <p:panelGrid   columns="2"  style="  background-color: #eee">
+                            <p:outputLabel value="Codigo Cliente"/>
+                            <p:outputLabel value="#{facturasBean.facturas.codigoCliente}" style=" font-weight: bold"/>
+                            <p:outputLabel value="Nombre" />
+                            <p:outputLabel value="#{facturasBean.facturas.nombre}" style=" font-weight: bold" />
+                            <p:outputLabel value="Vendedor"/>
+                            <p:outputLabel value="#{facturasBean.facturas.codigoVendedor}"  style=" font-weight: bold"/>
+                            <p:outputLabel value="Glosa" />
+                            <p:outputLabel value="#{facturasBean.facturas.glosa}" style=" font-weight: bold" />                         
+                        </p:panelGrid>
+                        <br></br>
+                        <p:dataTable  resizableColumns="true"  var="data" value="#{facturasBean.listLinFacturas}"   tableStyleClass="ui-table-columntoggle" emptyMessage="..."  style="border: palegoldenrod">
+                            <p:column headerText="Codigo"    style="font-size:  10px; width: 10%" >
+                                <p:outputLabel value="#{data.id.codigoItem}"  style="font-size:10px;"/>
+                            </p:column>      
+                            <p:column headerText="Descripcion"    style="font-size:  10px; width: 40%">
+                                <p:outputLabel value="#{data.items.descripcion}"  style="font-size: 10px;"/>
+                            </p:column>                             
+                             <p:column headerText="Cant."    style="font-size:  10px; width: 8%">
+                                <p:outputLabel value="#{data.cantidad}"  style="font-size: 10px;"/>
+                            </p:column>                             
+                            <p:column headerText="Uni."    style="font-size:  10px; width: 8%">
+                                <p:outputLabel value="#{data.unidad}"  style="font-size: 10px;"/>
+                            </p:column>                            
+                            <p:column headerText="Precio"    style="font-size:  10px; width: 10%">
+                                <p:outputLabel value="#{data.precioBs}"  style="font-size: 10px;">
+                                    <f:convertNumber pattern="0.00"/>
+                                </p:outputLabel>
+                            </p:column>    
+                            <p:column headerText="Importe"    style="font-size:  10px; width: 10%">
+                                <p:outputLabel value="#{data.importeBs}"  style="font-size: 10px;">
+                                    <f:convertNumber pattern="0.00"/>
+                                </p:outputLabel>
+                            </p:column>     
+                            <p:column headerText="Lote"    style="font-size:  10px; width: 14%">
+                                <p:outputLabel value="#{data.lote}"  style="font-size: 10px;"/>
+                            </p:column>      
+                        </p:dataTable>  
+                        <br></br>                        
+                        <p:panelGrid columns="4"   style="background: #045491; font-weight: bold; color: white; text-align: left">
+                            <p:outputLabel  value="Total:"/>
+                            <p:outputLabel value="BS" />  
+                            <p:outputLabel value="#{facturasBean.facturas.monto}" >
+                              <f:convertNumber  pattern="0.00"/>
+                            </p:outputLabel>                                                     
+                        </p:panelGrid> 
+                    </p:panel>   
+                    <p:panel id="myDataTotal" header="OPERACIONES" style=" align-content: center ">
+                        <p:panelGrid columns="3" >
+                            <p:column rendered="#{facturasBean.verFactura == true}">    
+                                <p:commandButton id="facturarPagosButton" type="submit" value="Facturar"  style="background-color: #085061; color: white; font-size: 12px" icon="ui-icon-edit" 
+                                                 actionListener="#{facturasBean.facturarPago}"  action="facturacion"  update="mensajes imprimirFactueraButton"  rendered="#{facturasBean.facturar==true}"
+                                                  /> 
+                            </p:column>
+                           <p:column rendered="#{facturasBean.imprimir==true}">
+                                <p:commandButton id="imprimirFactueraButton" type="submit" value="Imprimir Factura"  style="background-color: #085061; color: white; font-size: 12px" icon="ui-icon-gear" 
+                                                 actionListener="#{facturasBean.imprimirFactura}"  action="facturacion"  update="mensajes myDataTotal"   
+                                                  />  
+                                <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{facturasBean.tipImpresion}"  onLabel="Rollo" offLabel="Carta"    />                
+                            </p:column>
+                            
+                            <p:column rendered="#{facturasBean.urlFactura==true}" >
+                                <h:outputLink  id="urlFactura" value="/ABDFacturacion/faces/views/facturas/#{facturasBean.imprimeFact}.pdf" style="font-weight: bold; font-size:  large; color: blue" >Ver Factura</h:outputLink>
+                            </p:column>
+                        </p:panelGrid>                       
+                    </p:panel>                     
+                </pm:content>         
+                <ui:include src="pie.xhtml" />
+            </pm:page> 
+        </h:form>             
+    </h:body>     
+<style type="text/css">
+.colored {
+/*//background-color:  lightpink;*/
+color: red;
+}
+.colorRed {
+background-color: white;
+color: red;
+}
+.coloredGreen {
+/*// background-color: WHITE  ;*/
+color:  green;
+/*//font-size:    x-large;*/
+}
+.coloredBlue {
+background-color: #085061;
+color:   white;
+/*//font-size:    x-large;*/
+}
+</style>      
+    
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.DimTiempo" table="DIM_TIEMPO" schema="ABD" optimistic-lock="version">
+        <composite-id name="id" class="model.DimTiempoId">
+            <key-property name="periodo" type="string">
+                <column name="PERIODO" length="6" />
+            </key-property>
+            <key-property name="diaano" type="string">
+                <column name="DIAANO" length="3" />
+            </key-property>
+        </composite-id>
+        <property name="ano" type="string">
+            <column name="ANO" length="4" />
+        </property>
+        <property name="mes" type="string">
+            <column name="MES" length="2" />
+        </property>
+        <property name="diames" type="string">
+            <column name="DIAMES" length="2" />
+        </property>
+        <property name="diasemana" type="string">
+            <column name="DIASEMANA" length="1" />
+        </property>
+        <property name="semanames" type="string">
+            <column name="SEMANAMES" length="1" />
+        </property>
+        <property name="semanaano" type="string">
+            <column name="SEMANAANO" length="3" />
+        </property>
+        <property name="bimestre" type="string">
+            <column name="BIMESTRE" length="1" />
+        </property>
+        <property name="trimestre" type="string">
+            <column name="TRIMESTRE" length="1" />
+        </property>
+        <property name="semestre" type="string">
+            <column name="SEMESTRE" length="1" />
+        </property>
+        <property name="dia" type="date">
+            <column name="DIA" length="7" />
+        </property>
+    </class>
+</hibernate-mapping>

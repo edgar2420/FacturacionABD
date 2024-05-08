@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 20-07-2022 12:57:37 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Claves" table="CLAVES" schema="ABD" optimistic-lock="version">
+        <id name="login" type="string">
+            <column name="LOGIN" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="clave" type="string">
+            <column name="CLAVE" length="40" />
+        </property>
+        <property name="anulacion" type="string">
+            <column name="ANULACION" length="2" />
+        </property>
+        <property name="precio" type="string">
+            <column name="PRECIO" length="2" />
+        </property>
+        <property name="cierre" type="string">
+            <column name="CIERRE" length="2" />
+        </property>
+        <property name="apertura" type="string">
+            <column name="APERTURA" length="2" />
+        </property>
+        <property name="modificar" type="string">
+            <column name="MODIFICAR" length="2" />
+        </property>
+        <property name="flagGl" type="string">
+            <column name="FLAG_GL" length="2" />
+        </property>
+        <property name="acceso" type="string">
+            <column name="ACCESO" length="2" />
+        </property>
+    </class>
+</hibernate-mapping>
