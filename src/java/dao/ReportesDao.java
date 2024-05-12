@@ -224,8 +224,9 @@ public class ReportesDao implements Serializable {
            }
            catch (JRException e)
            {   
-               conn.close();
+               
                e.printStackTrace();
+               conn.close();
                Errores.registrarLogArchivo
                    ("ERROR CREACION RECIBO","generaReporteRecibo"
                    +"\n Nombre (User SO): " + System.getProperty("os.name")
@@ -242,6 +243,8 @@ public class ReportesDao implements Serializable {
         
            catch (FileNotFoundException e)
            {
+               
+               e.printStackTrace();
                conn.close(); 
                Errores.registrarLogArchivo
                    ("ERROR CREACION RECIBO","generaReporteRecibo"

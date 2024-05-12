@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecibo" pageWidth="612" pageHeight="792" columnWidth="598" leftMargin="7" rightMargin="7" topMargin="28" bottomMargin="28" uuid="c6337a7b-9149-4352-97dd-81389bde4635">
-	<property name="ireport.zoom" value="3.0"/>
-	<property name="ireport.x" value="142"/>
-	<property name="ireport.y" value="495"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["D:\\NetBeans-14\\Workspace\\ABDFacturacion\\src\\java\\reportes\\"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="P_DEPOSITO" class="java.lang.Integer">
+	<parameter name="P_DEPOSITO" class="java.lang.String">
 		<defaultValueExpression><![CDATA[121]]></defaultValueExpression>
 	</parameter>
 	<queryString>

@@ -431,7 +431,7 @@ public class RecibosBean implements Serializable {
         int deposito = 0, recibo=0;
         datos = recibosDao.recibirPago(cliente.getCodigo(), clasificador, montoPagar, contabilidad, tipDocPago, banco);
         resp = datos[0];
-        nroDeposito = datos[1];
+        this.nroDeposito = datos[1];
         msj = datos[2];
         deposito = Integer.parseInt(nroDeposito);
         if (deposito>0){
@@ -468,7 +468,7 @@ public class RecibosBean implements Serializable {
         else
             impresion = "C";
         
-           this.imprimeRecibo = reportesDao.generaReporteRecibo(nroRecibo, tipImpresion);
+           this.imprimeRecibo = reportesDao.generaReporteRecibo(nroDeposito, tipImpresion);
            msj = new FacesMessage(FacesMessage.SEVERITY_INFO,  "Recibo Generado",nroRecibo);           
 
 

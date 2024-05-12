@@ -196,13 +196,13 @@
                         <p:panelGrid  id="mydataPago" columns="2" >
                             <p:column>
                                 <p:commandButton id="realizarPagoButton" type="submit" value="Pagar"  icon="ui-icon-edit" 
-                                                 actionListener="#{recibosBean.recibirPago(event)}"  action="polizas"  update="mensajes myDataDeudas mydataPago"  
+                                                 actionListener="#{recibosBean.recibirPago(event)}"  action="recibos"  update="mensajes myDataDeudas mydataPago"  
                                                  rendered="#{recibosBean.dataOperaciones==true}" />              
 
                             </p:column>
                            <p:column rendered="#{recibosBean.imprimir==true}">
                                 <p:commandButton id="imprimirReciboButton" type="submit" value="Imprimir Factura"  style="background-color: #085061; color: white; font-size: 12px" icon="ui-icon-gear" 
-                                                 actionListener="#{recibosBean.imprimirRecibo}"  action="cobranzas"  update="mensajes mydataPago"   
+                                                 actionListener="#{recibosBean.imprimirRecibo}"  action="recibos"  update="mensajes mydataPago"   
                                                   />  
                                 <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{recibosBean.tipImpresion}"  onLabel="Rollo" offLabel="Carta"    />                
                             </p:column>
