@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecibo" pageWidth="612" pageHeight="792" columnWidth="598" leftMargin="7" rightMargin="7" topMargin="28" bottomMargin="28" uuid="c6337a7b-9149-4352-97dd-81389bde4635">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="142"/>
+	<property name="ireport.y" value="495"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["D:\\NetBeans-14\\Workspace\\ABDFacturacion\\src\\java\\reportes\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="P_DEPOSITO" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[121]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[select p.codigo, p.nombre, p.ruc, p.pais, p.ciudad, p.contacto, p.direccion_dom, p.telefono_dom, p.ref_per1_dir email,
@@ -176,6 +176,27 @@
 				</textElement>
 				<text><![CDATA[CANTIDAD]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="87" y="10" width="86" height="14" uuid="495c5460-e707-4214-b8be-94785cf46cc5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO OP.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="173" y="10" width="39" height="14" uuid="05c2f0d8-aeb3-41e4-87e2-aa70259346a9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NRO OP.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="10" width="50" height="14" uuid="f6f4d484-85ff-48c8-af59-4cf1d12ce36f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NRO CUOTA]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -185,17 +206,28 @@
 				<textElement textAlignment="Center">
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[CODIGO]]></text>
+				<text><![CDATA[GESTION]]></text>
 			</staticText>
+			<subreport>
+				<reportElement x="10" y="-217" width="585" height="13" uuid="32f7e351-7b75-4f7f-9832-c6b9cecd2256"/>
+				<subreportParameter name="P_DEPOSITO">
+					<subreportParameterExpression><![CDATA[$P{P_DEPOSITO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CODIGO">
+					<subreportParameterExpression><![CDATA[$F{CODIGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rptRecibo_subreport.jasper"]]></subreportExpression>
+			</subreport>
 			<staticText>
-				<reportElement x="119" y="-231" width="263" height="14" uuid="da74a1e2-9395-4d3b-b3af-fd42530e627f"/>
+				<reportElement x="278" y="-231" width="170" height="14" uuid="da74a1e2-9395-4d3b-b3af-fd42530e627f"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PRODUCTO]]></text>
+				<text><![CDATA[DESCRIPCION]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="532" y="-231" width="52" height="14" uuid="61077ac7-5a6d-48da-8b54-e63e59f02d52"/>
+				<reportElement x="541" y="-231" width="52" height="14" uuid="61077ac7-5a6d-48da-8b54-e63e59f02d52"/>
 				<textElement textAlignment="Center">
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
@@ -209,24 +241,24 @@
 				<textElement textAlignment="Center">
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[DESCRIPCIÓN]]></text>
+				<text><![CDATA[DETALLE RECIBO]]></text>
 			</staticText>
 			<line>
 				<reportElement x="9" y="-247" width="586" height="1" uuid="af158cf8-b886-4bd8-8408-c781287262d5"/>
 			</line>
 			<staticText>
-				<reportElement x="392" y="-231" width="50" height="14" uuid="58426061-66cd-47c9-8f56-3194c74f5ace"/>
+				<reportElement x="51" y="-231" width="38" height="14" uuid="86810ab7-8872-45b0-ba9c-5567833f2091"/>
 				<textElement textAlignment="Center">
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[UNIDAD]]></text>
+				<text><![CDATA[PERIODO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="449" y="-231" width="50" height="14" uuid="feea845d-3c98-4a2c-bd17-d57c5ed1b9ef"/>
+				<reportElement x="489" y="-231" width="52" height="14" uuid="de7798e5-c36b-4ea9-a7d8-bee433203586"/>
 				<textElement textAlignment="Center">
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[P.UNITARIO]]></text>
+				<text><![CDATA[MONEDA]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

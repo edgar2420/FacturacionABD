@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptFac_SFE_subreport" language="groovy" pageWidth="612" pageHeight="100" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0c7453e7-6c08-4ece-b3c7-dc4fef0c54ad">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="39"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="P_DEPOSITO" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
@@ -10,11 +10,11 @@
 		<defaultValueExpression><![CDATA["VD1"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[    SELECT gestion_op, periodo_op, tipo_op, numero_op, numero_cuota, descripcion, moneda, k_pagar, digitar_k, i_pagar, digitar_i, unineg, estado
-      FROM ibsadm.CXC
-      WHERE NRO_DEPOSITO = $P{P_DEPOSITO}
-        AND PERSONA      = $P{P_CODIGO}
-      ORDER BY numero_cuota]]>
+		<![CDATA[SELECT gestion_op, periodo_op, tipo_op, numero_op, numero_cuota, descripcion, moneda, k_pagar, digitar_k, i_pagar, digitar_i, unineg, estado
+  FROM ibsadm.CXC
+ WHERE NRO_DEPOSITO = $P{P_DEPOSITO}
+   AND PERSONA      = $P{P_CODIGO}
+ ORDER BY numero_cuota]]>
 	</queryString>
 	<field name="GESTION_OP" class="java.lang.String"/>
 	<field name="PERIODO_OP" class="java.lang.String"/>
@@ -44,39 +44,60 @@
 	<detail>
 		<band height="13" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="4" y="0" width="47" height="12" uuid="35c76d33-3216-4267-8ec9-77fea774a2a2"/>
+				<reportElement x="11" y="0" width="41" height="12" uuid="35c76d33-3216-4267-8ec9-77fea774a2a2"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NUMERO_CUOTA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{GESTION_OP}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="97" y="0" width="290" height="12" uuid="7e7da8c8-0411-4fb1-ba29-755816b1377a"/>
+				<reportElement x="272" y="0" width="230" height="12" uuid="7e7da8c8-0411-4fb1-ba29-755816b1377a"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,###.00" isBlankWhenNull="true">
-				<reportElement x="510" y="0" width="55" height="12" uuid="c3ac8c46-63a4-4b38-bc9b-673f951f5af2"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Courier New" size="8" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="402" y="0" width="53" height="12" uuid="1e68ad71-d9ae-4e65-aec5-a1595c13e26e"/>
+				<reportElement x="557" y="0" width="53" height="12" uuid="1e68ad71-d9ae-4e65-aec5-a1595c13e26e"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{K_PAGAR}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="457" y="0" width="53" height="12" uuid="03c93217-948e-4f94-a5de-f860b199b45e"/>
+				<reportElement x="57" y="0" width="35" height="12" uuid="690b3772-95e9-4a05-bc90-6af32f3fd1e1"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{I_PAGAR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PERIODO_OP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="0" width="80" height="12" uuid="ffb239ec-bcec-46a6-8281-e1d6b03a183c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_OP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="172" y="0" width="50" height="12" uuid="5035a4af-8f70-4731-84d6-4181283104e1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_OP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="222" y="0" width="50" height="12" uuid="6f7b61a9-f525-4b18-ac15-4fa5d3a6d347"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_CUOTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="502" y="0" width="55" height="12" uuid="b539585e-fef5-4cdb-92a9-511fb2e70d3f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
