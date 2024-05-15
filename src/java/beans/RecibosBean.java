@@ -357,6 +357,24 @@ public class RecibosBean implements Serializable {
         this.imprimeRecibo = "";
     }
 
+    public void inicializaNuevo(){
+        this.facturar=false;
+        this.imprimir=false;
+        this.urlRecibo=true;
+        this.dataBusqueda = false;
+        this.dataClientes = false;
+        this.dataDeudas = false;
+        this.dataOperaciones = false;   
+        this.tipoBusqueda = "N";
+        this.valorBusqueda = "";
+        this.banco = "";
+        this.clasificador = "CO-ABD";
+        this.contabilidad = "B";
+        this.nroDeposito= "";
+        this.montoPagar = 0.0;
+        this.banco = "";
+        this.tipDocPago = "EFE";
+    }
     public void busqueda(){
         this.dataClientes = true;
         this.dataDeudas = false;
@@ -416,7 +434,7 @@ public class RecibosBean implements Serializable {
         this.dataClientes=false;
         this.dataOperaciones=true;
         listCXC = recibosDao.getCuentasXCobrar(cliElegido.getCodigo(), contabilidad);
-        datos = recibosDao.getTotalesCuentasXCobrar(cliElegido.getCodigo());
+        datos = recibosDao.getTotalesCuentasXCobrar(cliElegido.getCodigo(), contabilidad);
         this.totImporte = datos[0];
         this.totPagado = datos[1];
         this.totSaldo = datos[2];
@@ -456,6 +474,7 @@ public class RecibosBean implements Serializable {
         }
             
         FacesContext.getCurrentInstance().addMessage("*", msg);
+
         
     }
     
@@ -468,16 +487,14 @@ public class RecibosBean implements Serializable {
         else
             impresion = "C";
         
-           this.imprimeRecibo = reportesDao.generaReporteRecibo(nroDeposito, tipImpresion);
+           this.imprimeRecibo = reportesDao.generaReporteRecibo(nroDeposito, impresion);
            msj = new FacesMessage(FacesMessage.SEVERITY_INFO,  "Recibo Generado",nroRecibo);           
 
 
 
            FacesContext.getCurrentInstance().addMessage("***", msj) ;
-           this.facturar=false;
-           this.imprimir=false;
-           this.urlRecibo=true;    
-        
+    
+            inicializaNuevo();
         
     }
 }

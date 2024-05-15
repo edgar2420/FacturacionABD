@@ -325,7 +325,7 @@ String claseJava = "SiniestrosDao.java";
         return model; 
     }
     
-    public String[] getTotalesCuentasXCobrar(String codigo){
+    public String[] getTotalesCuentasXCobrar(String codigo, String contabilidad){
         String respuestas[] = new String[5];           
         iniciaOperacion();
          try{
@@ -333,13 +333,14 @@ String claseJava = "SiniestrosDao.java";
             {  
                 @Override 
                 public void execute(Connection conn) throws SQLException {
-                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_OBTENER_SUM_DEUDAS_CLIENTE(?,?,?,?)}");
+                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_OBTENER_SUM_DEUDAS_CLIENTE(?,?,?,?,?)}");
                     stmt.clearParameters();
                     stmt.registerOutParameter(1, OracleTypes.VARCHAR );//java.sql.Types.VARCHAR); //  java.sql.ResultSet
                     stmt.setString(2, codigo);
                     stmt.registerOutParameter(3, OracleTypes.VARCHAR);
                     stmt.registerOutParameter(4, OracleTypes.VARCHAR);
                     stmt.registerOutParameter(5, OracleTypes.VARCHAR);
+                    stmt.setString(6, contabilidad);
                     stmt.execute();
                     
                     respuestas[0] = stmt.getString(3);

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptFactRollo_subreport" language="groovy" pageWidth="297" pageHeight="200" columnWidth="297" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0c7453e7-6c08-4ece-b3c7-dc4fef0c54ad">
+	<property name="ireport.zoom" value="6.0"/>
+	<property name="ireport.x" value="608"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_DEPOSITO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT gestion_op, periodo_op, tipo_op, numero_op, descripcion, k_pagar
+  FROM ibsadm.CXC
+ WHERE NRO_DEPOSITO = $P{P_DEPOSITO}
+   AND PERSONA      = $P{P_CODIGO}
+ ORDER BY numero_cuota]]>
+	</queryString>
+	<field name="GESTION_OP" class="java.lang.String"/>
+	<field name="PERIODO_OP" class="java.lang.String"/>
+	<field name="TIPO_OP" class="java.lang.String"/>
+	<field name="NUMERO_OP" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="K_PAGAR" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="0" width="14" height="12" uuid="b8737ff7-7499-43f7-a90e-87076464dc6b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERIODO_OP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="20" height="12" isPrintWhenDetailOverflows="true" uuid="35c76d33-3216-4267-8ec9-77fea774a2a2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GESTION_OP}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="78" y="0" width="67" height="12" uuid="7e7da8c8-0411-4fb1-ba29-755816b1377a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_OP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###.00" isBlankWhenNull="true">
+				<reportElement x="240" y="0" width="43" height="12" uuid="c3ac8c46-63a4-4b38-bc9b-673f951f5af2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{K_PAGAR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="147" y="0" width="20" height="12" uuid="934c7192-6442-4998-a840-7274d79caeb5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_OP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="172" y="0" width="68" height="12" uuid="54f6d59b-9cd0-4b50-a31d-39aec73f4341"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
