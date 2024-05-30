@@ -28,7 +28,29 @@
                         <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
                         <p:menuitem value="Facturar" icon="ui-icon-edit"  rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
                         <p:menuitem value="Cobranzas" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
-                    </p:tabMenu>                      
+                        <p:menuitem value="QR" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
+
+
+                    </p:tabMenu>      
+
+    <script>
+        function abrirNuevaPagina() {
+            window.open("qr.xhtml", "_blank");
+        }
+    </script>
+<!--
+<p:commandButton value="Ver PDF" onclick="openPdfWindow()" />
+-->
+<!--
+<p:commandButton value="Ver QR" oncomplete="PB('dialogoPDF').show()"/>
+
+<p:dialog header="PDF" widgetVar="dialogoPDF" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+    <p:media value="views/qr/QR.pdf" width="100%" height="500px" player="pdf">
+        Tu navegador no puede mostrar el PDF.
+    </p:media>
+</p:dialog>
+-->
+                
                     <p:panel header="Datos Busqueda" id="myDataFiltro">
                         <p:panelGrid columns="1" >
                             <p:column> 
@@ -194,6 +216,13 @@
                         </p:panelGrid>                         
                         
                         <p:panelGrid  id="mydataPago" columns="2" >
+    <button onclick="abrirNuevaPagina()">QR</button>
+
+    <script>
+        function abrirNuevaPagina() {
+            window.open("qr.xhtml", "_blank");
+        }
+    </script>
                             <p:column>
                                 <p:commandButton id="realizarPagoButton" type="submit" value="Pagar"  icon="ui-icon-edit" 
                                                  actionListener="#{recibosBean.recibirPago(event)}"  action="recibos"  update="mensajes myDataDeudas mydataPago"  
@@ -220,6 +249,13 @@
             </pm:page> 
         </h:form>             
     </h:body>     
+<script>
+    function openPdfWindow() {
+        var pdfUrl = "/views/qr/QR.PDF";
+        var pdfWindow = window.open('', '_blank');
+        pdfWindow.document.write('<html><head><title>PDF</title></head><body><embed src="' + pdfUrl + '" type="application/pdf" width="100%" height="100%"></embed></body></html>');
+    }
+</script>
 <style type="text/css">
 .colored {
 /*//background-color:  lightpink;*/

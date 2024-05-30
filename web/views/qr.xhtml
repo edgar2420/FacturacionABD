@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:pm="http://primefaces.org/mobile"
+        xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        contentType="text/html">    
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:head>
+        <script name="jquery/jquery.js" library="primefaces"></script>
+        <title> Laboratorios ABD</title>
+        <link rel="icon" type="images/ico" href="resources/images/icons/favicon.ico" />
+        <link rel="stylesheet" href="../resources/font-awesome/css/font-awesome.min.css"/>     
+    </h:head>
+    
+    <h:body onload="clearInputs()" >     
+        <h:form id="recibosForm">   
+            <pm:page id="recibosPage">
+                <pm:header   fixed="true" style="background-color: #3572E2; color: white; font-size: 14px; font-family: serif " />
+                <p:messages id="msg"  showDetail="true" autoUpdate="true" closable="true" redisplay="true"/>
+                <p:growl id="mensajes" showDetail="true" life="40000" />
+                <ui:include src="cabecera.xhtml" />
+                <pm:content>
+                    <p:tabMenu activeIndex="3"  style="background: #085061; color: white;font-size: 12px  " >                     
+                        <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
+                        <p:menuitem value="Facturar" icon="ui-icon-edit"  rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
+                        <p:menuitem value="Cobranzas" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                        <p:menuitem value="QR*" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
+
+                    </p:tabMenu>      
+
+                        <p:panel header="QR - ABD">
+                            <p:media value="/views/qr/QR.pdf"
+                                     player="pdf" width="100%" height="600px" rendered="true"/>
+
+                            <p:outputLabel value="El archivo PDF no está disponible." rendered="false"/>
+                        </p:panel>        
+                    
+                </pm:content>         
+                <ui:include src="pie.xhtml" />
+            </pm:page> 
+        </h:form>             
+    </h:body> 
+<style type="text/css">
+.colored {
+/*//background-color:  lightpink;*/
+color: red;
+}
+.colorRed {
+background-color: white;
+color: red;
+}
+.coloredGreen {
+/*// background-color: WHITE  ;*/
+color:  green;
+/*//font-size:    x-large;*/
+}
+.coloredBlue {
+background-color: #085061;
+color:   white;
+/*//font-size:    x-large;*/
+}
+</style>      
+    
+</html>
