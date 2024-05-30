@@ -13,6 +13,7 @@
         <script name="jquery/jquery.js" library="primefaces"></script>
         <title> Laboratorios ABD</title>
         <link rel="icon" type="images/ico" href="resources/images/icons/favicon.ico" />
+        <link rel="icon" type="images/ico" href="../resources/images/icons/favicon.ico" />
         <link rel="stylesheet" href="../resources/font-awesome/css/font-awesome.min.css"/>     
     </h:head>
     
@@ -29,27 +30,14 @@
                         <p:menuitem value="Facturar" icon="ui-icon-edit"  rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
                         <p:menuitem value="Cobranzas" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
                         <p:menuitem value="QR" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
-
-
                     </p:tabMenu>      
 
-    <script>
-        function abrirNuevaPagina() {
-            window.open("qr.xhtml", "_blank");
-        }
-    </script>
-<!--
-<p:commandButton value="Ver PDF" onclick="openPdfWindow()" />
--->
-<!--
-<p:commandButton value="Ver QR" oncomplete="PB('dialogoPDF').show()"/>
+                    <script>
+                        function abrirNuevaPagina() {
+                            window.open("qr.xhtml", "_blank");
+                        }
+                    </script>
 
-<p:dialog header="PDF" widgetVar="dialogoPDF" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
-    <p:media value="views/qr/QR.pdf" width="100%" height="500px" player="pdf">
-        Tu navegador no puede mostrar el PDF.
-    </p:media>
-</p:dialog>
--->
                 
                     <p:panel header="Datos Busqueda" id="myDataFiltro">
                         <p:panelGrid columns="1" >
@@ -65,14 +53,7 @@
                                     <f:selectItem itemLabel="Carnet" itemValue="C"  />
                                     <f:selectItem itemLabel="Codigo" itemValue="O" />
                                 </p:selectOneMenu>
-                            </p:column> 
-                            <p:column>  
-                                <p:outputLabel value="Tipo:"  />
-                                <p:selectOneMenu  title="Tipo:" value="#{recibosBean.contabilidad}"  >
-                                    <f:selectItem itemLabel="Factura" itemValue="B"  />
-                                    <f:selectItem itemLabel="Nota Remisión" itemValue="A"/>
-                                </p:selectOneMenu>
-                            </p:column>                               
+                            </p:column>                              
                             <p:panelGrid columns="2">
                                 <p:column>
                                     <p:commandButton id="buscarClienteButton"   value="Buscar" update="mensajes myDataFiltro myDataClientes" type="submit" actionListener="#{recibosBean.buscarCliente(event)}" action="recibos" icon="ui-icon-search"  />
@@ -84,23 +65,23 @@
                         </p:panelGrid>
                    </p:panel>
                     
-                   <p:panel id="myDataClientes" header="SELECCIONE CLIENTE"   style="font-weight: bolder; text-align:center; font-size: 14px">       
-                       <!--
-                       <p:selectOneRadio id="clientesRadio" value="#{recibosBean.clienteElegido}"   columns="2"  style="font-size:11px  "  >
-                           <f:selectItems value="#{recibosBean.listPersonas}" var="data"  
-                                           itemLabel="Código:#{data.codigo} Nombre:#{data.nombre} NIT:#{data.ruc} Ciudad:#{data.ciudad}"
-                                           itemValue="#{data.codigo}"   >
-                           </f:selectItems>
-                       </p:selectOneRadio> 
-                       -->
+                   <p:panel id="myDataClientes" header="SELECCIONE TIPO RECIBO - RAZON SOCIAL"    style="font-weight: bolder; text-align:center; font-size: 14px;">       
+
+                            <p:column>  
+                                <p:outputLabel value="Tipo Recibo:"  />
+                                <p:selectOneMenu  title="Tipo:" value="#{recibosBean.contabilidad}"  >
+                                    <f:selectItem itemLabel="Factura" itemValue="B"  />
+                                    <f:selectItem itemLabel="Nota Remisión" itemValue="A"/>
+                                </p:selectOneMenu>
+                            </p:column>  
                        
                        <p:dataTable id="singleDT" var="car" value="#{recibosBean.listPersonas}" selectionMode="single" selection="#{recibosBean.cliElegido}" rowKey="#{car.codigo}"     emptyMessage="..."  >
                             <f:facet name="header">
                                 Elija la Razón Social
                             </f:facet>
                                                    
-                            <p:column headerText="Razón Social" style="font-size:  12px; width: 50%">
-                                <h:outputText value="#{car.nombre}"  style="font-size: 10px;" />
+                            <p:column headerText="Razón Social" style="font-size:  14px; width: 50%">
+                                <h:outputText value="#{car.nombre}"  style="font-size: 12px;" />
                             </p:column>
                             <p:column headerText="Nit" style="font-size:  12px; width: 20%"> 
                                 <h:outputText value="#{car.ruc}" style="font-size: 10px;"/>
@@ -115,7 +96,7 @@
                        
                        <p:panelGrid columns="1">
                            <p:column>
-                               <p:commandButton id="elegirClienteButton" value="Elegir" update="mensajes myDataFiltro myDataClientes myDataDeudas" type="submit" actionListener="#{recibosBean.elegirCliente(event)}" rendered="#{recibosBean.dataClientes==true}" action="recibos"     icon="ui-icon-user"  />
+                               <p:commandButton id="elegirClienteButton" value="Buscar deudas" update="mensajes myDataFiltro myDataClientes myDataDeudas mydataPago" type="submit" actionListener="#{recibosBean.elegirCliente(event)}" rendered="#{recibosBean.dataClientes==true}" action="recibos"     icon="ui-icon-user"  />
                            </p:column>        
                        </p:panelGrid>
                    </p:panel>   
@@ -193,56 +174,68 @@
                           <p:outputLabel  value="A CANCELAR:"/>    
                         </p:panelGrid>
                         <p:panelGrid  id="mydataTipoDocPago" columns="2"    style="background: #045491; font-weight: bold; color: white; text-align:  center" >
-                            <p:outputLabel  value="MONEDA"/> 
-                            <p:outputLabel value="BS"/>    
+                            
+                            <p:outputLabel  value="Moneda:" />
+                            <!--<p:inputSwitch id="monedaPago" value="#{recibosBean.codMonedaPago}"   onLabel="Bs" offLabel="$us"    /> -->
+                            <p:selectOneMenu id="codMonedaPago" value="#{recibosBean.codMonedaPago}" >
+                                <f:selectItem itemLabel="Seleccione una" itemValue=""  />
+                                <f:selectItem itemLabel="BS" itemValue="BS"  />
+                                <f:selectItem itemLabel="US" itemValue="US"/>
+                                <p:ajax listener="#{recibosBean.seteoMoneda}"  />
+                            </p:selectOneMenu>      
                             <p:outputLabel  value="Monto"/>   
                             <p:inputText id="mntPagar" value="#{recibosBean.montoPagar}" placeholder="0.0" type="number"  />   
-                            <p:outputLabel value=" Vendedor" />
+                            <!--<p:outputLabel value=" Vendedor" />
                             <p:selectOneMenu value="#{recibosBean.codVendedor}">
                                 <f:selectItem itemLabel="Elija vendedor" itemValue="" />
                                 <f:selectItems value="#{recibosBean.listVendedores}" var="tipo"
                                                itemLabel="#{tipo.nombre}" itemValue="#{tipo.codigo}"/>
                             </p:selectOneMenu>                            
+                            -->
                             <p:outputLabel  value="Tipo Pago:"  />
-                            <p:selectOneMenu id="tipDocPago" value="#{recibosBean.tipDocPago}"  >
+                            <p:selectOneMenu id="tipDocPago" value="#{recibosBean.tipDocPago}"   >
                                 <f:selectItem itemLabel="Efectivo" itemValue="EFE"  />
                                 <f:selectItem itemLabel="QR" itemValue="QR"/>
-                                <f:selectItem itemLabel="Cheque Diferido" itemValue="CHD"/>
-                                <f:selectItem itemLabel="Tarjeta Crédito/Débito" itemValue="TAR"/>
-                                <f:selectItem itemLabel="Transferencia/Depósito" itemValue="TRA"/>
+                                <f:selectItem itemLabel="Cheque" itemValue="CHD"/>
+                                <f:selectItem itemLabel="Transferencia" itemValue="TRA"/>
+                                <p:ajax update="banco"  listener="#{recibosBean.onDocPagoChanged}" />
                             </p:selectOneMenu>      
-                            <p:outputLabel  value="Banco:"  />
-                            <p:inputText id="banco" value="#{recibosBean.banco}" maxlength="100"  />   
+                            <p:outputLabel  value="Banco:"  /> 
+                            <p:selectOneMenu id="banco" value="#{recibosBean.banco}" >
+                                <f:selectItem itemLabel="Seleccione uno" itemValue="" />
+                                <f:selectItems value="#{recibosBean.bancos}" />
+                            </p:selectOneMenu>  
                         </p:panelGrid>                         
-                        
-                        <p:panelGrid  id="mydataPago" columns="2" >
-    <button onclick="abrirNuevaPagina()">QR</button>
+                    </p:panel>      
+                    <p:panelGrid  id="mydataPago" columns="2" >
+                        <p:commandButton value="QR" onclick="abrirNuevaPagina()" />
+                        <!--<button onclick="abrirNuevaPagina()">QR</button>-->
 
-    <script>
-        function abrirNuevaPagina() {
-            window.open("qr.xhtml", "_blank");
-        }
-    </script>
-                            <p:column>
-                                <p:commandButton id="realizarPagoButton" type="submit" value="Pagar"  icon="ui-icon-edit" 
-                                                 actionListener="#{recibosBean.recibirPago(event)}"  action="recibos"  update="mensajes myDataDeudas mydataPago"  
-                                                 rendered="#{recibosBean.dataOperaciones==true}" />              
+                        <script>
+                            function abrirNuevaPagina() {
+                                window.open("qr.xhtml", "_blank");
+                            }
+                        </script>
+                        <p:column>
+                            <p:commandButton id="realizarPagoButton" type="submit" value="Pagar"  icon="ui-icon-edit" 
+                                             actionListener="#{recibosBean.recibirPago(event)}"  action="recibos"  update="mensajes myDataDeudas mydataPago"  
+                                             rendered="#{recibosBean.dataOperaciones==true}" />              
 
-                            </p:column>
-                           <p:column rendered="#{recibosBean.imprimir==true}">
-                                <p:commandButton id="imprimirReciboButton" type="submit" value="Imprimir Recibo"  style="background-color: #085061; color: white; font-size: 12px" icon="ui-icon-gear" 
-                                                 actionListener="#{recibosBean.imprimirRecibo}"  action="recibos"  update="mensajes mydataPago myDataDeudas"   
-                                                  />  
-                                <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{recibosBean.tipImpresion}"  onLabel="Rollo" offLabel="Carta"    />                
-                            </p:column>
-                            
-                            <p:column rendered="#{recibosBean.urlRecibo==true}" >
-                                <h:outputLink  id="urlRecibo" value="/ABDFacturacion/faces/views/facturas/#{recibosBean.imprimeRecibo}.pdf" style="font-weight: bold; font-size:  large; color: blue" >Ver Recibo</h:outputLink>
-                            </p:column>
-                        </p:panelGrid>                            
+                        </p:column>
+                        <p:column rendered="#{recibosBean.imprimir==true}">
+                             <p:commandButton id="imprimirReciboButton" type="submit" value="Imprimir Recibo"  style="background-color: #085061; color: white; font-size: 12px" icon="ui-icon-gear" 
+                                              actionListener="#{recibosBean.imprimirRecibo}"  action="recibos"  update="mensajes mydataPago myDataDeudas"   
+                                               />  
+                             <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{recibosBean.tipImpresion}"  onLabel="Rollo" offLabel="Carta"    />                
+                        </p:column>
+
+                        <p:column rendered="#{recibosBean.urlRecibo==true}" >
+                            <h:outputLink  id="urlRecibo" value="/ABDFacturacion/faces/views/facturas/#{recibosBean.imprimeRecibo}.pdf" style="font-weight: bold; font-size:  large; color: blue" >Ver Recibo</h:outputLink>
+                        </p:column>
+                    </p:panelGrid>                            
                         
                         
-                    </p:panel>            
+                           
                     
                 </pm:content>         
                 <ui:include src="pie.xhtml" />

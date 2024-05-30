@@ -63,7 +63,8 @@ public class RecibosBean implements Serializable {
     private Double montoPagar;
     private String tipDocPago;
     private String banco;
-    
+    private String codMonedaPago;
+    private String sCodMonedaPago;
     
     private String clasificador = "CO-ABD";
     private String contabilidad = "A";
@@ -72,7 +73,8 @@ public class RecibosBean implements Serializable {
     
     private RecibosDao recibosDao;
     private ReportesDao reportesDao;
-
+    private List<String> bancos;
+    
     FacesMessage msg;
     /*****/
     public String getValorBusqueda() {
@@ -319,6 +321,22 @@ public class RecibosBean implements Serializable {
         this.imprimeRecibo = imprimeRecibo;
     }
 
+    public String getCodMonedaPago() {
+        return codMonedaPago;
+    }
+
+    public void setCodMonedaPago(String codMonedaPago) {
+        this.codMonedaPago = codMonedaPago;
+    }
+
+    public List<String> getBancos() {
+        return bancos;
+    }
+
+    public void setBancos(List<String> bancos) {
+        this.bancos = bancos;
+    }
+
 
 
   
@@ -355,6 +373,7 @@ public class RecibosBean implements Serializable {
         this.banco = "";
         this.tipDocPago = "EFE";
         this.imprimeRecibo = "";
+        //this.codMonedaPago = "false";
     }
 
     public void inicializaNuevo(){
@@ -374,6 +393,7 @@ public class RecibosBean implements Serializable {
         this.montoPagar = 0.0;
         this.banco = "";
         this.tipDocPago = "EFE";
+        //this.codMonedaPago = "false";
     }
     public void busqueda(){
         this.dataClientes = true;
@@ -408,7 +428,30 @@ public class RecibosBean implements Serializable {
         this.imprimir = false; 
     } 
     
+    public void seteoMoneda(){
+       this.codMonedaPago =  getCodMonedaPago();   
+    }
     
+    public void onDocPagoChanged(){
+        this.codMonedaPago = getCodMonedaPago();
+        /*if (this.codMonedaPago.equalsIgnoreCase("true"))
+            this.sCodMonedaPago="BS";
+        else 
+            this.sCodMonedaPago ="US";*/
+        bancos = new ArrayList<>();
+        if (this.tipDocPago.equalsIgnoreCase("TRA")){
+            if (this.codMonedaPago.equalsIgnoreCase("BS")){
+                bancos.add("BDC");
+                bancos.add("BISA");
+                bancos.add("BMSC");
+                bancos.add("BUN");
+            }
+            else{
+                bancos.add("BDC");
+            }    
+        }        
+        
+    }
     
     public void buscarCliente(ActionEvent event){
 
@@ -453,6 +496,11 @@ public class RecibosBean implements Serializable {
         msj = datos[2];
         deposito = Integer.parseInt(nroDeposito);
         if (deposito>0){
+            if (this.codMonedaPago.equalsIgnoreCase("true"))
+                this.sCodMonedaPago="BS";
+            else 
+                this.sCodMonedaPago ="US";
+                    
             datos = recibosDao.pagarCuentaXCobrar(cliente.getCodigo(), clasificador, montoPagar, deposito, contabilidad, userLogin, "", codVendedor, tipDocPago, banco);
             resp = datos[0];
             nroRecibo = datos[1];
