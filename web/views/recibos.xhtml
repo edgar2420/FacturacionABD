@@ -179,8 +179,8 @@
                             <!--<p:inputSwitch id="monedaPago" value="#{recibosBean.codMonedaPago}"   onLabel="Bs" offLabel="$us"    /> -->
                             <p:selectOneMenu id="codMonedaPago" value="#{recibosBean.codMonedaPago}" >
                                 <f:selectItem itemLabel="Seleccione una" itemValue=""  />
-                                <f:selectItem itemLabel="BS" itemValue="BS"  />
-                                <f:selectItem itemLabel="US" itemValue="US"/>
+                                <f:selectItem itemLabel="BS" itemValue="BS"   />
+                              <!--  <f:selectItem itemLabel="US" itemValue="US" rendered="false"/>-->
                                 <p:ajax listener="#{recibosBean.seteoMoneda}"  />
                             </p:selectOneMenu>      
                             <p:outputLabel  value="Monto"/>   
@@ -196,7 +196,7 @@
                             <p:selectOneMenu id="tipDocPago" value="#{recibosBean.tipDocPago}"   >
                                 <f:selectItem itemLabel="Efectivo" itemValue="EFE"  />
                                 <f:selectItem itemLabel="QR" itemValue="QR"/>
-                                <f:selectItem itemLabel="Cheque" itemValue="CHD"/>
+                                <f:selectItem itemLabel="Cheque" itemValue="CHQ"/>
                                 <f:selectItem itemLabel="Transferencia" itemValue="TRA"/>
                                 <p:ajax update="banco"  listener="#{recibosBean.onDocPagoChanged}" />
                             </p:selectOneMenu>      
@@ -226,7 +226,7 @@
                              <p:commandButton id="imprimirReciboButton" type="submit" value="Imprimir Recibo"  style="background-color: #085061; color: white; font-size: 12px" icon="ui-icon-gear" 
                                               actionListener="#{recibosBean.imprimirRecibo}"  action="recibos"  update="mensajes mydataPago myDataDeudas"   
                                                />  
-                             <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{recibosBean.tipImpresion}"  onLabel="Rollo" offLabel="Carta"    />                
+                             <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{recibosBean.tipImpresion}"  onLabel="Carta" offLabel="Rollo"    />                
                         </p:column>
 
                         <p:column rendered="#{recibosBean.urlRecibo==true}" >

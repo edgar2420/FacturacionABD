@@ -441,13 +441,13 @@ public class RecibosBean implements Serializable {
         bancos = new ArrayList<>();
         if (this.tipDocPago.equalsIgnoreCase("TRA")){
             if (this.codMonedaPago.equalsIgnoreCase("BS")){
-                bancos.add("BDC");
-                bancos.add("BISA");
-                bancos.add("BMSC");
-                bancos.add("BUN");
+                bancos.add("BCP-MN");
+                bancos.add("BISA-MN");
+                bancos.add("BMSC-MN");
+                bancos.add("BUSA-MN");
             }
             else{
-                bancos.add("BDC");
+                bancos.add("BCP-ME");
             }    
         }        
         
