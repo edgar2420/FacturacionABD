@@ -374,7 +374,7 @@ String claseJava = "SiniestrosDao.java";
                     stmt.setString(2, codigo);
                     stmt.setString(3, clasificador);
                     stmt.setDouble(4, monto);
-                    stmt.setString(5, "A"); // CONTA
+                    stmt.setString(5, conta); // CONTA
                     stmt.setString(6, formaPago);
                     stmt.setString(7, banco);
                     stmt.registerOutParameter(8, OracleTypes.VARCHAR);
