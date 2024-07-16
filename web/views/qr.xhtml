@@ -24,20 +24,20 @@
                 <p:growl id="mensajes" showDetail="true" life="40000" />
                 <ui:include src="cabecera.xhtml" />
                 <pm:content>
-                    <p:tabMenu activeIndex="3"  style="background: #085061; color: white;font-size: 12px  " >                     
+                    <p:tabMenu activeIndex="4"  style="background: #085061; color: white;font-size: 12px  " >                     
                         <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
                         <p:menuitem value="Facturar" icon="ui-icon-edit"  rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
                         <p:menuitem value="Cobranzas" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                        <p:menuitem value="Recibos" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
                         <p:menuitem value="QR*" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
-
                     </p:tabMenu>      
 
-                        <p:panel header="QR - ABD">
-                            <p:media value="/views/qr/QR.pdf"
-                                     player="pdf" width="100%" height="600px" rendered="true"/>
+                    <p:panel header="QR - ABD">
+                        <p:media value="/views/qr/QR.pdf"
+                                 player="pdf" width="100%" height="600px" rendered="true"/>
 
-                            <p:outputLabel value="El archivo PDF no está disponible." rendered="false"/>
-                        </p:panel>        
+                        <p:outputLabel value="El archivo PDF no está disponible." rendered="false"/>
+                    </p:panel>        
                     
                 </pm:content>         
                 <ui:include src="pie.xhtml" />

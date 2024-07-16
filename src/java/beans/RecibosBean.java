@@ -75,6 +75,8 @@ public class RecibosBean implements Serializable {
     private ReportesDao reportesDao;
     private List<String> bancos;
     
+    
+    
     FacesMessage msg;
     /*****/
     public String getValorBusqueda() {
@@ -511,13 +513,14 @@ public class RecibosBean implements Serializable {
                 this.facturar=false;
                 this.imprimir=true;
                 this.urlRecibo=false;    
+                this.dataOperaciones=false;
             }
             else{
                 msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo pagar cuenta x cobrar, intente de nuevo. ", "Si el problema persiste consulte con el administrador." );
             }
         }
         else{ 
-            msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo reservar pago, intente de nuevo. ", "Si el problema persiste consulte con el administrador." ); 
+            msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo reservar pago, Revise el saldo.", msj ); 
             
         }
             

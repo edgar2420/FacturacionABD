@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import lib.Errores;
 import model.Personas;
 import objetos.DetalleCuentasXCobrar;
+import objetos.DetalleRecibos;
 import oracle.jdbc.OracleTypes;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -52,7 +53,8 @@ String claseJava = "SiniestrosDao.java";
     public List<Personas> model = null; 
     public List<DetalleCuentasXCobrar> listCXC = new ArrayList();
     public DetalleCuentasXCobrar cuentaXCobrar;
-    ResultSet cuotasRes = null;    
+    public DetalleRecibos recibo;
+    ResultSet cuotasRes, recibosRes = null;    
     
     
     
@@ -285,6 +287,46 @@ String claseJava = "SiniestrosDao.java";
         return model;
     }
     
+    public List<DetalleRecibos> getRecibos(String nroRecibo, String cliente,  String usuario, String fecha){
+        List<DetalleRecibos> model = new ArrayList();
+        iniciaOperacion();
+         try{
+            sesion.doWork(new Work() 
+            {  
+                @Override 
+                public void execute(Connection conn) throws SQLException {
+                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_OBTENER_RECIBOS(?,?,?,?)}");
+                    stmt.clearParameters();
+                    stmt.registerOutParameter(1, OracleTypes.CURSOR );//java.sql.Types.VARCHAR); //  java.sql.ResultSet
+                    stmt.setString(2, nroRecibo); 
+                    stmt.setString(3, cliente); 
+                    stmt.setString(4, usuario);
+                    stmt.setString(5, fecha);
+                    stmt.execute();
+                    recibosRes = (ResultSet)stmt.getObject(1);
+                    while (recibosRes.next()){
+                       
+                        recibo = new DetalleRecibos(recibosRes.getString(1),
+                                                                  recibosRes.getString(2),
+                                                                  recibosRes.getString(3),
+                                                                  recibosRes.getString(4),
+                                                                  recibosRes.getString(5),
+                                                                  recibosRes.getString(6));
+                        model.add(recibo);
+                    }                    
+                    stmt.close();
+                }
+            });   
+        }         
+        catch(HibernateException e){
+            manejaExcepcion( e, "getRecibos", "Error durante el proceso de busqueda de recibos. NroRecibo: "+nroRecibo+" Fecha: "+fecha+" Usuario: "+usuario, "ABD.PCK_OPERACIONES.F_OBTENER_RECIBOS(?,?,?)");            
+        }
+        finally{
+           sesion.close();
+        }    
+        return model; 
+        
+    }
     
     public List<DetalleCuentasXCobrar> getCuentasXCobrar(String codigo, String contabilidad){
         List<DetalleCuentasXCobrar> model = new ArrayList();        

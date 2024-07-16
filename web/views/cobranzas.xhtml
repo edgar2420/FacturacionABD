@@ -29,6 +29,8 @@
                         <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
                         <p:menuitem value="Facturar" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
                         <p:menuitem value="Cobranzas" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}"  resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                        <p:menuitem value="Recibos" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
+                        <p:menuitem value="QR" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
                     </p:tabMenu>   
                   
                     <p:panel header="Datos Busqueda PreFactura" id="myDataFiltro">
