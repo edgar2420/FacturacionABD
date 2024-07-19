@@ -36,8 +36,10 @@
                         <p:panelGrid columns="1" >
                             <p:outputLabel value="Nro. Deposito" style="background-color:#FDFDFD; " ></p:outputLabel>
                             <p:inputText id="deposito" value="#{impRecibosBean.recibo}" type="number"  placeholder="Nro. Recibo" lang="es" />
+                            <p:outputLabel value="Cliente" style="background-color:#FDFDFD;" ></p:outputLabel>
+                            <p:inputText id="cliente" value="#{impRecibosBean.cliente}" placeholder="Cliente" lang="es" />
                             <p:outputLabel value="Fecha" style="background-color:#FDFDFD;" ></p:outputLabel>
-                            <p:inputText id="fecha" value="#{impRecibosBean.fecha}" type="number"    placeholder="Fecha" lang="es" />
+                            <p:inputText id="fecha" value="#{impRecibosBean.fecha}" required="true" requiredMessage="Debe introducir una fecha dd/mm/yyyy" placeholder="dd/mm/yyyy" lang="es" />
                             <p:outputLabel value="Usuario" style="background-color:#FDFDFD;" ></p:outputLabel> 
                             <p:inputText id="login" value="#{loginBean.nomUsuario}"  disabled="true"  required="true" requiredMessage="Debe ingresar un almacen" lang="es" placeholder="Almacen" type="text" />
                             <p:outputLabel value="Tipo Impresión" style="background-color:#FDFDFD;" ></p:outputLabel> 
