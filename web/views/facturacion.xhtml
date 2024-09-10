@@ -26,12 +26,14 @@
                 <ui:include src="cabecera.xhtml" />
                 <pm:content>
                     <p:tabMenu activeIndex="0"  style="background: #085061; color: white;font-size: 12px  " >                     
-                        <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
-                        <p:menuitem value="Facturar" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
-                        <p:menuitem value="Cobranzas" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
-                        <p:menuitem value="Recibos" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
-                        <p:menuitem value="QR" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
-                    </p:tabMenu>                       
+                        <p:menuitem value="Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>                        
+                        <p:menuitem value="Recibos" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                        <p:menuitem value="Pedidos" icon="ui-icon-edit"  resetValues="true" outcome="/views/pedidos" iconPos="bottom"/>
+                    </p:tabMenu>   
+                    <p:tabMenu activeIndex="0"  style="background: #085061; color: white;font-size: 10px  ">                     
+                        <p:menuitem value="Impresiones" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
+                        <p:menuitem value="Facturación" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>                                           
+                    </p:tabMenu>                     
                     <p:panel header="Datos Busqueda Factura:" id="myDataFiltro">
                         <p:panelGrid columns="1" >
                             <p:outputLabel value="Tipo" style="background-color:#FDFDFD; " ></p:outputLabel>

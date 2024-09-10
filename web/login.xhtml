@@ -26,10 +26,10 @@
                     <p:growl id="mensajes" showDetail="true" life="80000" />
                     <p:outputLabel value="#{loginBean.mensajeInicial}" style="font-size: 12px"/>
                     <p:outputLabel value="" style="background-color:#FDFDFD" styleClass="fa fa-user"></p:outputLabel>
-                    <p:inputText id="usuario" value="#{loginBean.nomUsuario}"  lang="es" placeholder="Usuario" type="text" style=" font-size: 11px"/>
+                    <p:inputText id="usuario" value="#{loginBean.nomUsuario}"  lang="es" placeholder="Usuario" type="text" />
                     <p:message for="usuario" ></p:message>            
                     <p:outputLabel value="" style="background-color:#FDFDFD"  styleClass="fa fa-key"/>
-                    <p:password id="password" value="#{loginBean.passUsuario}" autocomplete="false" feedback="false"   lang="es" placeholder="Contraseña" style=" font-size: 11px"  />
+                    <p:password id="password" value="#{loginBean.passUsuario}" autocomplete="false" feedback="false"   lang="es" placeholder="Contraseña"   />
                     <p:message for="password" ></p:message>
                     <!--<center>
                         <p:captcha label="Captcha" language="es" validatorMessage="Por favor, haga clic en la casilla 'No soy robot' "  />  

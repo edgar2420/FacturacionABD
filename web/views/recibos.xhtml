@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="../resources/font-awesome/css/font-awesome.min.css"/>     
     </h:head>
     
-    <h:body onload="clearInputs()" >     
+    <h:body>     
         <h:form id="recibosForm">   
             <pm:page id="recibosPage">
                 <pm:header   fixed="true" style="background-color: #3572E2; color: white; font-size: 14px; font-family: serif " />
@@ -25,13 +25,15 @@
                 <p:growl id="mensajes" showDetail="true" life="40000" />
                 <ui:include src="cabecera.xhtml" />
                 <pm:content>
-                    <p:tabMenu activeIndex="2"  style="background: #085061; color: white;font-size: 12px  " >                     
-                        <p:menuitem value="Imp. Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
-                        <p:menuitem value="Facturar" icon="ui-icon-edit"  rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/cobranzas" iconPos="bottom"/>
-                        <p:menuitem value="Cobranzas" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                    <p:tabMenu activeIndex="1"  style="background: #085061; color: white;font-size: 12px  " >                     
+                        <p:menuitem value="Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
                         <p:menuitem value="Recibos" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
-                        <p:menuitem value="QR" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/qr" iconPos="bottom"/>
-                    </p:tabMenu>      
+                        <p:menuitem value="Pedidos" icon="ui-icon-edit"   resetValues="true" outcome="/views/pedidos" iconPos="bottom"/>
+                    </p:tabMenu>     
+                    <p:tabMenu activeIndex="1"  style="background: #085061; color: white;font-size: 10px  ">                     
+                        <p:menuitem value="Impresiones" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
+                        <p:menuitem value="Cobros" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>                        
+                    </p:tabMenu>    
 
                     <script>
                         function abrirNuevaPagina() {
@@ -97,7 +99,7 @@
                        
                        <p:panelGrid columns="1">
                            <p:column>
-                               <p:commandButton id="elegirClienteButton" value="Buscar deudas" update="mensajes myDataFiltro myDataClientes myDataDeudas mydataPago" type="submit" actionListener="#{recibosBean.elegirCliente(event)}" rendered="#{recibosBean.dataClientes==true}" action="recibos"     icon="ui-icon-user"  />
+                               <p:commandButton id="elegirClienteButton" value="Buscar deudas" update="mensajes myDataFiltro myDataClientes myDataDeudas mydataPago" type="submit" actionListener="#{recibosBean.elegirCliente(event)}" rendered="#{recibosBean.dataClientes==true}" action="recibos"     icon="ui-icon-search"  />
                            </p:column>        
                        </p:panelGrid>
                    </p:panel>   

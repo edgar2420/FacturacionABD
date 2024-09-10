@@ -33,7 +33,7 @@ import util.HibernateUtil;
  * @author marce
  */
 public class RecibosDao {
-String claseJava = "SiniestrosDao.java";
+String claseJava = "RecibosDao.java";
     private static final Logger LOGGER = Logger.getLogger(RecibosDao.class.getName());
     private static final String CABLOG ="[LaboratoriosABD][RecibosDao]"; 
     

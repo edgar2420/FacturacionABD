@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:pm="http://primefaces.org/mobile"
+        xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        contentType="text/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">    
+    <f:view renderKitId="PRIMEFACES_MOBILE"/>
+    <h:head>
+        <script name="jquery/jquery.js" library="primefaces"></script>
+        <title>Laboratorios ABD</title>
+        <link rel="icon" type="images/ico" href="resources/images/icons/favicon.ico" />
+        <link rel="icon" type="images/ico" href="../resources/images/icons/favicon.ico" />
+        <link rel="stylesheet" href="../resources/font-awesome/css/font-awesome.min.css"/>     
+    </h:head>
+    
+    <h:body >     
+        <h:form id="pedidosForm">   
+            <pm:page id="recibosPage">
+                <pm:header   fixed="true" style="background-color: #3572E2; color: white; font-size: 14px; font-family: serif " />
+                <p:messages id="msg"  showDetail="true" autoUpdate="true" closable="true" redisplay="true"/>
+                <p:growl id="mensajes" showDetail="true" life="1500" />
+                <ui:include src="cabecera.xhtml" />
+                <pm:content>
+                    <p:tabMenu activeIndex="2"  style="background: #085061; color: white;font-size: 12px  " >           
+                        <p:menuitem value="Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
+                        <p:menuitem value="Recibos" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}"  resetValues="true" outcome="/views/recibos" iconPos="bottom"/>
+                        <p:menuitem value="Pedidos" icon="ui-icon-edit" resetValues="true" outcome="/views/MisPedidos" iconPos="bottom"/>
+                   </p:tabMenu>     
+                    <p:tabMenu activeIndex="1"  style="background: #085061; color: white;font-size: 10px  ">                     
+                         <p:menuitem value="Pedido" icon="ui-icon-edit"  resetValues="true" outcome="/views/pedidos" iconPos="bottom"/>
+                         <p:menuitem value="Mis Pedidos" icon="ui-icon-edit"  resetValues="true" outcome="/views/pedidos" iconPos="bottom"/>                                       
+                    </p:tabMenu>
+                    
+                    <p:panel id="myDataFiltro" header="FILTRO BUSQUEDA MIS PEDIDOS" style="font-weight: bolder; text-align:center; font-size: 14px;">
+                        <p:panelGrid columns="2" style="background-color: #3d42ad; color: white ">
+                            <p:outputLabel value="Almacen"/>
+                            <p:inputText value="#{misPedidosBean.almacen}" readonly="true" />
+                            <p:outputLabel value="Tipo Busqueda"/>
+                            <p:selectOneMenu  title="Filtrar por:" value="#{misPedidosBean.tipoBusqueda}">
+                                <f:selectItem itemLabel="Nro Pedido"  itemValue="P"  />
+                                <f:selectItem itemLabel="Nro Factura" itemValue="F" />
+                                <f:selectItem itemLabel="Nombre Fact." itemValue="F" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Valor Búsqueda"/>
+                            <p:inputText value="#{misPedidosBean.valorBusqueda}" />
+                            <p:outputLabel value="Fecha" />
+                            <p:inputText value="#{misPedidosBean.fechaBusqueda}" required="true" requiredMessage="Debe introducir la fecha de pedido dd/mm/yyyy" placeholder="dd/mm/yyyy" lang="es" />
+                        </p:panelGrid>
+                        <p:panelGrid columns="2">
+                            <p:column>
+                                <p:commandButton id="buscarpedidosButton"   value="Buscar" update="mensajes myDataFiltro myDataPedidos"  ajax="true" actionListener="#{misPedidosBean.buscarPedidos(event)}"   action="pedidos" icon="ui-icon-search"  />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="Cancelar" type="reset"  icon="ui-icon-forbidden"  />
+                            </p:column>
+                        </p:panelGrid>  
+                    </p:panel>
+                    
+                    <p:panel header="DETALLE PEDIDOS">
+                        <p:dataTable  var="pedido" value="#{pedidosBean.detallePedido}"   emptyMessage="..."  >
+                            <p:column headerText="Nro." style="font-size:  10px; width: 5%">
+                                <h:outputText value="#{producto.item}"  style="font-size: 9px;" />
+                            </p:column>
+                            <p:column headerText="Codigo" style="font-size:  10px; width: 5%">
+                                <h:outputText value="#{producto.codigoItem}"  style="font-size: 9px;" />
+                            </p:column>
+                            <p:column headerText="Cantidad" style="font-size:10px;width: 5%"> 
+                                <h:outputText value="#{producto.cantidad}" style="font-size:10px;"/>
+                            </p:column>
+                            <p:column headerText="Unidad" style="font-size:10px;width: 5%">
+                                <h:outputText value="#{producto.unidad}" style="font-size: 10px;"/>
+                            </p:column> 
+                            <p:column headerText="PrecioBs" style="font-size:10px;width: 10%">
+                                <h:outputText value="#{producto.precioBs}" style="font-size:10px;"/>
+                            </p:column>
+                            <p:column headerText="Venc." style="font-size:10px;width: 10%">
+                                <h:outputText value="#{producto.fechaVencimiento}" style="font-size:10px;"/>
+                            </p:column>
+                            <p:column headerText="Lote" style="font-size:10px;width: 10%">
+                                <h:outputText value="#{producto.lote}" style="font-size:10px;"/>
+                            </p:column> 
+                        </p:dataTable> 
+                    </p:panel>
+                    <!--
+                    <p:panel id="myDataFiltro" header="MIS PEDIDOs" style="font-weight: bolder; text-align:center; font-size: 14px;">  
+                        <p:selectOneMenu id="selectMenu" value="#{misPedidosBean.selectedOption}" required="true">
+                            <f:selectItem itemLabel="Seleccione" itemValue="" />
+                            <f:selectItem itemLabel="SI" itemValue="SI" />
+                            <f:selectItem itemLabel="NO" itemValue="NO" />
+                            <p:ajax update="inputTextPanel" />
+                        </p:selectOneMenu>        
+                            <h:panelGroup id="inputTextPanel" layout="block">
+                                <p:inputText id="inputText" value="#{misPedidosBean.valorBusqueda}" rendered="#{misPedidosBean.selectedOption eq 'SI'}" />
+                            </h:panelGroup>
+                    </p:panel> -->
+                </pm:content>         
+                <ui:include src="pie.xhtml" />
+            </pm:page> 
+        </h:form>             
+    </h:body>     
+
+    
+    
+</html>

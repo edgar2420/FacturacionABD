@@ -4,27 +4,23 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:p="http://primefaces.org/ui"
         xmlns:h="http://java.sun.com/jsf/html"
-        xmlns:pm="http://primefaces.org/mobile"
-        xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:pm="http://primefaces.org/mobile" 
         contentType="text/html">    
     <f:view renderKitId="PRIMEFACES_MOBILE"/>
     <h:head>
         <title>Laboratorios ABD</title>
         <link rel="icon" type="images/ico" href="../resources/images/icons/favicon.ico" />
     </h:head>
-    <h:body> 
-        
-            <pm:header  title="Laboratorios ABD Ltda."  swatch="d" fixed="true" style="text-align: center; background-color: #3572E2; color: white;   " >                
-                <h:outputLabel value="IBS FACTURACION" style="font-size: 14px "/> 
-                <f:facet name="left">
-                    <p:button value="Volver" icon="ui-icon-back" onclick="history.go(-1)" style="background-color: #3572E2; border-color: darkblue;  color: white;  font-size: 10px"/>
-                </f:facet>
-                <f:facet name="right">
-                    <p:button value="Salir" icon="ui-icon-power" href="/Logout"  style="background-color:#3572E2; border-color: darkblue;  color: white; font-size: 10px"/>
-                </f:facet>
-            </pm:header>  
-       
+    <h:body>         
+        <pm:header  title="Laboratorios ABD Ltda."  swatch="d" fixed="true" style="text-align: center; background-color: #3572E2; color: white;   " >                
+            <h:outputLabel value="IBS FACTURACION" style="font-size: 14px "/> 
+            <f:facet name="left">
+                <p:button value="Volver" icon="ui-icon-back" onclick="history.go(-1)" style="background-color: #3572E2; border-color: darkblue;  color: white;  font-size: 10px"/>
+            </f:facet>
+            <f:facet name="right">
+                <p:button value="Salir" icon="ui-icon-power" href="/Logout"  style="background-color:#3572E2; border-color: darkblue;  color: white; font-size: 10px"/>
+            </f:facet>
+        </pm:header>         
     </h:body>        
 </html>
 
