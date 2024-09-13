@@ -2,6 +2,8 @@ package beans;
 
 import dao.MisPedidosDao;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -95,10 +97,12 @@ public class MisPedidosBean implements Serializable{
     }
     
     private void inicializa(){
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.listPedidos.clear();
         this.tipoBusqueda = "";
         this.valorBusqueda = "";
-        this.fechaBusqueda = "";               
+        this.fechaBusqueda = fechaActual.format(formato);             
         this.almacen = util.FacesUtil.getSessionMapValue(FacesContext.getCurrentInstance(), "unidad").toString(); 
     }
     

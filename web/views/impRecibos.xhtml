@@ -29,7 +29,7 @@
                         <p:menuitem value="Facturas" icon="ui-icon-search" resetValues="true"  outcome="/views/facturacion"    iconPos="bottom"/>
                         <p:menuitem value="Recibos" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
                         <p:menuitem value="Pedidos" icon="ui-icon-edit"   resetValues="true" outcome="/views/pedidos" iconPos="bottom"/>
-                   </p:tabMenu>     
+                    </p:tabMenu>     
                     <p:tabMenu activeIndex="0"  style="background: #085061; color: white;font-size: 10px  ">                     
                         <p:menuitem value="Impresiones" rendered="#{loginBean.rolFacturar=='S'}" icon="ui-icon-edit" resetValues="true" outcome="/views/impRecibos" iconPos="bottom"/>
                         <p:menuitem value="Cobros" icon="ui-icon-edit" rendered="#{loginBean.rolFacturar=='S'}" resetValues="true" outcome="/views/recibos" iconPos="bottom"/>                        
@@ -45,8 +45,7 @@
                             <p:outputLabel value="Usuario" style="background-color:#FDFDFD;" ></p:outputLabel> 
                             <p:inputText id="login" value="#{loginBean.nomUsuario}"  disabled="true"  required="true" requiredMessage="Debe ingresar un almacen" lang="es" placeholder="Almacen" type="text" />
                             <p:outputLabel value="Tipo Impresión" style="background-color:#FDFDFD;" ></p:outputLabel> 
-                            <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{impRecibosBean.tipImpresion}"  onLabel="Carta" offLabel="Rollo"    />         
-                            
+                            <p:inputSwitch id="tipoImpresion" label="Impresion" value="#{impRecibosBean.tipImpresion}"  onLabel="Carta" offLabel="Rollo" />                                
                         </p:panelGrid>
                     
                         <center>

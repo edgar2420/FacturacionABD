@@ -3,7 +3,10 @@ package beans;
 import dao.PedidosDao; 
 import dao.ReportesDao;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -699,31 +702,46 @@ public class PedidosBean implements Serializable{
     }
 
     public void crearPedido(ActionEvent event){
-         LOGGER.log(Level.INFO, "{0} [crearPedido] Cantidad Reserva: {1} {2} {3} Producto Elegido: {3}", new Object[]{CABLOG, cantidadReserva,almacen, productoElegido.getProducto()+"-"+ productoElegido.getLote()+"-"+ productoElegido.getSaldo()});
-        
-        /* Validamos que cantidad no sobrepase al saldo actual */
-        if (cantidadReserva>Integer.valueOf(productoElegido.getSaldo())){
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Producto inexistente", "Revise la cantidad de su reserva, no puede sobrepasar el salgo actual. Producto: "+ productoElegido.getNombre()+" Saldo: "+productoElegido.getSaldo() ); 
-        }
-        else{        
-            this.datos = pedidosDao.crearPedido(almacen, cliente.getCodigo(), cliente.getNombre(), fechaEntrega, userLogin, codVendedor, productoElegido.getProducto(), cantidadReserva, productoElegido.getUnidad(), 0.0, productoElegido.getLote(), productoElegido.getFecha());
-            if (datos[0].equalsIgnoreCase("1")){
-                this.dataPedido = false;
-                this.dataPedidoCrear = false;
-                this.dataPedidoAdicionar = true;
-                this.dataPedidoTerminar = true;
-                this.nroPedido = datos[1];
-                mensaje = datos[2];
-                detallePedido = pedidosDao.getDetallePedido(almacen, Integer.valueOf(nroPedido));
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Pedido Creado con éxito", "Se creo pedido Nro: "+ nroPedido +" para el Almacen: "+almacen); 
-
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        formato.setLenient(false); 
+        LOGGER.log(Level.INFO, "{0} [crearPedido] Cantidad Reserva: {1} {2} {3} Producto Elegido: {3} FechaEntrega: {4}", new Object[]{CABLOG, cantidadReserva,almacen, productoElegido.getProducto()+"-"+ productoElegido.getLote()+"-"+ productoElegido.getSaldo(), fechaEntrega});
+        try{
+            Date fechaIngresada = formato.parse(fechaEntrega);
+            Date fechaActual = new Date();
+            if (fechaIngresada.before(fechaActual)) { 
+                LOGGER.log(Level.INFO, "{0} [crearPedido][Error fecha entrega anterior a la actual] Cantidad Reserva: {1} {2} {3} Producto Elegido: {3} FechaEntrega: {4} ", new Object[]{CABLOG, cantidadReserva,almacen, productoElegido.getProducto()+"-"+ productoElegido.getLote()+"-"+ productoElegido.getSaldo(), fechaEntrega});
+        mensaje = "La fecha de entrega no puede ser anterior a la fecha actual.";
+                msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "Error de validacion", mensaje); 
+            } 
+            else {
+                /* Validamos que cantidad no sobrepase al saldo actual */
+                if (cantidadReserva>Integer.valueOf(productoElegido.getSaldo())){
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Producto inexistente", "Revise la cantidad de su reserva, no puede sobrepasar el salgo actual. Producto: "+ productoElegido.getNombre()+" Saldo: "+productoElegido.getSaldo() ); 
+                }
+                else{        
+                    this.datos = pedidosDao.crearPedido(almacen, cliente.getCodigo(), cliente.getNombre(), fechaEntrega, userLogin, codVendedor, productoElegido.getProducto(), cantidadReserva, productoElegido.getUnidad(), 0.0, productoElegido.getLote(), productoElegido.getFecha());
+                    if (datos[0].equalsIgnoreCase("1")){
+                        this.dataPedido = false;
+                        this.dataPedidoCrear = false;
+                        this.dataPedidoAdicionar = true;
+                        this.dataPedidoTerminar = true;
+                        this.nroPedido = datos[1];
+                        mensaje = datos[2];
+                        detallePedido = pedidosDao.getDetallePedido(almacen, Integer.valueOf(nroPedido));
+                        msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Pedido Creado con éxito", "Se creo pedido Nro: "+ nroPedido +" para el Almacen: "+almacen); 
+                    }
+                    else{
+                        mensaje = datos[2];
+                        msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Error al crear pedido Pedido", "Hubo un problema al crear pedido, mensaje:  "+mensaje); 
+                    }              
+                }
             }
-            else{
-                mensaje = datos[2];
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Error al crear pedido Pedido", "Hubo un problema al crear pedido, mensaje:  "+mensaje); 
-            }              
         }
-        
+        catch (ParseException e) {
+            LOGGER.log(Level.INFO, "{0} [crearPedido][Error en formato de fecha] Cantidad Reserva: {1} {2} {3} Producto Elegido: {3} FechaEntrega: {4}", new Object[]{CABLOG, cantidadReserva,almacen, productoElegido.getProducto()+"-"+ productoElegido.getLote()+"-"+ productoElegido.getSaldo(), fechaEntrega});
+            mensaje = "Formato de fecha inválido. Asegúrate de usar el formato dd/MM/yyyy.";
+            msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "Error de validacion", mensaje); 
+        }
         FacesContext.getCurrentInstance().addMessage("*", msg);      
     }
     

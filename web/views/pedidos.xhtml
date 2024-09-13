@@ -156,18 +156,19 @@
                                     <!--<p:column headerText="Almacen" style="font-size:  10px; width: 5%">
                                         <h:outputText value="#{producto.almacen}"  style="font-size: 9px;" />
                                     </p:column>-->
-                                    <p:column headerText="Codigo" style="width: 5%">
+                                    <p:column headerText="Cod" style="width: 5%">
                                         <h:outputText value="#{producto.producto}"  style="font-size: 11px;" />
                                     </p:column>
                                     <p:column headerText="Descripcion" style="width: 20%"> 
                                         <h:outputText value="#{producto.nombre}" style="font-size:10px;"/>
                                     </p:column>
-                                    <p:column headerText="Unidad" style="width: 5%">
+                                    <p:column headerText="Und" style="width: 5%">
                                         <h:outputText value="#{producto.unidad}" style="font-size: 10px;"/>
-                                    </p:column>                                    
+                                    </p:column>     
+                                    <!--
                                     <p:column headerText="Lote" style="font-size:  10px; width: 5%">
                                         <h:outputText value="#{producto.lote}" style="font-size: 9px;"/>
-                                    </p:column> 
+                                    </p:column>--> 
                                     <p:column headerText="Venc." style="width: 10%">
                                         <h:outputText value="#{producto.fecha}" style="font-size:10px;"/>
                                     </p:column>
@@ -285,13 +286,13 @@
                                         <f:selectItem itemLabel="Transferencia" itemValue="TRA"/>
                                         <p:ajax update="banco"  listener="#{pedidosBean.onDocPagoChanged}" />
                                     </p:selectOneMenu>  
-                                    <p:panelGrid rendered="#{pedidosBean.dataBano==true}" style="background-color: #3d42ad; color: white;">
+                                   
                                         <p:outputLabel  value="Banco:"  /> 
                                         <p:selectOneMenu id="banco" value="#{pedidosBean.banco}" >
                                             <f:selectItem itemLabel="Seleccione banco" itemValue="" />
                                             <f:selectItems value="#{pedidosBean.bancos}" />
                                         </p:selectOneMenu>
-                                    </p:panelGrid>
+                                   
                                 </p:panelGrid>
                             </p:panel>    
                         </p:panelGrid>     
@@ -302,7 +303,7 @@
                         <p:column>
                             <p:commandButton id="nuevoPedidooButton" value="Nuevo pedido" update="mensajes myDataFiltro myDataClientes mydataPago midataTerminar" type="submit" actionListener="#{pedidosBean.nuevoPedido(event)}" rendered="#{pedidosBean.dataPedidoNuevo==true}" action="pedidos"     icon="ui-icon-search"  style="background-color: #73b846; color: white;" />
                         </p:column>  
-                        </p:panel> 
+                    </p:panel> 
                 </pm:content>         
                 <ui:include src="pie.xhtml" />
             </pm:page> 
