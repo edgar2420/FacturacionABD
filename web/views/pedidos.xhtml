@@ -193,16 +193,16 @@
                         </p:panel> 
                         <p:panel header="PEDIDO Nro:  #{pedidosBean.nroPedido}"  rendered="#{pedidosBean.dataPedidoTerminar==true}">
                             <p:dataTable  var="producto" value="#{pedidosBean.detallePedido}"   emptyMessage="..."  >
-                                <p:column headerText="Nro." style="font-size:  10px; width: 5%">
+                                <p:column headerText="Nro." style="font-size:  10px; width: 2%">
                                     <h:outputText value="#{producto.item}"  style="font-size: 9px;" />
                                 </p:column>
                                 <p:column headerText="Codigo" style="font-size:  10px; width: 5%">
                                     <h:outputText value="#{producto.codigoItem}"  style="font-size: 9px;" />
                                 </p:column>
-                                <p:column headerText="Cantidad" style="font-size:10px;width: 5%"> 
+                                <p:column headerText="Cant." style="font-size:10px;width: 5%"> 
                                     <h:outputText value="#{producto.cantidad}" style="font-size:10px;"/>
                                 </p:column>
-                                <p:column headerText="Unidad" style="font-size:10px;width: 5%">
+                                <p:column headerText="Und." style="font-size:10px;width: 5%">
                                     <h:outputText value="#{producto.unidad}" style="font-size: 10px;"/>
                                 </p:column> 
                                 <p:column headerText="PrecioBs" style="font-size:10px;width: 10%">
@@ -211,9 +211,9 @@
                                 <p:column headerText="Venc." style="font-size:10px;width: 10%">
                                     <h:outputText value="#{producto.fechaVencimiento}" style="font-size:10px;"/>
                                 </p:column>
-                                <p:column headerText="Lote" style="font-size:10px;width: 10%">
+                                <!--<p:column headerText="Lote" style="font-size:10px;width: 10%">
                                     <h:outputText value="#{producto.lote}" style="font-size:10px;"/>
-                                </p:column> 
+                                </p:column>--> 
                             </p:dataTable>  
                         </p:panel>
                     
