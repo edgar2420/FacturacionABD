@@ -832,6 +832,7 @@ public class PedidosBean implements Serializable{
             this.dataPedidoNuevo = true;
             mensaje = datos[1];
             detallePedido = pedidosDao.getDetallePedido(almacen, Integer.valueOf(nroPedido));
+            this.pedido = pedidosDao.getPedido(almacen, Integer.valueOf(nroPedido));
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Pago de pedido se proceso con éxito", mensaje); 
         }
         else{
