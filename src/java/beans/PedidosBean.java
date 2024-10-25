@@ -819,6 +819,8 @@ public class PedidosBean implements Serializable{
         LOGGER.log(Level.INFO, "{0} [pagarPedSido] Pedido: {1} User: {2} ", new Object[]{CABLOG, nroPedido,userLogin});
         if (pagado.equalsIgnoreCase("Si"))
            formaPago = "Contado";
+        else if (pagado.equalsIgnoreCase("En"))
+           formaPago = "CEntrega";
         else
             formaPago = "CxC";
         this.datos =  pedidosDao.pagarPedido(almacen, Integer.valueOf(nroPedido), userLogin, formaPago, tipDocPago, banco, razonSocial, nit);

@@ -269,9 +269,10 @@
                             <p:panelGrid columns="1" style="background-color: #3d42ad; color: white;" rendered="#{pedidosBean.dataPedidoFinalizar==true}">
                             <p:outputLabel value="Pedido pagado ?" />
                              <p:selectOneMenu id="selectMenu" value="#{pedidosBean.pagado}" required="true">
-                                <f:selectItem itemLabel="Seleccione Si/No" itemValue="" />
+                                <f:selectItem itemLabel="Seleccione Si/No/Contra Entrega" itemValue="" />
                                 <f:selectItem itemLabel="SI" itemValue="Si" />
                                 <f:selectItem itemLabel="NO" itemValue="No" />
+                                <f:selectItem itemLabel="CENTREGA" itemValue="En" />
                                 <!-- Usamos Ajax para actualizar el formulario cuando cambie la selección -->
                                 <p:ajax update="inputTextPanel" />
                             </p:selectOneMenu>        
