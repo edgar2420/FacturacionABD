@@ -492,41 +492,43 @@ public class RecibosBean implements Serializable {
     public void recibirPago(ActionEvent event){
         String resp, msj;
         int deposito = 0, recibo=0;
-        datos = recibosDao.recibirPago(cliente.getCodigo(), clasificador, montoPagar, contabilidad, tipDocPago, banco);
-        resp = datos[0];
-        this.nroDeposito = datos[1];
-        msj = datos[2];
-        deposito = Integer.parseInt(nroDeposito);
-        if (deposito>0){
-            if (this.codMonedaPago.equalsIgnoreCase("true"))
-                this.sCodMonedaPago="BS";
-            else 
-                this.sCodMonedaPago ="US";
-                    
-            datos = recibosDao.pagarCuentaXCobrar(cliente.getCodigo(), clasificador, montoPagar, deposito, contabilidad, userLogin, "", codVendedor, tipDocPago, banco);
+        if (montoPagar>Double.valueOf(totImporte)){
+             msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo pagar cuenta x cobrar con un monto mayor al adeudado: ", montoPagar+">"+totImporte);
+        }
+        else{
+            datos = recibosDao.recibirPago(cliente.getCodigo(), clasificador, montoPagar, contabilidad, tipDocPago, banco);
             resp = datos[0];
-            nroRecibo = datos[1];
-            //recibo = Integer.parseInt(nroRecibo);
-            msj = datos[2];       
-            if (nroRecibo.length() >0){
-                msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "Pago exitoso. ", "" );
-                this.facturar=false;
-                this.imprimir=true;
-                this.urlRecibo=false;    
-                this.dataOperaciones=false;
-            }
-            else{
-                msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo pagar cuenta x cobrar, intente de nuevo. ", "Si el problema persiste consulte con el administrador." );
-            }
-        }
-        else{ 
-            msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo reservar pago, Revise el saldo.", msj ); 
-            
-        }
-            
-        FacesContext.getCurrentInstance().addMessage("*", msg);
+            this.nroDeposito = datos[1];
+            msj = datos[2];
+            deposito = Integer.parseInt(nroDeposito);
+            if (deposito>0){
+                if (this.codMonedaPago.equalsIgnoreCase("true"))
+                    this.sCodMonedaPago="BS";
+                else 
+                    this.sCodMonedaPago ="US";
 
-        
+                datos = recibosDao.pagarCuentaXCobrar(cliente.getCodigo(), clasificador, montoPagar, deposito, contabilidad, userLogin, "", codVendedor, tipDocPago, banco);
+                resp = datos[0];
+                nroRecibo = datos[1];
+                //recibo = Integer.parseInt(nroRecibo);
+                msj = datos[2];       
+                if (nroRecibo.length() >0){
+                    msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "Pago exitoso. ", "" );
+                    this.facturar=false;
+                    this.imprimir=true;
+                    this.urlRecibo=false;    
+                    this.dataOperaciones=false;
+                }
+                else{
+                    msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo pagar cuenta x cobrar, intente de nuevo. ", "Si el problema persiste consulte con el administrador." );
+                }
+            }
+            else{ 
+                msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "No se pudo reservar pago, Revise el saldo.", msj ); 
+
+            }
+        }
+        FacesContext.getCurrentInstance().addMessage("*", msg);
     }
     
     public void imprimirRecibo(ActionEvent event) throws Exception{

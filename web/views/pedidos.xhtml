@@ -91,7 +91,58 @@
                                 </p:column>        
                             </p:panelGrid>
                         </p:panel>      
-                        
+                        <p:panel header="VENDEDOR" rendered="#{pedidosBean.dataBusquedaVendedor==true}" >
+                            <p:panelGrid columns="1" >
+                                <p:column> 
+                                    <p:outputLabel value="Dato a buscar" />
+                                    <p:inputText id="datoBusquedaVendedor" value="#{pedidosBean.valorBusqueda}" maxlength="60"   />
+                                </p:column>
+                                <p:column>  
+                                    <p:outputLabel value="Filtrar por:"  />
+                                    <p:selectOneMenu  title="Filtrar por:" value="#{pedidosBean.tipoBusqueda}"  >
+                                        <f:selectItem itemLabel="Nombre" itemValue="N"  />
+                                        <f:selectItem itemLabel="Codigo" itemValue="O" />
+                                    </p:selectOneMenu>
+                                </p:column>                              
+                                <p:panelGrid columns="2">
+                                    <p:column>
+                                        <p:commandButton id="buscarVendedorButton"   value="Buscar" update="mensajes myDataFiltro myDataClientes"  ajax="true" actionListener="#{pedidosBean.buscarVendedor(event)}"   action="pedidos" icon="ui-icon-search"  />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="Cancelar" type="reset"  icon="ui-icon-forbidden"  />
+                                    </p:column>
+                                </p:panelGrid>  
+                            </p:panelGrid>
+                       </p:panel>
+                            
+                        <p:panel header="SELECCIONE VENDEDOR"    style="font-weight: bolder; text-align:center; font-size: 14px;"
+                                rendered="#{pedidosBean.dataVendedores==true}" >
+
+                           <p:dataTable id="singleDT1" var="car" value="#{pedidosBean.listVendedores}" selectionMode="single" selection="#{pedidosBean.vendedorElegido}" rowKey="#{car.codigo}"     emptyMessage="..."  >
+                                 <f:facet name="header">
+                                     Elija vendedor
+                                 </f:facet>
+
+                                 <p:column headerText="Razón Social" style="font-size:  14px; width: 50%">
+                                     <h:outputText value="#{car.nombre}"  style="font-size: 12px;" />
+                                 </p:column>
+                                 <p:column headerText="Codigo" style="font-size:  12px; width: 25%"> 
+                                     <h:outputText value="#{car.codigo}" style="font-size: 10px;"/>
+                                 </p:column>
+                                 <p:column headerText="Ciudad" style="font-size:  12px; width: 25%">
+                                     <h:outputText value="#{car.ciudad}" style="font-size: 10px;"/>
+                                 </p:column>
+                                 <f:facet name="footer">
+                                     <p:commandButton process="singleDT1" update=":pedidosForm" icon="ui-icon-search" value="View" oncomplete="PF('carDialog').show()" />
+                                 </f:facet>
+                             </p:dataTable>                       
+
+                            <p:panelGrid columns="1">
+                                <p:column>
+                                    <p:commandButton id="elegirVendedorButton" value="Elegir Vendedor" update="mensajes myDataFiltro myDataClientes mydataPago" type="submit" actionListener="#{pedidosBean.elegirVendedor(event)}" rendered="#{pedidosBean.dataVendedores==true}" action="pedidos"     icon="ui-icon-search"  style="background-color: #aec7f5; color: white;"  />
+                                </p:column>        
+                            </p:panelGrid>
+                        </p:panel>                           
                         <p:panel id="myDataClientes" header="PEDIDO CLIENTE: #{pedidosBean.cliente.codigo}" closeTitle="DATOS DEL PEDIDO" toggleSpeed="10000" toggleable="true" collapsed="false"
                                 
                                 rendered="#{pedidosBean.dataOperaciones==true}">        
@@ -107,21 +158,25 @@
                                 <p:outputLabel value="Teléfono"/>
                                 <p:outputLabel value="#{pedidosBean.cliente.telefonoDom}"  style="font-weight: bold"/>
                                 <p:outputLabel value="Correo" />
-                                <p:outputLabel value="#{pedidosBean.cliente.email}" style="font-weight: bold" />                         
-                            </p:panelGrid>
-                            <br></br>
-                            <p:panelGrid columns="2" >   
-                                <p:outputLabel value="Vendedor"   />
-                                <p:selectOneMenu value="#{pedidosBean.codVendedor}" required="true" requiredMessage="Debe seleccionar un vendedor">
+                                <p:outputLabel value="#{pedidosBean.cliente.email}" style="font-weight: bold" />                                          <p:outputLabel value="Vendedor"   />
+                                <!--<p:selectOneMenu value="#{pedidosBean.codVendedor}"   requiredMessage="Debe seleccionar un vendedor">
                                     <f:selectItem itemLabel="Elija Vendedor" itemValue="" />
                                     <f:selectItems value="#{pedidosBean.listVendedores}" var="tipo"
                                                    itemLabel="#{tipo.nombre}" itemValue="#{tipo.codigo}"/>
-                                </p:selectOneMenu>    
+                                </p:selectOneMenu> -->
+                                <p:outputLabel value="#{pedidosBean.nombreVendedor}"   style="font-weight: bold"/>       
+                                <p:outputLabel value="Almacen"/>
+                                <p:outputLabel value="#{pedidosBean.almacen}"   style="font-weight: bold"/>                            
+                                 
+                            </p:panelGrid>
+                            <br></br>
+                              
+                            
+                            <p:panelGrid columns="2" >   
+
                                 <p:outputLabel value="Fecha Entrega" />                        
                                 <p:inputText value="#{pedidosBean.fechaEntrega}" required="true" requiredMessage="Debe introducir la fecha de entrega dd/mm/yyyy" placeholder="dd/mm/yyyy" lang="es" />
-                                <p:outputLabel value="Almacen" style="background-color:#FDFDFD; "  ></p:outputLabel>
-                                <p:inputText id="almacen" value="#{pedidosBean.almacen}" readonly="true"  required="true" requiredMessage="Debe ingresar un almacen" lang="es" placeholder="Almacen" type="text" />                            
-
+ 
                             </p:panelGrid>
                             <br/>
                             <p:panel header="FILTRO DE PRODUCTOS" rendered="#{pedidosBean.dataFiltro==true}">
@@ -155,25 +210,25 @@
                                     </f:facet>
                                     <!--<p:column headerText="Almacen" style="font-size:  10px; width: 5%">
                                         <h:outputText value="#{producto.almacen}"  style="font-size: 9px;" />
-                                    </p:column>-->
-                                    <p:column headerText="Cod" style="width: 5%">
-                                        <h:outputText value="#{producto.producto}"  style="font-size: 11px;" />
                                     </p:column>
+                                    <p:column headerText="Cod" style="width: 5%">
+                                        <h:outputText value="#{producto.producto}"  style="font-size: 10px;" />
+                                    </p:column>-->
                                     <p:column headerText="Descripcion" style="width: 20%"> 
-                                        <h:outputText value="#{producto.nombre}" style="font-size:10px;"/>
+                                        <h:outputText value="#{producto.nombre}" style="font-size:12px;"/>
                                     </p:column>
                                     <p:column headerText="Und" style="width: 5%">
-                                        <h:outputText value="#{producto.unidad}" style="font-size: 10px;"/>
+                                        <h:outputText value="#{producto.unidad}" style="font-size: 11px;"/>
                                     </p:column>     
-                                    <!--
-                                    <p:column headerText="Lote" style="font-size:  10px; width: 5%">
-                                        <h:outputText value="#{producto.lote}" style="font-size: 9px;"/>
-                                    </p:column>--> 
+                                    
+                                    <p:column headerText="precio" style="width: 5%">
+                                        <h:outputText value="#{producto.precio}" style="font-size: 12px;"/>
+                                    </p:column >
                                     <p:column headerText="Venc." style="width: 10%">
-                                        <h:outputText value="#{producto.fecha}" style="font-size:10px;"/>
+                                        <h:outputText value="#{producto.fecha}" style="font-size:12px;"/>
                                     </p:column>
                                     <p:column headerText="Saldo" style="width: 5%">
-                                        <h:outputText value="#{producto.saldo}" style="font-size: 10px;"/>
+                                        <h:outputText value="#{producto.saldo}" style="font-size: 12px;"/>
                                     </p:column>
                                 </p:dataTable>                       
                                 <p:panelGrid columns="2"  columnClasses="label, value"   style="background:beige ; font-weight: bold;   border-width: thin; font-size: 14px"   >                              
@@ -191,32 +246,69 @@
                             </p:panel>
                             
                         </p:panel> 
-                        <p:panel header="PEDIDO Nro:  #{pedidosBean.nroPedido}"  rendered="#{pedidosBean.dataPedidoTerminar==true}">
+                        <p:panel id="pedido" header="PEDIDO Nro:  #{pedidosBean.nroPedido}"  rendered="#{pedidosBean.dataPedidoTerminar==true}">
                             <p:dataTable  var="producto" value="#{pedidosBean.detallePedido}"   emptyMessage="..."  >
-                                <p:column headerText="Nro." style="font-size:  10px; width: 2%">
-                                    <h:outputText value="#{producto.item}"  style="font-size: 9px;" />
+                                <p:column headerText="No" style="font-size:  13px; width: 3%">
+                                    <h:outputText value="#{producto.item}"  style="font-size: 11px;" />
                                 </p:column>
-                                <p:column headerText="Codigo" style="font-size:  10px; width: 5%">
+                                <p:column headerText="Nombre" style="font-size:  13px; width: 40%">
+                                    <h:outputText value="#{producto.descripcion}"  style="font-size: 12px;" />
+                                </p:column>
+                                <!--<p:column headerText="Codigo" style="font-size:  10px; width: 5%">
                                     <h:outputText value="#{producto.codigoItem}"  style="font-size: 9px;" />
+                                </p:column>-->
+                                <p:column headerText="Cant." style="font-size:13px;width: 10%"> 
+                                    <h:outputText value="#{producto.cantidad}" style="font-size:12px;"/>
                                 </p:column>
-                                <p:column headerText="Cant." style="font-size:10px;width: 5%"> 
-                                    <h:outputText value="#{producto.cantidad}" style="font-size:10px;"/>
-                                </p:column>
-                                <p:column headerText="Und." style="font-size:10px;width: 5%">
+                                <!--<p:column headerText="Und." style="font-size:10px;width: 5%">
                                     <h:outputText value="#{producto.unidad}" style="font-size: 10px;"/>
-                                </p:column> 
-                                <p:column headerText="PrecioBs" style="font-size:10px;width: 10%">
-                                    <h:outputText value="#{producto.precioBs}" style="font-size:10px;"/>
+                                </p:column>-->
+                                <p:column headerText="Precio" style="font-size:13px;width: 23%; text-align: right;">
+                                    <h:outputText value="#{producto.netoBs}" style="font-size:12px;">
+                                        <f:convertNumber 
+                                            type="currency" 
+                                            currencySymbol=" " 
+                                            maxFractionDigits="2"
+                                        />
+                                    </h:outputText>
+                                    <!-- Footer con el total -->
+                                    <f:facet name="footer">
+                                        <p:panelGrid columns="2">
+                                            <!--<h:outputText  value="Total: "  style="font-size:12px; font-weight: bold;" />-->
+                                            <h:outputText value="#{pedidosBean.totalPrecio}" style="font-size:12px; font-weight: bold;text-align: right;">
+                                                <f:convertNumber 
+                                                    type="currency" 
+                                                    currencySymbol="Bs" 
+                                                    maxFractionDigits="2"
+                                                />
+                                            </h:outputText>
+                                        </p:panelGrid>
+                                    </f:facet>                                    
                                 </p:column>
-                                <p:column headerText="Venc." style="font-size:10px;width: 10%">
-                                    <h:outputText value="#{producto.fechaVencimiento}" style="font-size:10px;"/>
+                                <!--<p:column headerText="Venc." style="font-size:12px;width: 10%">
+                                    <h:outputText value="#{producto.fechaVencimiento}" style="font-size:11px;"/>
+                                </p:column>-->
+                                <p:column headerText="Lote" style="font-size:12px;width: 5%">
+                                    <h:outputText value="#{producto.lote}" style="font-size:12px;"/>
                                 </p:column>
-                                <!--<p:column headerText="Lote" style="font-size:10px;width: 10%">
-                                    <h:outputText value="#{producto.lote}" style="font-size:10px;"/>
-                                </p:column>--> 
+                                <p:column headerText="Eliminar"   style="font-size:  12px; width: 10%" >
+                                    <p:commandButton value=" " actionListener="#{pedidosBean.eliminarItemPedido(event)}"     
+                                                     immediate="true" icon="fa fa-trash"  style="font-size:  11px; width: 30px"  update=":pedidosForm:recibosPage:pedido">
+                                        <p:confirm header="Confirmar" message="Esta seguro de elimnar Item #{producto.descripcion}? "   />
+                                        <f:param name="item" value="#{producto.codigoItem}" />
+                                        <f:param name="pedido" value="#{pedidosBean.nroPedido}" />
+                                        <f:param name="almacen" value="#{pedidosBean.almacen}" />
+                                    </p:commandButton >                              
+                                </p:column>
                             </p:dataTable>  
                         </p:panel>
-                    
+                        <!-- Cuadro de diálogo de confirmación fuera de la tabla -->
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" 
+                                         width="400" height="auto"  
+                                         style="font-size: 14px;">
+                            <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-ban" />
+                        </p:confirmDialog>
                     
                         <p:panelGrid  id="mydataPago" columns="1">
                                                               
@@ -301,7 +393,7 @@
                             </p:panel>    
                         </p:panelGrid>     
                         <p:column>
-                            <p:commandButton id="pagarPedidooButton" value="Finalizar" update="mensajes myDataFiltro myDataClientes mydataPago midataTerminar" type="submit" actionListener="#{pedidosBean.pagarPedido(event)}" rendered="#{pedidosBean.dataPedidoFinalizar==true}" action="pedidos"     icon="ui-icon-search"  style="background-color: #085061; color: white;" />
+                            <p:commandButton id="pagarPedidooButton" value="Finalizar" update="mensajes myDataFiltro myDataClientes mydataPago midataTerminar" type="submit" actionListener="#{pedidosBean.pagarPedido(event)}" rendered="#{pedidosBean.dataPedidoFinalizar==true}" action="pedidos"   style="background-color: #085061; color: white;" />
                         </p:column>   
                     </p:panel>   
                         <p:column>

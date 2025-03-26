@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +44,17 @@ public class PedidosBean implements Serializable{
     private List<Map<String,?>>  listVendedores = new ArrayList<Map<String, ?>>(); 
     private List<DetalleCuentasXCobrar>  listCXC = new ArrayList<>(); 
     private List<Personas> listClientes;
+    private List<Personas> listVendedores2;
     private Personas cliente;
-    private Personas cliElegido;
+    private Personas vendedor;
+    private Personas cliElegido;    
+    private Personas vendedorElegido;
     private boolean urlRecibo;
     private boolean imprimir;
     private boolean dataBusqueda;
+    private boolean dataBusquedaVendedor;
     private boolean dataClientes;
+    private boolean dataVendedores;
     private boolean dataPedido;
     private boolean dataFiltro;
     private boolean dataPedidoCrear;
@@ -79,9 +85,9 @@ public class PedidosBean implements Serializable{
     private String tipDocPago;
     private String banco;
     private String codMonedaPago;
-    private String sCodMonedaPago;
     private String formaPago;
     private String razonSocial;
+    private String nombreVendedor;
     private String nit;
     
     private String clasificador = "CO-ABD";
@@ -232,12 +238,28 @@ public class PedidosBean implements Serializable{
         this.cliente = cliente;
     }
 
+    public Personas getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(Personas vendedor) {
+        this.vendedor = vendedor;
+    }
+
     public Personas getCliElegido() {
         return cliElegido;
     }
 
     public void setCliElegido(Personas cliElegido) {
         this.cliElegido = cliElegido;
+    }
+
+    public Personas getVendedorElegido() {
+        return vendedorElegido;
+    }
+
+    public void setVendedorElegido(Personas vendedorElegido) {
+        this.vendedorElegido = vendedorElegido;
     }
 
     public List<DetalleCuentasXCobrar> getListCXC() {
@@ -551,6 +573,30 @@ public class PedidosBean implements Serializable{
         this.dataPedidoFinalizar = dataPedidoFinalizar;
     }
 
+    public boolean isDataBusquedaVendedor() {
+        return dataBusquedaVendedor;
+    }
+
+    public void setDataBusquedaVendedor(boolean dataBusquedaVendedor) {
+        this.dataBusquedaVendedor = dataBusquedaVendedor;
+    }
+
+    public boolean isDataVendedores() {
+        return dataVendedores;
+    }
+
+    public void setDataVendedores(boolean dataVendedores) {
+        this.dataVendedores = dataVendedores;
+    }
+
+    public String getNombreVendedor() {
+        return nombreVendedor;
+    }
+
+    public void setNombreVendedor(String nombreVendedor) {
+        this.nombreVendedor = nombreVendedor;
+    }
+
    
     
     /*
@@ -566,7 +612,9 @@ public class PedidosBean implements Serializable{
     
     public void inicializa(){
         this.dataBusqueda = true;
+        this.dataBusquedaVendedor = false;
         this.dataClientes = false;
+        this.dataVendedores = false;
         this.dataPedido = false;
         this.dataDetallePedido = false;
         this.dataOperaciones = false;
@@ -599,9 +647,11 @@ public class PedidosBean implements Serializable{
 
     public void inicializaNuevo(){
         this.dataPedidoCrear = false;
+        this.dataBusquedaVendedor = false;
         this.dataPedidoAdicionar = false;
         this.dataPedidoTerminar = false;
         this.dataBusqueda = false;
+        this.dataVendedores = false;
         this.dataClientes = false;
         this.dataPedido = false;
         this.dataDetallePedido = false;
@@ -621,7 +671,9 @@ public class PedidosBean implements Serializable{
     }
     public void busqueda(){
         this.dataBusqueda = true;
+        this.dataBusquedaVendedor = false;
         this.dataClientes = true;   
+        this.dataVendedores = false;   
         this.dataPedido = false;
         this.dataDetallePedido = false;
         this.dataOperaciones = false;   
@@ -631,7 +683,22 @@ public class PedidosBean implements Serializable{
         this.dataPedidoTerminar = false;
         this.valorBusqueda = "";
         this.productoBusqueda = "";
-    }     
+    }   
+    public void busquedaVendedor(){
+        this.dataBusqueda = false;
+        this.dataBusquedaVendedor = true;
+        this.dataClientes = false;
+        this.dataVendedores = true;
+        this.dataPedido = false;
+        this.dataDetallePedido = false;
+        this.dataOperaciones = false;   
+        this.dataFiltro = false;
+        this.dataPedidoCrear = false;
+        this.dataPedidoAdicionar = false;
+        this.dataPedidoTerminar = false;
+        this.valorBusqueda = "";
+        this.productoBusqueda = "";
+    }      
     
     public void pedidos(){
         this.dataBusqueda = false;
@@ -648,6 +715,25 @@ public class PedidosBean implements Serializable{
     public void operaciones(){
         this.dataBusqueda = false;
         this.dataClientes = false;
+        this.dataBusquedaVendedor = true;
+        this.dataVendedores = true;
+        this.dataPedido = false;
+        this.dataOperaciones = false; 
+        this.dataFiltro = false;
+        if (!this.dataPedidoAdicionar){
+            this.dataPedidoCrear = true;
+            this.dataPedidoAdicionar = false;
+            this.dataPedidoTerminar = false;
+        }
+        this.valorBusqueda = "";
+        //this.tipoBusqueda = "";
+        this.cantidadReserva = 0;
+    }
+    public void operacionesVendedor(){
+        this.dataBusqueda = false;
+        this.dataClientes = false;
+        this.dataBusquedaVendedor = false;
+        this.dataVendedores = false;
         this.dataPedido = true;
         this.dataOperaciones = true; 
         this.dataFiltro = true;
@@ -659,10 +745,11 @@ public class PedidosBean implements Serializable{
         this.valorBusqueda = "";
         //this.tipoBusqueda = "";
         this.cantidadReserva = 0;
-    }
+    }    
     
     public void buscarCliente(ActionEvent event){
         listPersonas = pedidosDao.buscarCliente(valorBusqueda, tipoBusqueda);
+        
         if (listPersonas.isEmpty()){
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Cliente no encontrado.", "Revise los datos de búsqueda e intente de nuevo." ); 
         }
@@ -673,15 +760,27 @@ public class PedidosBean implements Serializable{
         FacesContext.getCurrentInstance().addMessage("*", msg);      
     }
     
+    public void buscarVendedor(ActionEvent event){
+        listVendedores = pedidosDao.buscarVendedoresFiltro("R",valorBusqueda.trim().toUpperCase(), tipoBusqueda);
+        if (listVendedores.isEmpty()){
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Vendedor no encontrado.", "Revise los datos de búsqueda e intente de nuevo." ); 
+        }
+        else{
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO , "Vendedor encontrado.", "Elija la cuenta para realizar operaciones." ); 
+        }
+        busquedaVendedor();
+        FacesContext.getCurrentInstance().addMessage("*", msg);      
+    }
+    
     public void buscarProducto(ActionEvent event){
-        listProductos = pedidosDao.getProductos(productoBusqueda, productoBusqueda, almacen, tipoBusqueda);
+        listProductos = pedidosDao.getProductos(productoBusqueda, productoBusqueda, almacen, tipoBusqueda, cliente.getCodigo(),fechaEntrega);
         if (listProductos.isEmpty()){
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Producto no encontrado.", "Revise los datos de búsqueda e intente de nuevo." ); 
         }
         else{
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO , "Producto encontrado.", "Elija la cuenta y asigne una cantidad para inicar pedido." ); 
         }
-        operaciones();
+        operacionesVendedor();
         FacesContext.getCurrentInstance().addMessage("*", msg);      
     }
     
@@ -689,12 +788,22 @@ public class PedidosBean implements Serializable{
         //System.out.println("ABDFacturacion -> RecibosBean -> elegirCLiente -> codigo: "+cliElegido.getCodigo());
         LOGGER.log(Level.INFO, "{0}Cliente ELegido: {1}", new Object[]{CABLOG, cliElegido.getCodigo()});
         cliente = pedidosDao.buscarCliente(cliElegido.getCodigo());
-        this.listVendedores =  pedidosDao.buscarVendedores("R");   
+        //this.listVendedores =  pedidosDao.buscarVendedores("R");   
         this.razonSocial = cliente.getNombre();
         this.nit = cliente.getRuc();
         operaciones();
                 
-    }    
+    }        
+    public void elegirVendedor(ActionEvent event){
+        //System.out.println("ABDFacturacion -> RecibosBean -> elegirCLiente -> codigo: "+cliElegido.getCodigo());
+        LOGGER.log(Level.INFO, "{0}Vendedor ELegido: {1}", new Object[]{CABLOG, cliElegido.getCodigo()});
+        vendedor = pedidosDao.buscarCliente(vendedorElegido.getCodigo());
+        //this.listVendedores =  pedidosDao.buscarVendedores("R");   
+        this.nombreVendedor = vendedor.getNombre(); 
+        this.codVendedor = vendedor.getCodigo();
+        operacionesVendedor();
+                
+    }   
        
     public void nuevoPedido(ActionEvent event){
         this.pedidosDao = new PedidosDao();
@@ -707,8 +816,15 @@ public class PedidosBean implements Serializable{
         LOGGER.log(Level.INFO, "{0} [crearPedido] Cantidad Reserva: {1} {2} {3} Producto Elegido: {3} FechaEntrega: {4}", new Object[]{CABLOG, cantidadReserva,almacen, productoElegido.getProducto()+"-"+ productoElegido.getLote()+"-"+ productoElegido.getSaldo(), fechaEntrega});
         try{
             Date fechaIngresada = formato.parse(fechaEntrega);
+                // Normalizar fechaActual (eliminar horas, minutos, segundos y ms)
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            Date fechaActualNormalizada = cal.getTime();
             Date fechaActual = new Date();
-            if (fechaIngresada.before(fechaActual)) { 
+            if (fechaIngresada.before(fechaActualNormalizada)) { //if (fechaIngresada.before(fechaActual)) { 
                 LOGGER.log(Level.INFO, "{0} [crearPedido][Error fecha entrega anterior a la actual] Cantidad Reserva: {1} {2} {3} Producto Elegido: {3} FechaEntrega: {4} ", new Object[]{CABLOG, cantidadReserva,almacen, productoElegido.getProducto()+"-"+ productoElegido.getLote()+"-"+ productoElegido.getSaldo(), fechaEntrega});
         mensaje = "La fecha de entrega no puede ser anterior a la fecha actual.";
                 msg = new FacesMessage(FacesMessage.SEVERITY_ERROR , "Error de validacion", mensaje); 
@@ -763,12 +879,35 @@ public class PedidosBean implements Serializable{
         else{
             mensaje = datos[2];
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Error al adicionar item al Pedido", "Hubo un problema al adicionar Item, mensaje:  "+mensaje); 
-        }           
-       
-        FacesContext.getCurrentInstance().addMessage("*", msg);     
-                
-                    
+        }                  
+        FacesContext.getCurrentInstance().addMessage("*", msg);                         
     }
+    
+    
+    public void eliminarItemPedido(ActionEvent event){         
+        LOGGER.log(Level.INFO, "{0} [eliminarItemPedido] Datos: {1} Almacen: {2} Pedido: {3} Producto Elegido: {4}", new Object[]{CABLOG, almacen, nroPedido, productoElegido.getProducto()});
+        /* Validamos que cantidad no sobrepase al saldo actual */
+        final String pedido = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("pedido");
+        final String almacen = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("almacen");
+        final String item = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("item");
+        this.datos =   pedidosDao.eliminarDetallePedido(almacen, Integer.valueOf(pedido), item);
+        if (datos[0].equalsIgnoreCase("1")){
+            this.dataPedido = false;
+            this.dataPedidoCrear = false;
+            this.dataPedidoAdicionar = true;
+            this.dataPedidoTerminar = true;
+            String nroLinPedido = datos[1];
+            mensaje = datos[2];
+            detallePedido = pedidosDao.getDetallePedido(almacen, Integer.valueOf(nroPedido));
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Item eliminado con éxito. ",mensaje); 
+        }
+        else{
+            mensaje = datos[2];
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN , "Error al eliminar item. Pedido. ", mensaje); 
+        }                  
+        FacesContext.getCurrentInstance().addMessage("*", msg);         
+    }
+    
     public void terminarPedido(ActionEvent event){
         LOGGER.log(Level.INFO, "{0} [terminarPedido] Pedido: {1} User:{2} Almacen: {3} Pedido: {4} ", new Object[]{CABLOG, nroPedido,userLogin, almacen, nroPedido});
         /* Validamos que cantidad no sobrepase al saldo actual */
@@ -843,4 +982,13 @@ public class PedidosBean implements Serializable{
         }   
         FacesContext.getCurrentInstance().addMessage("*", msg);         
     }    
+
+    public double getTotalPrecio() {
+    if (detallePedido == null || detallePedido.isEmpty()) {
+        return 0.0;
+    }
+    return detallePedido.stream()
+            .mapToDouble(DetallePedido::getNetoBs) // Asegúrate de tener un getter para "precioBs"
+            .sum();
+}    
 }

@@ -15,6 +15,7 @@ public class DetalleProductos {
     private String unidad;
     private String lote;
     private String fecha;
+    private Double precio;
     private String saldo;
 
     public DetalleProductos() {
@@ -27,6 +28,17 @@ public class DetalleProductos {
         this.unidad = unidad;
         this.lote = lote;
         this.fecha = fecha;
+        this.saldo = saldo;
+    }
+
+    public DetalleProductos(String almacen, String producto, String nombre, String unidad, String lote, String fecha, Double precio, String saldo) {
+        this.almacen = almacen;
+        this.producto = producto;
+        this.nombre = nombre;
+        this.unidad = unidad;
+        this.lote = lote;
+        this.fecha = fecha;
+        this.precio = precio;
         this.saldo = saldo;
     }
 
@@ -78,6 +90,14 @@ public class DetalleProductos {
         this.fecha = fecha;
     }
 
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
+
     public String getSaldo() {
         return saldo;
     }
@@ -88,8 +108,6 @@ public class DetalleProductos {
 
     @Override
     public String toString() {
-        return "DetalleProductos{" + "almacen=" + almacen + ", producto=" + producto + ", nombre=" + nombre + ", unidad=" + unidad + ", lote=" + lote + ", fecha=" + fecha + ", saldo=" + saldo + '}';
-    }
-    
-    
+        return "DetalleProductos{" + "almacen=" + almacen + ", producto=" + producto + ", nombre=" + nombre + ", unidad=" + unidad + ", lote=" + lote + ", fecha=" + fecha + ", precio=" + precio + ", saldo=" + saldo + '}';
+    }    
 }

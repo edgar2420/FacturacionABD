@@ -186,6 +186,39 @@ public class PedidosDao {
                 sesion.close();
         }
         return model;          
+    }  
+    
+    public List<Map<String,?>> buscarVendedoresFiltro(String tipo, String valorBusqueda, String tipoBusqueda){
+        FacesMessage msg;        
+        String sql="";
+        List<Map<String,?>> model = null;
+        String log = "[buscarVendedores][Inicio]:  Tipo: "+tipo;
+        LOGGER.log(Level.FINE, "{0} TipoBusqueda: {1}, ValorBusqueda: {2}",  new Object[]{CABLOG + log, tipoBusqueda, valorBusqueda});
+        iniciaOperacion();
+       try{
+           switch (tipoBusqueda) {
+               // Nombre
+               case "N":
+                    sql = "from Personas where codigoEmpleado='SI' and codigoVendedor is not null and trim(nombre) like '%"+valorBusqueda+"%' order by trim(nombre)"; 
+                   break;
+               // Razon social
+               case "O":
+                   sql = "from Personas where codigoEmpleado='SI' and codigoVendedor = "+valorBusqueda+" and codigoVendedor is not null order by trim(nombre)";
+                   break;
+           }
+           Query query = sesion.createQuery(sql);
+           model = (List<Map<String,?>>) query.list();
+       }   
+        
+         catch (HibernateException e) { 
+            e.printStackTrace();
+            manejaExcepcion( (HibernateException) e, "buscarVendedores", "Error durante el proceso de busqueda. DatoBusqueda: "+tipo, "IBSADM.PERSONAS");
+        }       
+        finally{
+            if (sesion != null)
+                sesion.close();
+        }
+        return model;          
     }
     
     
@@ -486,7 +519,7 @@ public class PedidosDao {
         return respuestas;                 
     }      
 
-    public List<DetalleProductos> getProductos(String codigo, String nombre,  String almacen, String tipo){
+    public List<DetalleProductos> getProductos(String codigo, String nombre,  String almacen, String tipo, String cliente, String fecha){
         List<DetalleProductos> model = new ArrayList();
         iniciaOperacion();
          try{
@@ -494,7 +527,7 @@ public class PedidosDao {
             {  
                 @Override 
                 public void execute(Connection conn) throws SQLException {
-                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_OBTENER_PRODUCTOS(?,?,?)}");
+                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_OBTENER_PRODUCTOS(?,?,?,?,?)}");
                     stmt.clearParameters();
                     stmt.registerOutParameter(1, OracleTypes.CURSOR ); 
                     switch (tipo) {
@@ -508,6 +541,8 @@ public class PedidosDao {
                             break;
                     }    
                     stmt.setString(4, almacen.toUpperCase());
+                    stmt.setString(5, cliente.toUpperCase());
+                    stmt.setString(6, fecha);
                     stmt.execute();
                     productosRes = (ResultSet)stmt.getObject(1);
                     while (productosRes.next()){                       
@@ -517,7 +552,8 @@ public class PedidosDao {
                                                         productosRes.getString(4),
                                                         productosRes.getString(5),
                                                         productosRes.getString(6),
-                                                        productosRes.getString(7));
+                                                        productosRes.getDouble(7),
+                                                        productosRes.getString(8));
                         model.add(producto);
                     }                               
                     productosRes.close();
@@ -587,7 +623,8 @@ public class PedidosDao {
             {  
                 @Override 
                 public void execute(Connection conn) throws SQLException {
-                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_CREAR_DETALLE_PEDIDO(?,?,?,?,?,?,?,?,?,?,?,?)}");
+                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_CREAR_DETALLE_PEDIDO(?,?,?,?,?,?,?,?,?,?,"
+                                                                                                                 + "?,?)}");
                     stmt.clearParameters();
                     stmt.registerOutParameter(1, OracleTypes.VARCHAR );//java.sql.Types.VARCHAR); //  java.sql.ResultSet
                     stmt.setString(2, almacen);
@@ -615,6 +652,40 @@ public class PedidosDao {
         catch(HibernateException e){
             String msj = " Almacen: "+almacen+" Pedido: "+pedido+" Cliente: "+cliente+" Item: "+codItem+" Cantidad: "+cantidad+" unidad: "+unidad+" PorcDescuento: "+porcDescto+" Login: "+login+" Lote: "+lote+" Fec.Vencimiento: "+fecVencimiento;
             manejaExcepcion( e, "crearDetallePedido", "Error durante el proceso. Datos: "+msj, "ABD.PCK_OPERACIONES.F_CREAR_DETALLE_PEDIDO(?,?,?,?,?,?,?,?,?,?,?,?)");            
+        }       
+        finally{
+           sesion.close();
+        }    
+        return respuestas;                 
+    }   
+
+    public String[] eliminarDetallePedido(String almacen, Integer pedido, String item){
+        String respuestas[] = new String[5];           
+        iniciaOperacion();
+         try{
+            sesion.doWork(new Work() 
+            {  
+                @Override 
+                public void execute(Connection conn) throws SQLException {
+                    CallableStatement stmt = conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_ELIMINAR_DETALLE_PEDIDO(?,?,?,?)");
+                    stmt.clearParameters();
+                    stmt.registerOutParameter(1, OracleTypes.VARCHAR );//java.sql.Types.VARCHAR); //  java.sql.ResultSet
+                    stmt.setString(2, almacen);
+                    stmt.setInt(3, pedido);
+                    stmt.setString(4, item);
+                    stmt.registerOutParameter(5, OracleTypes.VARCHAR);
+                    stmt.execute();
+                    
+                    respuestas[0] = stmt.getString(1);
+                    respuestas[1] = stmt.getString(5);
+                        
+                    stmt.close();
+                }
+            });   
+        }         
+        catch(HibernateException e){
+            String msj = " Almacen: "+almacen+" Pedido: "+pedido+" Item: "+item;
+            manejaExcepcion( e, "eliminarDetallePedido", "Error durante el proceso. Datos: "+msj, "ABD.PCK_OPERACIONES.F_ELIMINARAR_DETALLE_PEDIDO(?,?,?,?)");            
         }       
         finally{
            sesion.close();
@@ -712,7 +783,8 @@ public class PedidosDao {
                                                           pedidoRes.getString(14),
                                                           pedidoRes.getString(15),
                                                           pedidoRes.getString(16),
-                                                          pedidoRes.getString(17) 
+                                                          pedidoRes.getString(17),
+                                                          pedidoRes.getString(18)  
                         );
                         model.add(detallePedido);
                     }                               

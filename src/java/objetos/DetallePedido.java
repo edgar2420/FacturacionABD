@@ -26,6 +26,7 @@ public class DetallePedido {
     private String fechaMod;
     private String lote;
     private String fechaVencimiento;
+    private String descripcion;
 
     public DetallePedido() {
     }
@@ -48,6 +49,27 @@ public class DetallePedido {
         this.fechaMod = fechaMod;
         this.lote = lote;
         this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public DetallePedido(Integer item, String fecha, String estado, String codigoItem, Integer cantidad, String unidad, Double precioBs, Double importeBs, Double descItemBs, Double netoBs, Double porcDescuento, String login, String loginMod, String fechaAct, String fechaMod, String lote, String fechaVencimiento, String descripcion) {
+        this.item = item;
+        this.fecha = fecha;
+        this.estado = estado;
+        this.codigoItem = codigoItem;
+        this.cantidad = cantidad;
+        this.unidad = unidad;
+        this.precioBs = precioBs;
+        this.importeBs = importeBs;
+        this.descItemBs = descItemBs;
+        this.netoBs = netoBs;
+        this.porcDescuento = porcDescuento;
+        this.login = login;
+        this.loginMod = loginMod;
+        this.fechaAct = fechaAct;
+        this.fechaMod = fechaMod;
+        this.lote = lote;
+        this.fechaVencimiento = fechaVencimiento;
+        this.descripcion = descripcion;
     }
 
     public Integer getItem() {
@@ -186,11 +208,18 @@ public class DetallePedido {
         this.fechaVencimiento = fechaVencimiento;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     @Override
     public String toString() {
-        return "DetallePedido{" + "item=" + item + ", fecha=" + fecha + ", estado=" + estado + ", codigoItem=" + codigoItem + ", cantidad=" + cantidad + ", unidad=" + unidad + ", precioBs=" + precioBs + ", importeBs=" + importeBs + ", descItemBs=" + descItemBs + ", netoBs=" + netoBs + ", porcDescuento=" + porcDescuento + ", login=" + login + ", loginMod=" + loginMod + ", fechaAct=" + fechaAct + ", fechaMod=" + fechaMod + ", lote=" + lote + ", fechaVencimiento=" + fechaVencimiento + '}';
+        return "DetallePedido{" + "item=" + item + ", fecha=" + fecha + ", estado=" + estado + ", codigoItem=" + codigoItem + ", cantidad=" + cantidad + ", unidad=" + unidad + ", precioBs=" + precioBs + ", importeBs=" + importeBs + ", descItemBs=" + descItemBs + ", netoBs=" + netoBs + ", porcDescuento=" + porcDescuento + ", login=" + login + ", loginMod=" + loginMod + ", fechaAct=" + fechaAct + ", fechaMod=" + fechaMod + ", lote=" + lote + ", fechaVencimiento=" + fechaVencimiento + ", descripcion=" + descripcion + '}';
     }
-    
-    
+ 
     
 }
