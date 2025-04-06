@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecibo" pageWidth="612" pageHeight="792" columnWidth="598" leftMargin="7" rightMargin="7" topMargin="28" bottomMargin="28" uuid="c6337a7b-9149-4352-97dd-81389bde4635">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
@@ -13,9 +13,10 @@
 		<![CDATA[select p.codigo, p.nombre, p.ruc, p.pais, p.ciudad, p.contacto, p.direccion_dom, p.telefono_dom, p.ref_per1_dir email,
        r.nro_deposito, r.nom_usuario, r.fec_recibo, 'BS' moneda,r.num_monto, r.tip_pago, r.val_banco,
        INITCAP(p.ciudad)||', '||to_Char(r.fec_recibo,'DD')||' de '||TRIM(to_char(r.fec_recibo, 'month','nls_date_language=spanish'))||' de '||to_char(r.fec_recibo, 'yyyy') LUGAR,
-       pck_utils.cur_to_varchar(r.num_monto) literal
-  from personas p, cob_recibos r
+       pck_utils.cur_to_varchar(r.num_monto) literal, PCK_OPERACIONES.F_OBTIENE_NRO_FACTURA(c.gestion_op, c.periodo_op, c.tipo_op, c.numero_op, c.contabilidad_cm) Nro_factura
+  from personas p, cob_recibos r, IBSADM.cxc c
  where p.codigo = r.cod_cliente(+)
+   and (r.NRO_DEPOSITO = c.NRO_DEPOSITO AND r.COD_CLIENTE = C.PERSONA)
    and r.nro_deposito = $P{P_DEPOSITO}]]>
 	</queryString>
 	<field name="CODIGO" class="java.lang.String"/>
@@ -36,11 +37,26 @@
 	<field name="VAL_BANCO" class="java.lang.String"/>
 	<field name="LUGAR" class="java.lang.String"/>
 	<field name="LITERAL" class="java.lang.String"/>
+	<field name="NRO_FACTURA" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="140" splitType="Stretch">
+		<band height="159" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="70" y="118" width="293" height="14" isPrintWhenDetailOverflows="true" uuid="77a81e03-f259-4e80-b5b0-44df229095c1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="118" width="58" height="14" uuid="0cd9a647-05a5-4bf2-9492-e20deff20bb2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Señor(es):]]></text>
+			</staticText>
 			<staticText>
 				<reportElement x="259" y="15" width="104" height="32" uuid="23dfb71d-11f6-4dcb-b4ca-f1d1615990a3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -61,6 +77,20 @@
 					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NRO_DEPOSITO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="90" width="58" height="14" uuid="03030834-0d11-415e-994b-2a51f14c9a75"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Lugar y Fecha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="70" y="90" width="293" height="14" uuid="60f7a189-0c5d-42ba-a2f3-374095a2fe08"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LUGAR}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="12" y="104" width="58" height="14" uuid="99a3b470-6b39-4d42-ac54-e0bd55387725"/>
@@ -128,7 +158,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<text><![CDATA[Codigo:]]></text>
+				<text><![CDATA[CODIGO:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="431" y="118" width="162" height="14" isPrintWhenDetailOverflows="true" uuid="85dd8c31-8b31-4a6d-9f43-44ffb7c614d9"/>
@@ -137,38 +167,24 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CODIGO}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="12" y="132" width="58" height="14" uuid="929337ab-5269-4f6b-af8b-8c0a052bc7e0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[FACTURA: ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="70" y="132" width="293" height="14" isPrintWhenDetailOverflows="true" uuid="ebeff367-6cf9-473b-976b-208164a1e462"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="241" splitType="Immediate">
-			<staticText>
-				<reportElement x="12" y="-50" width="58" height="14" uuid="03030834-0d11-415e-994b-2a51f14c9a75"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Lugar y Fecha:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="12" y="-22" width="58" height="14" uuid="0cd9a647-05a5-4bf2-9492-e20deff20bb2"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Señor(es):]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="70" y="-50" width="293" height="14" uuid="60f7a189-0c5d-42ba-a2f3-374095a2fe08"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{LUGAR}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="70" y="-22" width="293" height="14" isPrintWhenDetailOverflows="true" uuid="77a81e03-f259-4e80-b5b0-44df229095c1"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="68" y="-221" width="50" height="14" uuid="b113c57c-54e6-4fa4-926a-b21dd55cc103"/>
 				<textElement textAlignment="Center">

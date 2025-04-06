@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecibotRollo" pageWidth="297" pageHeight="600" columnWidth="283" leftMargin="7" rightMargin="7" topMargin="28" bottomMargin="28" uuid="c6337a7b-9149-4352-97dd-81389bde4635">
-	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1424"/>
+	<property name="ireport.y" value="243"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["D:\\NetBeans-14\\Workspace\\ABDFacturacion\\src\\java\\reportes\\"]]></defaultValueExpression>
 	</parameter>
@@ -13,9 +13,10 @@
 		<![CDATA[select p.codigo, p.nombre, p.ruc, p.pais, p.ciudad, p.contacto, p.direccion_dom, p.telefono_dom, p.ref_per1_dir email,
        r.nro_deposito, r.nom_usuario, r.fec_recibo, 'BS' moneda,r.num_monto, r.tip_pago, r.val_banco,
        INITCAP(p.ciudad)||', '||to_Char(r.fec_recibo,'DD')||' de '||TRIM(to_char(r.fec_recibo, 'month','nls_date_language=spanish'))||' de '||to_char(r.fec_recibo, 'yyyy') LUGAR,
-       pck_utils.cur_to_varchar(r.num_monto) literal
-  from personas p, cob_recibos r
+       pck_utils.cur_to_varchar(r.num_monto) literal, PCK_OPERACIONES.F_OBTIENE_NRO_FACTURA(c.gestion_op, c.periodo_op, c.tipo_op, c.numero_op, c.contabilidad_cm) Nro_factura
+  from personas p, cob_recibos r, IBSADM.cxc c
  where p.codigo = r.cod_cliente(+)
+   and (r.NRO_DEPOSITO = c.NRO_DEPOSITO AND r.COD_CLIENTE = C.PERSONA)
    and r.nro_deposito = $P{P_DEPOSITO}]]>
 	</queryString>
 	<field name="CODIGO" class="java.lang.String"/>
@@ -36,6 +37,7 @@
 	<field name="VAL_BANCO" class="java.lang.String"/>
 	<field name="LUGAR" class="java.lang.String"/>
 	<field name="LITERAL" class="java.lang.String"/>
+	<field name="NRO_FACTURA" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -117,7 +119,7 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="85" splitType="Immediate">
+		<band height="114" splitType="Immediate">
 			<staticText>
 				<reportElement x="1" y="2" width="69" height="18" uuid="03030834-0d11-415e-994b-2a51f14c9a75"/>
 				<textElement verticalAlignment="Middle">
@@ -133,7 +135,7 @@
 				<text><![CDATA[Señor(es):]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="1" y="38" width="69" height="18" uuid="99a3b470-6b39-4d42-ac54-e0bd55387725"/>
+				<reportElement positionType="Float" x="1" y="41" width="69" height="18" uuid="99a3b470-6b39-4d42-ac54-e0bd55387725"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
@@ -149,31 +151,45 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="70" y="20" width="212" height="18" isPrintWhenDetailOverflows="true" uuid="77a81e03-f259-4e80-b5b0-44df229095c1"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="70" y="38" width="212" height="18" uuid="bd8fa2b2-4b5b-452a-847c-e4e40c6f6546"/>
+				<reportElement positionType="Float" x="70" y="41" width="212" height="18" uuid="bd8fa2b2-4b5b-452a-847c-e4e40c6f6546"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{RUC}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="70" y="56" width="212" height="18" uuid="9095b388-5fc4-4676-93b9-b0a66c4453ce"/>
+				<reportElement positionType="Float" x="70" y="59" width="212" height="18" uuid="9095b388-5fc4-4676-93b9-b0a66c4453ce"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CODIGO}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="1" y="56" width="69" height="18" uuid="5b9b1308-3933-4fa1-a47e-435098659e83"/>
+				<reportElement positionType="Float" x="1" y="59" width="69" height="18" uuid="5b9b1308-3933-4fa1-a47e-435098659e83"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
 				<text><![CDATA[CODIGO:]]></text>
 			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="1" y="77" width="69" height="18" uuid="67cc37e8-c2c3-44a7-83c2-1f82e775759d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[FACTURA]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="70" y="77" width="212" height="18" uuid="9df42191-c2b4-4a81-9813-50b2050b32f7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_FACTURA}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
