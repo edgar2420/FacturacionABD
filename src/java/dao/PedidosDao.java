@@ -122,7 +122,7 @@ public class PedidosDao {
             switch (tipo) {
                 // Nombre
                 case "N":
-                    sql = "from Personas where upper(nombre) like '%"+valor.toUpperCase()+"%' order by nombre";
+                    sql = "from Personas where upper(nombre) like '%"+valor.toUpperCase()+"%' and codigoCliente='SI'  order by nombre";
                     /*sql = "SELECT * FROM personas WHERE nombre LIKE :nombre ORDER BY nombre";
                     Query query = sesion.createSQLQuery(sql);
                     query.setParameter("nombre", "%primitiva%");
@@ -130,17 +130,18 @@ public class PedidosDao {
                     break;
                 // Razon social
                 case "R":
-                    sql = "from Personas where upper(razonSocial) like '%"+valor.toUpperCase()+"%' order by nombre";
+                    sql = "from Personas where upper(razonSocial) like '%"+valor.toUpperCase()+"%' and codigoCliente='SI' order by nombre";
                     break;
                 // Carnet/Nit    
                 case "C":
-                    sql = "from Personas where ruc like '%"+valor+"%' order by nombre";
+                    sql = "from Personas where ruc like '%"+valor+"%'  and codigoCliente='SI' order by nombre";
                     break;
                 //Codigo cliente    
                 case "O":
-                    sql = "from Personas where upper(codigo) like '%"+valor.toUpperCase()+"%' order by nombre";
+                    sql = "from Personas where upper(codigo) like '%"+valor.toUpperCase()+"%'  and codigoCliente='SI' order by nombre";
                     break;
             }
+            LOGGER.log(Level.FINE, CABLOG+" SQL: {0}", sql);
             Query query = sesion.createQuery(sql);
             model = (List<Map<String,?>>) query.list();
         }
