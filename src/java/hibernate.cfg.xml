@@ -5,7 +5,7 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.OracleDialect</property>
     <property name="hibernate.connection.driver_class">oracle.jdbc.OracleDriver</property>
-    <property name="hibernate.connection.url">jdbc:oracle:thin:@192.168.0.5:1521:ABD</property>
+    <property name="hibernate.connection.url">jdbc:oracle:thin:@192.168.0.5:1521/PDBABD</property>
      <!--<property name="hibernate.connection.url">jdbc:oracle:thin:@//154.53.61.54:1521/pdbtst.contaboserver.net</property>-->
     <!--<property name="hibernate.connection.url">jdbc:oracle:thin:@//192.168.0.5:1521:ABD</property>-->
     <property name="hibernate.connection.username">abd</property>
