@@ -3,10 +3,15 @@
  *
  * Equivale a PedidosBean.buscarCliente() + elegirCliente().
  * El backend ya aplica el filtro CODIGO_CLIENTE = 'SI'.
+ *
+ * Al tocar una fila se abre su ficha en un modal y se confirma ahi mismo.
+ * Antes habia que seleccionar arriba y bajar hasta un boton al pie, que en
+ * celular obliga a desplazarse y con nombres largos se desbordaba.
  */
 import { useState } from 'react';
 import * as api from '../api';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
+import { Modal } from '../componentes/Modal';
 import { IconoBuscar, IconoCheck } from '../componentes/iconos';
 import { Paginacion } from '../componentes/Paginacion';
 import type { Pagina } from '../api';
@@ -29,24 +34,29 @@ export function PasoCliente({
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState<TipoBusquedaCliente>('N');
   const [resultados, setResultados] = useState<Pagina<Persona> | null>(null);
-  const [seleccionado, setSeleccionado] = useState<Persona | null>(null);
+  const [enDetalle, setEnDetalle] = useState<Persona | null>(null);
   const [buscando, setBuscando] = useState(false);
 
-  /** Trae una pagina. Al cambiar de pagina no se limpia la seleccion previa. */
-  async function traer(pagina: number, esNuevaBusqueda: boolean) {
+  async function traer(pagina: number) {
     if (!valor.trim()) {
-      alAvisar('atencion', 'Falta el dato de búsqueda', 'Escriba un nombre, NIT o código de cliente.');
+      alAvisar(
+        'atencion',
+        'Falta el dato de búsqueda',
+        'Escriba un nombre, NIT o código de cliente.'
+      );
       return;
     }
 
     setBuscando(true);
-    if (esNuevaBusqueda) setSeleccionado(null);
-
     try {
       const r = await api.buscarClientes(valor.trim(), tipo, pagina);
       setResultados(r);
       if (r.total === 0) {
-        alAvisar('atencion', 'Cliente no encontrado', 'Revise los datos de búsqueda e intente de nuevo.');
+        alAvisar(
+          'atencion',
+          'Cliente no encontrado',
+          'Revise los datos de búsqueda e intente de nuevo.'
+        );
       }
     } catch (err) {
       alAvisar('error', 'No se pudo buscar', (err as Error).message);
@@ -57,7 +67,7 @@ export function PasoCliente({
 
   function buscar(e: React.FormEvent) {
     e.preventDefault();
-    void traer(1, true);
+    void traer(1);
   }
 
   return (
@@ -97,6 +107,8 @@ export function PasoCliente({
             <Vacio mensaje="Sin coincidencias. Pruebe con otro filtro." />
           ) : (
             <>
+              <p className="pista">Toque un cliente para ver sus datos y elegirlo.</p>
+
               <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
@@ -108,12 +120,10 @@ export function PasoCliente({
                   </thead>
                   <tbody>
                     {resultados.items.map((c) => (
-                      <tr
-                        key={c.codigo}
-                        aria-selected={seleccionado?.codigo === c.codigo}
-                        onClick={() => setSeleccionado(c)}
-                      >
-                        <td className="principal-col" data-etiqueta="Razón social">{c.nombre}</td>
+                      <tr key={c.codigo} onClick={() => setEnDetalle(c)}>
+                        <td className="principal-col" data-etiqueta="Razón social">
+                          {c.nombre}
+                        </td>
                         <td data-etiqueta="NIT">{c.ruc}</td>
                         <td data-etiqueta="Ciudad">{c.ciudad}</td>
                       </tr>
@@ -127,29 +137,45 @@ export function PasoCliente({
                 porPagina={resultados.porPagina}
                 total={resultados.total}
                 cargando={buscando}
-                alCambiar={(p) => void traer(p, false)}
+                alCambiar={(p) => void traer(p)}
               />
-
-              {/* El nombre va aparte y no dentro del boton: hay clientes con
-                  nombres larguisimos que desbordaban la tarjeta. */}
-              {seleccionado && (
-                <p className="elegido">
-                  Seleccionado: <b>{seleccionado.nombre}</b>
-                </p>
-              )}
-
-              <Boton
-                className="bloque"
-                style={{ marginTop: 12 }}
-                disabled={!seleccionado}
-                icono={<IconoCheck />}
-                onClick={() => seleccionado && alElegir(seleccionado)}
-              >
-                {seleccionado ? 'Elegir este cliente' : 'Seleccione un cliente'}
-              </Boton>
             </>
           )}
         </Tarjeta>
+      )}
+
+      {enDetalle && (
+        <Modal
+          titulo={enDetalle.nombre}
+          subtitulo={`Código ${enDetalle.codigo}`}
+          ancho="detalle"
+          alCerrar={() => setEnDetalle(null)}
+          pie={
+            <>
+              <Boton variante="secundario" onClick={() => setEnDetalle(null)}>
+                Cancelar
+              </Boton>
+              <Boton icono={<IconoCheck />} onClick={() => alElegir(enDetalle)}>
+                Elegir cliente
+              </Boton>
+            </>
+          }
+        >
+          <dl className="datos">
+            <dt>Razón social</dt>
+            <dd>{enDetalle.razonSocial || enDetalle.nombre}</dd>
+            <dt>NIT</dt>
+            <dd>{enDetalle.ruc || '—'}</dd>
+            <dt>Ciudad</dt>
+            <dd>{enDetalle.ciudad || '—'}</dd>
+            <dt>Dirección</dt>
+            <dd>{enDetalle.direccion || '—'}</dd>
+            <dt>Teléfono</dt>
+            <dd>{enDetalle.telefono || '—'}</dd>
+            <dt>Correo</dt>
+            <dd>{enDetalle.email || '—'}</dd>
+          </dl>
+        </Modal>
       )}
     </>
   );

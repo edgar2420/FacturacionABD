@@ -14,25 +14,32 @@ import type { Aviso } from '../tipos';
 
 export function Modal({
   titulo,
+  subtitulo,
   children,
   pie,
   alCerrar,
-  tono
+  tono,
+  ancho
 }: {
   titulo: string;
+  subtitulo?: string;
   children?: ReactNode;
   pie: ReactNode;
   alCerrar: () => void;
   tono?: Aviso['tono'];
+  /** "detalle" da mas espacio: se usa para fichas de cliente o producto. */
+  ancho?: 'normal' | 'detalle';
 }) {
   const cuadro = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const anterior = document.activeElement as HTMLElement | null;
 
-    // Foco al primer boton del pie (suele ser la accion principal).
+    // Si el modal pide un dato (p.ej. la cantidad), el foco va al campo;
+    // si no, al primer boton del pie, que es la accion principal.
+    const campo = cuadro.current?.querySelector<HTMLElement>('.cuerpo-modal input, .cuerpo-modal select');
     const primerBoton = cuadro.current?.querySelector<HTMLElement>('.pie-modal button');
-    primerBoton?.focus();
+    (campo ?? primerBoton)?.focus();
 
     function alTeclado(e: KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -82,7 +89,7 @@ export function Modal({
   return (
     <div className="fondo-modal" onMouseDown={(e) => e.target === e.currentTarget && alCerrar()}>
       <div
-        className={`modal ${tono ?? ''}`}
+        className={`modal ${tono ?? ''} ${ancho === 'detalle' ? 'detalle' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="titulo-modal"
@@ -94,7 +101,10 @@ export function Modal({
               <Icono tam={22} />
             </span>
           )}
-          <h2 id="titulo-modal">{titulo}</h2>
+          <div className="titulos-modal">
+            <h2 id="titulo-modal">{titulo}</h2>
+            {subtitulo && <p>{subtitulo}</p>}
+          </div>
           <button type="button" className="cerrar-modal" onClick={alCerrar} aria-label="Cerrar">
             <IconoCerrar tam={18} />
           </button>
