@@ -66,7 +66,7 @@ export function Boton({
   return (
     <button {...resto} className={clases.join(' ')} disabled={resto.disabled || cargando}>
       {cargando ? <span className="cargando" aria-hidden="true" /> : icono}
-      {children}
+      {children != null && children !== false && <span className="texto-btn">{children}</span>}
     </button>
   );
 }

@@ -4,34 +4,29 @@
    Claro y oscuro por preferencia del sistema, forzable con data-tema. */
 
 :root {
-  /* Paleta tomada de las vistas JSF actuales (web/views/*.xhtml) para que
-     ambos sistemas se vean igual:
-       #3572E2 barra y botones principales
-       #085061 cabeceras y acciones de proceso
-       #045491 azul de apoyo
-       #aec7f5 botones secundarios
-       #73b846 confirmar / nuevo
-       #ed4037 cancelar */
-  --marca-900: #085061;
-  --marca-700: #045491;
-  --marca-600: #3572E2;
-  --marca-500: #5b8fe9;
-  --acento: #aec7f5;
+  /* Celeste claro. Los tonos fuertes se reservan para barras y botones, donde
+     el texto va en blanco y necesita contraste; los claros pintan fondos y
+     superficies, que es lo que le da el aire celeste al conjunto. */
+  --marca-900: #01426b;
+  --marca-700: #01579b;
+  --marca-600: #0277bd;
+  --marca-500: #4fc3f7;
+  --acento: #81d4fa;
 
-  --exito: #73b846;
-  --error: #ed4037;
-  --atencion: #d97706;
+  --exito: #2e9e5b;
+  --error: #e0453a;
+  --atencion: #d98207;
 
-  /* Neutros */
-  --fondo: #f6f7fb;
+  /* Neutros con un leve tinte celeste */
+  --fondo: #eff8fd;
   --superficie: #ffffff;
-  --superficie-2: #f1f2f8;
-  --superficie-3: #e6e8f2;
-  --borde: #dfe2ee;
-  --borde-fuerte: #c5cadd;
-  --texto: #1a1c2b;
-  --texto-suave: #5f6480;
-  --texto-tenue: #8e93ab;
+  --superficie-2: #e7f3fb;
+  --superficie-3: #d5eaf7;
+  --borde: #cbe4f4;
+  --borde-fuerte: #a5d1ea;
+  --texto: #0b2a3d;
+  --texto-suave: #4a6b80;
+  --texto-tenue: #7b96a8;
 
   --radio: 14px;
   --radio-sm: 10px;
@@ -49,25 +44,25 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --marca-900: #063c49;
-    --marca-700: #4c8ef0;
-    --marca-600: #5b8fe9;
-    --marca-500: #8fb4f2;
-    --acento: #aec7f5;
+    --marca-900: #06344a;
+    --marca-700: #0277bd;
+    --marca-600: #4fc3f7;
+    --marca-500: #81d4fa;
+    --acento: #b3e5fc;
 
-    --exito: #8ccc61;
-    --error: #f4695e;
+    --exito: #5cc98a;
+    --error: #f4796e;
     --atencion: #f0ad4e;
 
-    --fondo: #0b0d17;
-    --superficie: #141726;
-    --superficie-2: #1c2032;
-    --superficie-3: #252a40;
-    --borde: #2a2f47;
-    --borde-fuerte: #3b4160;
-    --texto: #e8eaf6;
-    --texto-suave: #a2a8c8;
-    --texto-tenue: #767d9e;
+    --fondo: #06171f;
+    --superficie: #0d242f;
+    --superficie-2: #13303e;
+    --superficie-3: #1b3f52;
+    --borde: #1e4256;
+    --borde-fuerte: #2d5c74;
+    --texto: #e3f2fd;
+    --texto-suave: #a3c2d3;
+    --texto-tenue: #7493a6;
 
     --sombra-1: 0 1px 2px rgba(0, 0, 0, 0.4);
     --sombra-2: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -76,45 +71,42 @@
 }
 
 :root[data-tema='oscuro'] {
-  --marca-700: #4c8ef0;
-  --marca-600: #5b8fe9;
-  --marca-500: #8fb4f2;
-  --acento: #aec7f5;
-  --exito: #8ccc61;
-  --error: #f4695e;
+  --marca-900: #06344a;
+  --marca-700: #0277bd;
+  --marca-600: #4fc3f7;
+  --marca-500: #81d4fa;
+  --acento: #b3e5fc;
+
+  --exito: #5cc98a;
+  --error: #f4796e;
   --atencion: #f0ad4e;
-  --fondo: #0b0d17;
-  --superficie: #141726;
-  --superficie-2: #1c2032;
-  --superficie-3: #252a40;
-  --borde: #2a2f47;
-  --borde-fuerte: #3b4160;
-  --texto: #e8eaf6;
-  --texto-suave: #a2a8c8;
-  --texto-tenue: #767d9e;
+
+  --fondo: #06171f;
+  --superficie: #0d242f;
+  --superficie-2: #13303e;
+  --superficie-3: #1b3f52;
+  --borde: #1e4256;
+  --borde-fuerte: #2d5c74;
+  --texto: #e3f2fd;
+  --texto-suave: #a3c2d3;
+  --texto-tenue: #7493a6;
   --sombra-1: 0 1px 2px rgba(0, 0, 0, 0.4);
   --sombra-2: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.4);
   --sombra-3: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 60px rgba(0, 0, 0, 0.6);
 }
 
 :root[data-tema='claro'] {
-  --marca-900: #085061;
-  --marca-700: #045491;
-  --marca-600: #3572E2;
-  --marca-500: #5b8fe9;
-  --acento: #aec7f5;
-  --exito: #73b846;
-  --error: #ed4037;
-  --atencion: #d97706;
-  --fondo: #f6f7fb;
-  --superficie: #ffffff;
-  --superficie-2: #f1f2f8;
-  --superficie-3: #e6e8f2;
-  --borde: #dfe2ee;
-  --borde-fuerte: #c5cadd;
-  --texto: #1a1c2b;
-  --texto-suave: #5f6480;
-  --texto-tenue: #8e93ab;
+  --marca-900: #01426b;
+  --marca-700: #01579b;
+  --marca-600: #0277bd;
+  --marca-500: #4fc3f7;
+  --acento: #81d4fa;
+
+  --exito: #2e9e5b;
+  --error: #e0453a;
+  --atencion: #d98207;
+
+  /* Neutros con un leve tinte celeste 
   --sombra-1: 0 1px 2px rgba(20, 22, 48, 0.05);
   --sombra-2: 0 2px 4px rgba(20, 22, 48, 0.05), 0 8px 20px rgba(20, 22, 48, 0.07);
   --sombra-3: 0 8px 24px rgba(20, 22, 48, 0.12), 0 24px 60px rgba(20, 22, 48, 0.16);
@@ -133,7 +125,7 @@ body {
   margin: 0;
   background: var(--fondo);
   color: var(--texto);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   font-size: 15px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -505,9 +497,25 @@ button:focus-visible {
   font-size: 14.5px;
   font-weight: 600;
   cursor: pointer;
-  white-space: nowrap;
+  /* Sin esto una etiqueta larga (p.ej. el nombre de un cliente) empujaba el
+     boton fuera de la tarjeta. */
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   transition: background var(--transicion), border-color var(--transicion),
     transform var(--transicion), box-shadow var(--transicion);
+}
+
+/* La etiqueta se recorta con puntos suspensivos; el icono nunca se encoge. */
+.btn > .texto-btn {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.btn > svg {
+  flex: none;
 }
 
 .btn:hover:not(:disabled) {
@@ -611,6 +619,22 @@ table {
   font-size: 14px;
 }
 
+/* En celular la tabla no se comprime: se desplaza de lado dentro de su caja. */
+.tabla-scroll table {
+  min-width: 100%;
+  width: max-content;
+}
+
+.tabla-scroll {
+  /* Sombra al borde derecho mientras quede contenido por ver. */
+  background:
+    linear-gradient(to right, var(--superficie) 30%, transparent) left / 24px 100% no-repeat,
+    linear-gradient(to left, var(--superficie) 30%, transparent) right / 24px 100% no-repeat,
+    linear-gradient(to right, rgba(0, 0, 0, 0.09), transparent) left / 10px 100% no-repeat,
+    linear-gradient(to left, rgba(0, 0, 0, 0.09), transparent) right / 10px 100% no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
 th {
   text-align: left;
   font-size: 11px;
@@ -642,7 +666,8 @@ tbody tr:last-child td {
 
 .principal-col {
   font-weight: 550;
-  min-width: 170px;
+  min-width: 160px;
+  max-width: 280px;
 }
 
 .seleccionable tbody tr {
@@ -1145,4 +1170,20 @@ tbody tr:last-child td {
   .paginacion .btn svg {
     font-size: 14px;
   }
+}
+
+/* Resumen de lo seleccionado, encima del boton de continuar */
+.elegido {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: var(--radio-sm);
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  font-size: 13.5px;
+  color: var(--texto-suave);
+}
+
+.elegido b {
+  color: var(--texto);
+  font-weight: 650;
 }

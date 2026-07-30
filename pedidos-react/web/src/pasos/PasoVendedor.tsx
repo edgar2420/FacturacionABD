@@ -187,9 +187,15 @@ export function PasoVendedor({
                 alCambiar={(p) => void traer(p, false)}
               />
 
+              {seleccionado && (
+                <p className="elegido">
+                  Seleccionado: <b>{seleccionado.nombre}</b>
+                </p>
+              )}
+
               <Boton
                 className="bloque"
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 12 }}
                 disabled={!seleccionado || !fechaEntrega}
                 icono={<IconoCheck />}
                 onClick={continuar}

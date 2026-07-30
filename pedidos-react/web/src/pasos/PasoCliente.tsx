@@ -130,14 +130,22 @@ export function PasoCliente({
                 alCambiar={(p) => void traer(p, false)}
               />
 
+              {/* El nombre va aparte y no dentro del boton: hay clientes con
+                  nombres larguisimos que desbordaban la tarjeta. */}
+              {seleccionado && (
+                <p className="elegido">
+                  Seleccionado: <b>{seleccionado.nombre}</b>
+                </p>
+              )}
+
               <Boton
                 className="bloque"
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 12 }}
                 disabled={!seleccionado}
                 icono={<IconoCheck />}
                 onClick={() => seleccionado && alElegir(seleccionado)}
               >
-                {seleccionado ? `Elegir a ${seleccionado.nombre}` : 'Seleccione un cliente'}
+                {seleccionado ? 'Elegir este cliente' : 'Seleccione un cliente'}
               </Boton>
             </>
           )}
