@@ -575,3 +575,43 @@ tbody tr:last-child td {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* --- Campo de contrasena con boton de ver/ocultar ------------------------- */
+
+.campo-clave {
+  position: relative;
+}
+
+.campo-clave input {
+  /* espacio para que el texto no quede debajo del boton */
+  padding-right: 44px;
+}
+
+.campo-clave .ojo {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radio-sm);
+  background: none;
+  color: var(--texto-suave);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transicion);
+}
+
+.campo-clave .ojo:hover {
+  background: var(--superficie-2);
+}
+
+.campo-clave .ojo:focus-visible {
+  outline: 2px solid var(--azul-claro);
+  outline-offset: 1px;
+}

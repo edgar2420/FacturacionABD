@@ -57,9 +57,27 @@ app.post(
       return res.status(401).json({ error: 'Usuario o contrasena incorrectos' });
     }
 
-    const datos = await plsql.obtenerUsuario(usuario);
+    let datos = await plsql.obtenerUsuario(usuario);
+
     if (!datos) {
-      return res.status(401).json({ error: 'No existe usuario' });
+      // La cuenta paso la validacion de la base pero no esta en ABD.USUARIOS,
+      // que es de donde sale el almacen. Es el caso de "abd", el duenio del
+      // esquema. Solo se deja pasar si hay ALMACEN_DEV configurado.
+      if (!config.almacenDev) {
+        return res.status(401).json({ error: 'No existe usuario' });
+      }
+
+      console.warn(
+        `[dev] "${usuario}" no esta en ABD.USUARIOS; se le asigna el almacen ${config.almacenDev}`
+      );
+      datos = {
+        login: usuario,
+        nombre: usuario,
+        rol: 'DEV',
+        almacen: config.almacenDev,
+        imprimeFactura: false,
+        modoDesarrollo: true
+      };
     }
 
     req.session.usuario = datos;

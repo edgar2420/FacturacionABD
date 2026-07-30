@@ -153,12 +153,63 @@ mezclar nada. Vale la pena corregirlos allá en otro momento.
 
 ---
 
+## Entrar con una cuenta que no esta en ABD.USUARIOS
+
+El login exige que el usuario tenga fila en `ABD.USUARIOS`, porque de
+`USUARIOS.UNI_NEG` sale el almacen con el que se crea el pedido. Cuentas como
+`abd` (el dueño del esquema) no estan ahi y reciben `401 No existe usuario`.
+
+Para probar la interfaz sin dar de alta un usuario, define en el `.env`:
+
+```
+ALMACEN_DEV=AL-VEN-ABD-FAB
+```
+
+Con eso esas cuentas entran usando ese almacen, y la sesion queda marcada con
+`modoDesarrollo: true`. **Dejar vacio en cualquier despliegue real.**
+
+---
+
+## Hallazgo de seguridad en F_VALIDA_USUARIO
+
+Al probar el login contra la base real se encontro que
+`ABD.PCK_OPERACIONES.F_VALIDA_USUARIO` **devuelve `'1'` (valido) para cualquier
+contraseña** cuando el usuario no tiene fila en la tabla `CLAVES`. El cuerpo de
+la funcion hace:
+
+```sql
+BEGIN
+   SELECT CLAVE INTO v_clave FROM CLAVES WHERE LOGIN = p_usuario;
+EXCEPTION WHEN OTHERS THEN v_clave := NULL;
+END;
+...
+IF x_encriptado != v_clave THEN v_resp := '0'; END IF;
+```
+
+Si `v_clave` es `NULL`, la comparacion `x_encriptado != NULL` no da verdadero
+sino *desconocido*, el `IF` no se ejecuta y `v_resp` se queda en su valor
+inicial `'1'`.
+
+Consecuencia: **cualquier usuario de `USUARIOS` que no tenga fila en `CLAVES`
+entra con la contraseña que sea**, tanto en esta aplicacion como en el WAR JSF
+actual. La unica barrera hoy es que el login exista en `USUARIOS`
+(`LoginBean` comprueba `findMyUsuario`).
+
+No se corrigio aqui porque la solucion esta en el PL/SQL, fuera del alcance de
+este proyecto. La correccion seria inicializar `v_resp := '0'` y validar que
+`v_clave IS NOT NULL`. Conviene revisar con quien administre la base cuantos
+usuarios activos no tienen fila en `CLAVES`.
+
+---
+
 ## Estado y limitaciones
 
-- **Nunca se ejecutó contra la base real.** Se escribió a partir de
-  `PedidosBean.java`, `PedidosDao.java` y `pedidos.xhtml`. Compila y pasa el
-  chequeo de tipos, pero las firmas de los procedimientos PL/SQL están deducidas
-  del código Java: la primera corrida contra Oracle puede requerir ajustes.
+- **Probado contra Oracle real solo en lectura.** Verificado contra
+  `192.168.0.5/PDBABD`: login, busqueda de clientes, de vendedores y de
+  productos (con precio, lote, vencimiento y saldo) responden correctamente.
+- **El camino de escritura NO se probo**: crear pedido, adicionar y eliminar
+  lineas, terminar y pagar. Hacerlo contra esa base generaria pedidos reales.
+  Conviene probarlo primero en un entorno de pruebas.
 - El orden de las columnas de los cursores (`F_OBTENER_PEDIDO` devuelve 25,
   `F_OBTENER_DET_PEDIDO` 18) se tomó de los constructores de `objetos/*.java`.
   Si el paquete cambia, hay que ajustar `plsql.js`.

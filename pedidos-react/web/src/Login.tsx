@@ -10,6 +10,7 @@ import type { Usuario } from './tipos';
 export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
+  const [verClave, setVerClave] = useState(false);
   const [error, setError] = useState('');
   const [entrando, setEntrando] = useState(false);
 
@@ -47,12 +48,24 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
             </Campo>
 
             <Campo etiqueta="Contraseña" error={error || undefined}>
-              <input
-                type="password"
-                value={password}
-                autoComplete="current-password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="campo-clave">
+                <input
+                  type={verClave ? 'text' : 'password'}
+                  value={password}
+                  autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="ojo"
+                  onClick={() => setVerClave(!verClave)}
+                  aria-label={verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  aria-pressed={verClave}
+                  title={verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {verClave ? '🙈' : '👁'}
+                </button>
+              </div>
             </Campo>
 
             <Boton
