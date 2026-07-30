@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import * as api from './api';
 import { Boton, Campo, Tarjeta } from './componentes/ui';
-import { IconoCarrito, IconoOjo, IconoOjoTachado } from './componentes/iconos';
+import { PieApp } from './componentes/PieApp';
+import { IconoOjo, IconoOjoTachado } from './componentes/iconos';
 import type { Usuario } from './tipos';
 
 /**
@@ -32,11 +33,9 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
     <main className="login">
       <div className="caja">
         <div className="marca">
-          <span className="glifo">
-            <IconoCarrito tam={26} />
-          </span>
-          <strong>Laboratorios ABD</strong>
-          <span>Módulo de Pedidos</span>
+          <img src="/logo-abd.png" alt="Laboratorios ABD" className="logo-abd grande" />
+          <strong>Módulo Pedidos ABD</strong>
+          <span>Ingrese con su usuario del sistema</span>
         </div>
 
         <Tarjeta>
@@ -85,6 +84,8 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
             </Boton>
           </form>
         </Tarjeta>
+
+        <PieApp />
       </div>
     </main>
   );

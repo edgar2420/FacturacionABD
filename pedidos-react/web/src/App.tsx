@@ -14,6 +14,7 @@ import { Login } from './Login';
 import { BarraPasos, Boton } from './componentes/ui';
 import { ModalAviso, ModalConfirmacion } from './componentes/Modal';
 import { Toasts } from './componentes/Toast';
+import { PieApp } from './componentes/PieApp';
 import type { Confirmacion } from './componentes/Modal';
 import { IconoCarrito, IconoLuna, IconoSalir, IconoSol } from './componentes/iconos';
 import { PasoCliente } from './pasos/PasoCliente';
@@ -152,15 +153,17 @@ export default function App() {
   const total = totalPedido(detalle);
   const finalizado = Boolean(pedido?.pagado);
   const avisoActual = colaAvisos[0];
+  // La barra de total es fija y taparia el pie, asi que cuando esta visible se
+  // le reserva sitio al final de la pagina.
+  const hayBarraTotal = Boolean(nroPedido) || detalle.length > 0;
 
   return (
-    <div className="app">
+    <div className={`app ${hayBarraTotal ? 'con-total' : ''}`}>
       <header className="barra">
         <div className="marca-app">
-          <span className="glifo">
-            <IconoCarrito tam={17} />
-          </span>
-          <h1>Pedidos</h1>
+          {/* El logo institucional, el mismo archivo que usa el sistema JSF. */}
+          <img src="/logo-abd.png" alt="Laboratorios ABD" className="logo-abd" />
+          <h1>Módulo Pedidos ABD</h1>
         </div>
 
         <span className="crece" />
@@ -268,8 +271,10 @@ export default function App() {
         )}
       </main>
 
+      <PieApp />
+
       {/* Barra inferior: el total siempre visible, como pide un pedido en tablet. */}
-      {(nroPedido || detalle.length > 0) && (
+      {hayBarraTotal && (
         <div className="total-fijo">
           <div className="interior">
             <div className="cifra">
