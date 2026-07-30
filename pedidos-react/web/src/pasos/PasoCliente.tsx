@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import * as api from '../api';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
+import { IconoBuscar, IconoCheck } from '../componentes/iconos';
 import type { Persona, TipoBusquedaCliente } from '../tipos';
 
 const FILTROS: { valor: TipoBusquedaCliente; etiqueta: string }[] = [
@@ -32,7 +33,7 @@ export function PasoCliente({
   async function buscar(e: React.FormEvent) {
     e.preventDefault();
     if (!valor.trim()) {
-      alAvisar('atencion', 'Escriba un dato para buscar');
+      alAvisar('atencion', 'Falta el dato de búsqueda', 'Escriba un nombre, NIT o código de cliente.');
       return;
     }
 
@@ -76,7 +77,7 @@ export function PasoCliente({
               </select>
             </Campo>
           </div>
-          <Boton type="submit" cargando={buscando} className="bloque">
+          <Boton type="submit" cargando={buscando} className="bloque" icono={<IconoBuscar />}>
             Buscar cliente
           </Boton>
         </form>
@@ -104,7 +105,7 @@ export function PasoCliente({
                         aria-selected={seleccionado?.codigo === c.codigo}
                         onClick={() => setSeleccionado(c)}
                       >
-                        <td>{c.nombre}</td>
+                        <td className="principal-col">{c.nombre}</td>
                         <td>{c.ruc}</td>
                         <td>{c.ciudad}</td>
                       </tr>
@@ -115,8 +116,9 @@ export function PasoCliente({
 
               <Boton
                 className="bloque"
-                style={{ marginTop: 14 }}
+                style={{ marginTop: 16 }}
                 disabled={!seleccionado}
+                icono={<IconoCheck />}
                 onClick={() => seleccionado && alElegir(seleccionado)}
               >
                 {seleccionado ? `Elegir a ${seleccionado.nombre}` : 'Seleccione un cliente'}

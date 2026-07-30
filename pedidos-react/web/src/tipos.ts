@@ -7,6 +7,8 @@ export interface Usuario {
   /** UNI_NEG del usuario: es el almacen con el que opera. */
   almacen: string;
   imprimeFactura: boolean;
+  /** true cuando se entro por ALMACEN_DEV, sin fila en ABD.USUARIOS. */
+  modoDesarrollo?: boolean;
 }
 
 /** ABD.PERSONAS. Sirve tanto para clientes como para vendedores. */

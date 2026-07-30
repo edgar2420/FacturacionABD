@@ -12,6 +12,7 @@ import { useState } from 'react';
 import * as api from '../api';
 import { ETIQUETAS_DOC_PAGO, ETIQUETAS_PAGADO, bancosPara, bolivianos, requiereBanco } from '../reglas';
 import { Boton, Campo, Tarjeta } from '../componentes/ui';
+import { IconoCheck, IconoExito } from '../componentes/iconos';
 import type { LineaPedido, Pagado, Pedido, Persona, TipoDocPago } from '../tipos';
 
 export function PasoPago({
@@ -100,7 +101,10 @@ export function PasoPago({
           <dl className="datos">
             <dt>Estado</dt>
             <dd>
-              <span className="etiqueta exito">{pedido.estado}</span>
+              <span className="etiqueta exito">
+                <IconoExito tam={14} />
+                {pedido.estado}
+              </span>
             </dd>
             <dt>Forma de pago</dt>
             <dd>{pedido.formaPago}</dd>
@@ -182,6 +186,7 @@ export function PasoPago({
             className="bloque"
             cargando={enviando}
             disabled={!puedeFinalizar}
+            icono={<IconoCheck />}
             onClick={finalizar}
           >
             Finalizar pedido

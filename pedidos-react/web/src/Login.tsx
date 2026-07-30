@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as api from './api';
 import { Boton, Campo, Tarjeta } from './componentes/ui';
+import { IconoCarrito, IconoOjo, IconoOjoTachado } from './componentes/iconos';
 import type { Usuario } from './tipos';
 
 /**
@@ -29,8 +30,11 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
 
   return (
     <main className="login">
-      <div style={{ width: '100%', maxWidth: 380 }}>
+      <div className="caja">
         <div className="marca">
+          <span className="glifo">
+            <IconoCarrito tam={26} />
+          </span>
           <strong>Laboratorios ABD</strong>
           <span>Módulo de Pedidos</span>
         </div>
@@ -43,6 +47,8 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
                 value={usuario}
                 autoFocus
                 autoComplete="username"
+                autoCapitalize="none"
+                spellCheck={false}
                 onChange={(e) => setUsuario(e.target.value)}
               />
             </Campo>
@@ -63,7 +69,7 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
                   aria-pressed={verClave}
                   title={verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
-                  {verClave ? '🙈' : '👁'}
+                  {verClave ? <IconoOjoTachado /> : <IconoOjo />}
                 </button>
               </div>
             </Campo>
@@ -73,6 +79,7 @@ export function Login({ alEntrar }: { alEntrar: (usuario: Usuario) => void }) {
               className="bloque"
               cargando={entrando}
               disabled={!usuario || !password}
+              style={{ marginTop: 4 }}
             >
               Ingresar
             </Boton>

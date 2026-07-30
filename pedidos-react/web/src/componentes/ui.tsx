@@ -1,11 +1,24 @@
 /** Piezas visuales reutilizables. Sin librerias externas. */
 import type { ReactNode } from 'react';
-import type { Aviso } from '../tipos';
+import { IconoCheck } from './iconos';
 
-export function Tarjeta({ titulo, children }: { titulo?: string; children: ReactNode }) {
+export function Tarjeta({
+  titulo,
+  accion,
+  children
+}: {
+  titulo?: string;
+  accion?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <section className="tarjeta">
-      {titulo && <header>{titulo}</header>}
+      {titulo && (
+        <header>
+          <span>{titulo}</span>
+          {accion}
+        </header>
+      )}
       <div className="cuerpo">{children}</div>
     </section>
   );
@@ -26,7 +39,11 @@ export function Campo({
     <div className="campo">
       <label>{etiqueta}</label>
       {children}
-      {error ? <span className="error-campo">{error}</span> : ayuda && <span className="ayuda">{ayuda}</span>}
+      {error ? (
+        <span className="error-campo">{error}</span>
+      ) : (
+        ayuda && <span className="ayuda">{ayuda}</span>
+      )}
     </div>
   );
 }
@@ -35,10 +52,12 @@ export function Boton({
   children,
   variante = 'primario',
   cargando = false,
+  icono,
   ...resto
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variante?: 'primario' | 'secundario' | 'peligro' | 'exito' | 'icono';
+  variante?: 'primario' | 'secundario' | 'peligro' | 'exito' | 'fantasma' | 'icono';
   cargando?: boolean;
+  icono?: ReactNode;
 }) {
   const clases = ['btn'];
   if (variante !== 'primario') clases.push(variante);
@@ -46,7 +65,7 @@ export function Boton({
 
   return (
     <button {...resto} className={clases.join(' ')} disabled={resto.disabled || cargando}>
-      {cargando && <span className="cargando" aria-hidden="true" />}
+      {cargando ? <span className="cargando" aria-hidden="true" /> : icono}
       {children}
     </button>
   );
@@ -57,8 +76,8 @@ export function Vacio({ mensaje }: { mensaje: string }) {
 }
 
 /**
- * Barra de pasos. Los pasos ya completados son clicables para volver atras;
- * los futuros no, porque dependen de datos que aun no existen.
+ * Barra de pasos. Los completados son clicables para volver atras; los futuros
+ * no, porque dependen de datos que aun no existen.
  */
 export function BarraPasos({
   pasos,
@@ -71,44 +90,24 @@ export function BarraPasos({
 }) {
   return (
     <nav className="pasos" aria-label="Progreso del pedido">
-      {pasos.map((nombre, i) => {
-        const estado = i === actual ? 'activo' : i < actual ? 'hecho' : '';
-        return (
-          <button
-            key={nombre}
-            type="button"
-            className={`paso ${estado}`}
-            aria-current={i === actual ? 'step' : undefined}
-            disabled={i >= actual}
-            onClick={() => i < actual && alIr(i)}
-          >
-            <span className="linea" />
-            <span>
-              {i + 1}. {nombre}
-            </span>
-          </button>
-        );
-      })}
+      <ol>
+        {pasos.map((nombre, i) => {
+          const estado = i === actual ? 'activo' : i < actual ? 'hecho' : 'pendiente';
+          return (
+            <li key={nombre} className={estado}>
+              <button
+                type="button"
+                aria-current={i === actual ? 'step' : undefined}
+                disabled={i >= actual}
+                onClick={() => i < actual && alIr(i)}
+              >
+                <span className="ficha">{i < actual ? <IconoCheck tam={14} /> : i + 1}</span>
+                <span className="nombre">{nombre}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
     </nav>
-  );
-}
-
-export function Avisos({ avisos, alCerrar }: { avisos: Aviso[]; alCerrar: (id: number) => void }) {
-  if (avisos.length === 0) return null;
-
-  return (
-    <div className="avisos" role="status" aria-live="polite">
-      {avisos.map((a) => (
-        <div key={a.id} className={`aviso ${a.tono}`}>
-          <div className="texto">
-            <strong>{a.titulo}</strong>
-            {a.detalle && <span>{a.detalle}</span>}
-          </div>
-          <button type="button" onClick={() => alCerrar(a.id)} aria-label="Cerrar aviso">
-            ×
-          </button>
-        </div>
-      ))}
-    </div>
   );
 }

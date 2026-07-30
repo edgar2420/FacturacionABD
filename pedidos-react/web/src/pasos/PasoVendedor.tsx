@@ -9,6 +9,7 @@ import { useState } from 'react';
 import * as api from '../api';
 import { formatearFecha, validarFechaEntrega } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
+import { IconoBuscar, IconoCalendario, IconoCheck } from '../componentes/iconos';
 import type { Persona, TipoBusquedaSimple } from '../tipos';
 
 export function PasoVendedor({
@@ -35,7 +36,7 @@ export function PasoVendedor({
   async function buscar(e: React.FormEvent) {
     e.preventDefault();
     if (!valor.trim()) {
-      alAvisar('atencion', 'Escriba un dato para buscar');
+      alAvisar('atencion', 'Falta el dato de búsqueda', 'Escriba un nombre o código de vendedor.');
       return;
     }
 
@@ -108,6 +109,7 @@ export function PasoVendedor({
         </Campo>
         <Boton
           variante="secundario"
+          icono={<IconoCalendario />}
           onClick={() => alCambiarFecha(formatearFecha(new Date()))}
         >
           Usar la fecha de hoy
@@ -133,7 +135,7 @@ export function PasoVendedor({
               </select>
             </Campo>
           </div>
-          <Boton type="submit" cargando={buscando} className="bloque">
+          <Boton type="submit" cargando={buscando} className="bloque" icono={<IconoBuscar />}>
             Buscar vendedor
           </Boton>
         </form>
@@ -161,7 +163,7 @@ export function PasoVendedor({
                         aria-selected={seleccionado?.codigo === v.codigo}
                         onClick={() => setSeleccionado(v)}
                       >
-                        <td>{v.nombre}</td>
+                        <td className="principal-col">{v.nombre}</td>
                         <td>{v.codigo}</td>
                         <td>{v.ciudad}</td>
                       </tr>
@@ -172,8 +174,9 @@ export function PasoVendedor({
 
               <Boton
                 className="bloque"
-                style={{ marginTop: 14 }}
+                style={{ marginTop: 16 }}
                 disabled={!seleccionado || !fechaEntrega}
+                icono={<IconoCheck />}
                 onClick={continuar}
               >
                 Continuar a productos
