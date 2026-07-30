@@ -157,23 +157,40 @@ p {
   min-width: 0;
 }
 
-.barra .marca-app .glifo {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
+/* Logo institucional. Es el mismo PNG del sistema JSF (155x60, fondo
+   transparente), asi que se fija el alto y el ancho sale solo. */
+.logo-abd {
+  display: block;
+  height: 30px;
+  width: auto;
   flex: none;
-  border-radius: 11px;
-  background: linear-gradient(140deg, var(--cel-500), var(--cel-700));
-  color: #fff;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--cel-600) 32%, transparent);
+}
+
+.logo-abd.grande {
+  height: 60px;
+  margin: 0 auto 14px;
+}
+
+/* El logo es azul oscuro sobre transparente: en el tema oscuro desaparece.
+   Se le pone una tarjeta blanca detras en vez de invertirlo, que arruinaria
+   los colores de la marca. */
+[data-tema='oscuro'] .logo-abd {
+  padding: 5px 9px;
+  border-radius: 9px;
+  background: #fff;
+  box-sizing: content-box;
 }
 
 .barra h1 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.2px;
-  white-space: nowrap;
+  line-height: 1.2;
+  /* En celular el titulo se parte en dos lineas antes que empujar los botones
+     de tema y salida fuera de la barra. */
+  min-width: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--borde);
 }
 
 .barra .crece {
@@ -204,7 +221,9 @@ p {
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding: 16px 14px 138px;
+  /* El espacio para la barra de total fija lo pone ahora el pie, que va
+     despues; aqui solo queda la separacion normal. */
+  padding: 16px 14px 8px;
 }
 
 /* ========================================================================== */
@@ -992,18 +1011,6 @@ td {
   margin-bottom: 22px;
 }
 
-.login .marca .glifo {
-  display: grid;
-  place-items: center;
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 14px;
-  border-radius: 18px;
-  background: linear-gradient(140deg, var(--cel-400), var(--cel-700));
-  color: #fff;
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--cel-600) 34%, transparent);
-}
-
 .login .marca strong {
   display: block;
   font-size: 21px;
@@ -1026,6 +1033,34 @@ td {
 }
 
 /* ========================================================================== */
+/* Pie de la aplicacion                                                       */
+/* ========================================================================== */
+
+.pie-app {
+  padding: 20px 14px 24px;
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--texto-tenue);
+}
+
+.pie-app strong {
+  font-weight: 700;
+  color: var(--texto-suave);
+}
+
+.pie-app .sutil {
+  font-size: 11.5px;
+  opacity: 0.8;
+}
+
+/* Con la barra de total visible (que es fija y flota sobre el contenido) el
+   pie quedaria tapado, asi que se le reserva sitio debajo. */
+.app.con-total .pie-app {
+  padding-bottom: calc(118px + env(safe-area-inset-bottom));
+}
+
+/* ========================================================================== */
 /* Responsive                                                                 */
 /* ========================================================================== */
 
@@ -1043,7 +1078,16 @@ td {
   }
 
   .contenido {
-    padding: 22px 22px 132px;
+    padding: 22px 22px 10px;
+  }
+
+  .barra h1 {
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .logo-abd {
+    height: 34px;
   }
 
   .fila {
