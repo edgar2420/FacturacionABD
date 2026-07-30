@@ -4,11 +4,20 @@
  * Equivale a PedidosBean.buscarVendedor() + elegirVendedor().
  * La fecha de entrega se pide aqui porque el precio de los productos depende
  * de ella (F_OBTENER_PRODUCTOS la recibe como parametro).
+ *
+ * Al tocar un vendedor se abre su ficha en un modal y se confirma ahi mismo.
  */
 import { useState } from 'react';
 import * as api from '../api';
-import { ddmmaaaaAIso, formatearFecha, hoyIso, isoADdmmaaaa, validarFechaEntrega } from '../reglas';
+import {
+  ddmmaaaaAIso,
+  formatearFecha,
+  hoyIso,
+  isoADdmmaaaa,
+  validarFechaEntrega
+} from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
+import { Modal } from '../componentes/Modal';
 import { IconoBuscar, IconoCalendario, IconoCheck } from '../componentes/iconos';
 import { Paginacion } from '../componentes/Paginacion';
 import type { Pagina } from '../api';
@@ -30,25 +39,27 @@ export function PasoVendedor({
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState<TipoBusquedaSimple>('N');
   const [resultados, setResultados] = useState<Pagina<Persona> | null>(null);
-  const [seleccionado, setSeleccionado] = useState<Persona | null>(null);
+  const [enDetalle, setEnDetalle] = useState<Persona | null>(null);
   const [buscando, setBuscando] = useState(false);
 
   const validacionFecha = fechaEntrega ? validarFechaEntrega(fechaEntrega) : { ok: false };
 
-  async function traer(pagina: number, esNuevaBusqueda: boolean) {
+  async function traer(pagina: number) {
     if (!valor.trim()) {
       alAvisar('atencion', 'Falta el dato de búsqueda', 'Escriba un nombre o código de vendedor.');
       return;
     }
 
     setBuscando(true);
-    if (esNuevaBusqueda) setSeleccionado(null);
-
     try {
       const r = await api.buscarVendedores(valor.trim(), tipo, pagina);
       setResultados(r);
       if (r.total === 0) {
-        alAvisar('atencion', 'Vendedor no encontrado', 'Revise los datos de búsqueda e intente de nuevo.');
+        alAvisar(
+          'atencion',
+          'Vendedor no encontrado',
+          'Revise los datos de búsqueda e intente de nuevo.'
+        );
       }
     } catch (err) {
       alAvisar('error', 'No se pudo buscar', (err as Error).message);
@@ -59,18 +70,18 @@ export function PasoVendedor({
 
   function buscar(e: React.FormEvent) {
     e.preventDefault();
-    void traer(1, true);
+    void traer(1);
   }
 
-  function continuar() {
-    if (!seleccionado) return;
-
+  /** Confirma el vendedor del modal, validando antes la fecha de entrega. */
+  function confirmar(vendedor: Persona) {
     const v = validarFechaEntrega(fechaEntrega);
     if (!v.ok) {
-      alAvisar('error', 'Fecha de entrega inválida', v.mensaje);
+      setEnDetalle(null);
+      alAvisar('error', 'Falta la fecha de entrega', v.mensaje ?? 'Indique la fecha de entrega.');
       return;
     }
-    alElegir(seleccionado);
+    alElegir(vendedor);
   }
 
   return (
@@ -82,21 +93,9 @@ export function PasoVendedor({
           <dt>Nombre</dt>
           <dd>{cliente.nombre}</dd>
           <dt>NIT</dt>
-          <dd>{cliente.ruc}</dd>
+          <dd>{cliente.ruc || '—'}</dd>
           <dt>Ciudad</dt>
-          <dd>{cliente.ciudad}</dd>
-          {cliente.direccion && (
-            <>
-              <dt>Dirección</dt>
-              <dd>{cliente.direccion}</dd>
-            </>
-          )}
-          {cliente.telefono && (
-            <>
-              <dt>Teléfono</dt>
-              <dd>{cliente.telefono}</dd>
-            </>
-          )}
+          <dd>{cliente.ciudad || '—'}</dd>
         </dl>
       </Tarjeta>
 
@@ -114,14 +113,14 @@ export function PasoVendedor({
             min={hoyIso()}
             value={ddmmaaaaAIso(fechaEntrega)}
             onChange={(e) => alCambiarFecha(isoADdmmaaaa(e.target.value))}
-            /* Al tocar cualquier parte del campo se abre el calendario, no
-               solo el iconito: en celular ese icono es un blanco diminuto. */
             onClick={(e) => {
+              // Al tocar cualquier parte del campo se abre el calendario, no
+              // solo el iconito, que en celular es un blanco diminuto.
               const el = e.currentTarget as HTMLInputElement & { showPicker?: () => void };
               try {
                 el.showPicker?.();
               } catch {
-                /* Algunos navegadores solo permiten showPicker por gesto directo */
+                /* algunos navegadores solo lo permiten por gesto directo */
               }
             }}
           />
@@ -180,6 +179,8 @@ export function PasoVendedor({
             <Vacio mensaje="Sin coincidencias." />
           ) : (
             <>
+              <p className="pista">Toque un vendedor para elegirlo.</p>
+
               <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
@@ -191,12 +192,10 @@ export function PasoVendedor({
                   </thead>
                   <tbody>
                     {resultados.items.map((v) => (
-                      <tr
-                        key={v.codigo}
-                        aria-selected={seleccionado?.codigo === v.codigo}
-                        onClick={() => setSeleccionado(v)}
-                      >
-                        <td className="principal-col" data-etiqueta="Nombre">{v.nombre}</td>
+                      <tr key={v.codigo} onClick={() => setEnDetalle(v)}>
+                        <td className="principal-col" data-etiqueta="Nombre">
+                          {v.nombre}
+                        </td>
                         <td data-etiqueta="Código">{v.codigo}</td>
                         <td data-etiqueta="Ciudad">{v.ciudad}</td>
                       </tr>
@@ -210,27 +209,45 @@ export function PasoVendedor({
                 porPagina={resultados.porPagina}
                 total={resultados.total}
                 cargando={buscando}
-                alCambiar={(p) => void traer(p, false)}
+                alCambiar={(p) => void traer(p)}
               />
-
-              {seleccionado && (
-                <p className="elegido">
-                  Seleccionado: <b>{seleccionado.nombre}</b>
-                </p>
-              )}
-
-              <Boton
-                className="bloque"
-                style={{ marginTop: 12 }}
-                disabled={!seleccionado || !fechaEntrega}
-                icono={<IconoCheck />}
-                onClick={continuar}
-              >
-                Continuar a productos
-              </Boton>
             </>
           )}
         </Tarjeta>
+      )}
+
+      {enDetalle && (
+        <Modal
+          titulo={enDetalle.nombre}
+          subtitulo={`Código ${enDetalle.codigo}`}
+          ancho="detalle"
+          alCerrar={() => setEnDetalle(null)}
+          pie={
+            <>
+              <Boton variante="secundario" onClick={() => setEnDetalle(null)}>
+                Cancelar
+              </Boton>
+              <Boton icono={<IconoCheck />} onClick={() => confirmar(enDetalle)}>
+                Elegir vendedor
+              </Boton>
+            </>
+          }
+        >
+          <dl className="datos">
+            <dt>Ciudad</dt>
+            <dd>{enDetalle.ciudad || '—'}</dd>
+            <dt>Teléfono</dt>
+            <dd>{enDetalle.telefono || '—'}</dd>
+            <dt>Entrega</dt>
+            <dd>{fechaEntrega || 'sin definir'}</dd>
+          </dl>
+
+          {!validacionFecha.ok && (
+            <p className="nota-modal">
+              Falta indicar una fecha de entrega válida antes de continuar.
+            </p>
+          )}
+        </Modal>
       )}
     </>
   );

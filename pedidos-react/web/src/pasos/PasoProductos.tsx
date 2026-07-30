@@ -15,6 +15,7 @@ import { useState } from 'react';
 import * as api from '../api';
 import { bolivianos, validarCantidad } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
+import { Modal } from '../componentes/Modal';
 import { IconoBasura, IconoBuscar, IconoCheck, IconoMas } from '../componentes/iconos';
 import { Paginacion } from '../componentes/Paginacion';
 import type { Confirmacion } from '../componentes/Modal';
@@ -193,7 +194,9 @@ export function PasoProductos({
             {resultados.items.length === 0 ? (
               <Vacio mensaje="Sin coincidencias." />
             ) : (
-              <div className="tabla-scroll tarjetas-movil">
+              <>
+                <p className="pista">Toque un producto para indicar la cantidad.</p>
+                <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>
@@ -208,8 +211,10 @@ export function PasoProductos({
                     {resultados.items.map((p) => (
                       <tr
                         key={`${p.producto}-${p.lote}`}
-                        aria-selected={elegido?.producto === p.producto && elegido?.lote === p.lote}
-                        onClick={() => setElegido(p)}
+                        onClick={() => {
+                          setElegido(p);
+                          setCantidad('');
+                        }}
                       >
                         <td className="principal-col" data-etiqueta="Descripción">{p.nombre}</td>
                         <td data-etiqueta="Unidad">{p.unidad}</td>
@@ -220,7 +225,8 @@ export function PasoProductos({
                     ))}
                   </tbody>
                 </table>
-              </div>
+                </div>
+              </>
             )}
 
             <Paginacion
@@ -233,51 +239,6 @@ export function PasoProductos({
           </Tarjeta>
         )}
 
-        {elegido && (
-          <Tarjeta titulo="Cantidad a reservar">
-            <dl className="datos">
-              <dt>Producto</dt>
-              <dd>{elegido.nombre}</dd>
-              <dt>Lote</dt>
-              <dd>
-                {elegido.lote} · vence {elegido.fechaVencimiento}
-              </dd>
-              <dt>Precio</dt>
-              <dd>Bs {bolivianos(elegido.precio)}</dd>
-              <dt>Saldo</dt>
-              <dd>
-                {elegido.saldo} {elegido.unidad}
-              </dd>
-            </dl>
-
-            <div style={{ marginTop: 16 }}>
-              <Campo
-                etiqueta="Cantidad"
-                error={cantidad && !validacion.ok ? validacion.mensaje : undefined}
-                ayuda={`Máximo ${elegido.saldo} ${elegido.unidad}`}
-              >
-                <input
-                  type="number"
-                  min={1}
-                  max={Number(elegido.saldo) || undefined}
-                  value={cantidad}
-                  placeholder="0"
-                  onChange={(e) => setCantidad(e.target.value)}
-                />
-              </Campo>
-            </div>
-
-            <Boton
-              className="bloque"
-              cargando={guardando}
-              disabled={!validacion.ok}
-              icono={<IconoMas />}
-              onClick={agregar}
-            >
-              {nroPedido ? 'Adicionar al pedido' : 'Crear pedido con este producto'}
-            </Boton>
-          </Tarjeta>
-        )}
       </div>
 
       {nroPedido && (
@@ -287,7 +248,7 @@ export function PasoProductos({
               <Vacio mensaje="El pedido no tiene líneas." />
             ) : (
               <div className="tabla-scroll tarjetas-movil">
-                <table>
+                <table className="tabla-tarjetas">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -300,14 +261,18 @@ export function PasoProductos({
                   <tbody>
                     {detalle.map((l) => (
                       <tr key={`${l.item}-${l.codigoItem}`}>
-                        <td>{l.item}</td>
+                        <td data-etiqueta="Ítem">{l.item}</td>
                         <td className="principal-col">
                           {l.descripcion}
                           <br />
                           <span className="ayuda">Lote {l.lote}</span>
                         </td>
-                        <td className="num">{l.cantidad}</td>
-                        <td className="num">{bolivianos(l.netoBs)}</td>
+                        <td className="num" data-etiqueta="Cantidad">
+                          {l.cantidad}
+                        </td>
+                        <td className="num" data-etiqueta="Neto Bs">
+                          {bolivianos(l.netoBs)}
+                        </td>
                         <td>
                           <Boton
                             variante="icono"
@@ -336,6 +301,65 @@ export function PasoProductos({
             </Boton>
           </Tarjeta>
         </aside>
+      )}
+
+      {elegido && (
+        <Modal
+          titulo={elegido.nombre}
+          subtitulo={`Lote ${elegido.lote} · vence ${elegido.fechaVencimiento}`}
+          ancho="detalle"
+          alCerrar={() => setElegido(null)}
+          pie={
+            <>
+              <Boton variante="secundario" onClick={() => setElegido(null)}>
+                Cancelar
+              </Boton>
+              <Boton
+                cargando={guardando}
+                disabled={!validacion.ok}
+                icono={<IconoMas />}
+                onClick={agregar}
+              >
+                {nroPedido ? 'Adicionar' : 'Crear pedido'}
+              </Boton>
+            </>
+          }
+        >
+          <dl className="datos">
+            <dt>Precio</dt>
+            <dd>Bs {bolivianos(elegido.precio)}</dd>
+            <dt>Saldo</dt>
+            <dd>
+              {elegido.saldo} {elegido.unidad}
+            </dd>
+            <dt>Código</dt>
+            <dd>{elegido.producto}</dd>
+          </dl>
+
+          <div style={{ marginTop: 14 }}>
+            <Campo
+              etiqueta="Cantidad a reservar"
+              error={cantidad && !validacion.ok ? validacion.mensaje : undefined}
+              ayuda={`Máximo ${elegido.saldo} ${elegido.unidad}`}
+            >
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={Number(elegido.saldo) || undefined}
+                value={cantidad}
+                placeholder="0"
+                onChange={(e) => setCantidad(e.target.value)}
+              />
+            </Campo>
+          </div>
+
+          {cantidad && validacion.ok && (
+            <p className="subtotal-modal">
+              Subtotal aproximado: <b>Bs {bolivianos(elegido.precio * cant)}</b>
+            </p>
+          )}
+        </Modal>
       )}
     </div>
   );

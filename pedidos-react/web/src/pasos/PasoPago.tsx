@@ -66,14 +66,13 @@ export function PasoPago({
   return (
     <>
       <Tarjeta titulo={`Pedido Nº ${nroPedido}`}>
-        <div className="tabla-scroll">
-          <table>
+        <div className="tabla-scroll tarjetas-movil">
+          <table className="tabla-tarjetas">
             <thead>
               <tr>
+                <th>Descripción</th>
                 <th>#</th>
-                <th>Código</th>
                 <th className="num">Cant.</th>
-                <th>Und</th>
                 <th className="num">Precio</th>
                 <th className="num">Neto</th>
                 <th>Lote</th>
@@ -82,13 +81,20 @@ export function PasoPago({
             <tbody>
               {detalle.map((l) => (
                 <tr key={`${l.item}-${l.codigoItem}`}>
-                  <td>{l.item}</td>
-                  <td>{l.codigoItem}</td>
-                  <td className="num">{l.cantidad}</td>
-                  <td>{l.unidad}</td>
-                  <td className="num">{bolivianos(l.precioBs)}</td>
-                  <td className="num">{bolivianos(l.netoBs)}</td>
-                  <td>{l.lote}</td>
+                  <td className="principal-col">
+                    {l.descripcion || l.codigoItem}
+                  </td>
+                  <td data-etiqueta="Ítem">{l.item}</td>
+                  <td className="num" data-etiqueta="Cantidad">
+                    {l.cantidad} {l.unidad}
+                  </td>
+                  <td className="num" data-etiqueta="Precio">
+                    {bolivianos(l.precioBs)}
+                  </td>
+                  <td className="num" data-etiqueta="Neto">
+                    {bolivianos(l.netoBs)}
+                  </td>
+                  <td data-etiqueta="Lote">{l.lote}</td>
                 </tr>
               ))}
             </tbody>
