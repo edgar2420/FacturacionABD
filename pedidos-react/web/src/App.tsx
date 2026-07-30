@@ -27,7 +27,13 @@ const PASOS = ['Cliente', 'Vendedor', 'Productos', 'Pago'];
 export default function App() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [cargandoSesion, setCargandoSesion] = useState(true);
-  const [tema, setTema] = useState<'claro' | 'oscuro' | null>(null);
+  /**
+   * El tema arranca SIEMPRE en claro; no se sigue la preferencia del sistema.
+   * Si el usuario eligio oscuro antes, se respeta esa eleccion.
+   */
+  const [tema, setTema] = useState<'claro' | 'oscuro'>(
+    () => (localStorage.getItem('tema') === 'oscuro' ? 'oscuro' : 'claro')
+  );
 
   // --- Estado del pedido en curso ---
   const [paso, setPaso] = useState(0);
@@ -65,9 +71,9 @@ export default function App() {
       .finally(() => setCargandoSesion(false));
   }, []);
 
-  // Tema: por defecto el del sistema; el boton lo fuerza.
   useEffect(() => {
-    if (tema) document.documentElement.dataset.tema = tema;
+    document.documentElement.dataset.tema = tema;
+    localStorage.setItem('tema', tema);
   }, [tema]);
 
   function reiniciar() {
