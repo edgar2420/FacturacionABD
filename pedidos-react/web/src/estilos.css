@@ -1,0 +1,577 @@
+/* Sistema visual del modulo de Pedidos.
+   Un solo archivo, sin dependencias: variables + componentes.
+   Soporta claro y oscuro; el tema se decide por el sistema y se puede forzar
+   con data-tema="claro" | "oscuro" en <html>. */
+
+:root {
+  --azul: #0f4c5c;
+  --azul-claro: #2a7f95;
+  --acento: #f0a202;
+  --exito: #2e7d4f;
+  --error: #c0392b;
+  --atencion: #b7791f;
+
+  --fondo: #f4f6f8;
+  --superficie: #ffffff;
+  --superficie-2: #eef1f5;
+  --borde: #d8dee6;
+  --texto: #1b2430;
+  --texto-suave: #5c6b7f;
+
+  --radio: 12px;
+  --radio-sm: 8px;
+  --sombra: 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 12px rgba(16, 24, 40, 0.06);
+  --transicion: 140ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #0e1418;
+    --superficie: #161e24;
+    --superficie-2: #1e282f;
+    --borde: #2c3a44;
+    --texto: #e6edf3;
+    --texto-suave: #9bacbb;
+    --azul-claro: #4aa8c0;
+    --sombra: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
+  }
+}
+
+:root[data-tema='oscuro'] {
+  --fondo: #0e1418;
+  --superficie: #161e24;
+  --superficie-2: #1e282f;
+  --borde: #2c3a44;
+  --texto: #e6edf3;
+  --texto-suave: #9bacbb;
+  --azul-claro: #4aa8c0;
+}
+
+:root[data-tema='claro'] {
+  --fondo: #f4f6f8;
+  --superficie: #ffffff;
+  --superficie-2: #eef1f5;
+  --borde: #d8dee6;
+  --texto: #1b2430;
+  --texto-suave: #5c6b7f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Estructura ---------------------------------------------------------- */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--azul);
+  color: #fff;
+  box-shadow: var(--sombra);
+}
+
+.barra h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.barra .crece {
+  flex: 1;
+}
+
+.barra .usuario {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.contenido {
+  flex: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 16px 16px 140px;
+}
+
+/* --- Pasos --------------------------------------------------------------- */
+
+.pasos {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.paso {
+  flex: 1 0 auto;
+  min-width: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: default;
+}
+
+.paso .linea {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--borde);
+  transition: background var(--transicion);
+}
+
+.paso.activo {
+  color: var(--texto);
+  font-weight: 600;
+}
+
+.paso.activo .linea {
+  background: var(--azul-claro);
+}
+
+.paso.hecho .linea {
+  background: var(--exito);
+}
+
+.paso.hecho {
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+/* --- Tarjetas ------------------------------------------------------------ */
+
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.tarjeta > header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--borde);
+  background: var(--superficie-2);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.tarjeta > .cuerpo {
+  padding: 16px;
+}
+
+/* --- Formularios --------------------------------------------------------- */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.campo > label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-suave);
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='password'],
+input[type='date'],
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  background: var(--superficie);
+  color: var(--texto);
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: none;
+  border-color: var(--azul-claro);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--azul-claro) 25%, transparent);
+}
+
+.fila {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fila > * {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.ayuda {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.error-campo {
+  font-size: 12px;
+  color: var(--error);
+}
+
+/* --- Botones ------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radio-sm);
+  background: var(--azul);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter var(--transicion), transform var(--transicion);
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn.secundario {
+  background: transparent;
+  border-color: var(--borde);
+  color: var(--texto);
+}
+
+.btn.peligro {
+  background: var(--error);
+}
+
+.btn.exito {
+  background: var(--exito);
+}
+
+.btn.icono {
+  padding: 6px 10px;
+  background: transparent;
+  border-color: var(--borde);
+  color: var(--error);
+}
+
+.btn.bloque {
+  width: 100%;
+}
+
+/* --- Tablas -------------------------------------------------------------- */
+
+.tabla-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--texto-suave);
+  font-weight: 600;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--borde);
+  white-space: nowrap;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid var(--borde);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Filas seleccionables (catalogo de clientes, vendedores, productos) */
+.seleccionable tbody tr {
+  cursor: pointer;
+  transition: background var(--transicion);
+}
+
+.seleccionable tbody tr:hover {
+  background: var(--superficie-2);
+}
+
+.seleccionable tbody tr[aria-selected='true'] {
+  background: color-mix(in srgb, var(--azul-claro) 16%, transparent);
+  box-shadow: inset 3px 0 0 var(--azul-claro);
+}
+
+.vacio {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+/* --- Resumen del cliente ------------------------------------------------- */
+
+.datos {
+  display: grid;
+  grid-template-columns: minmax(90px, auto) 1fr;
+  gap: 6px 16px;
+  font-size: 14px;
+}
+
+.datos dt {
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* --- Barra de total (fija abajo) ----------------------------------------- */
+
+.total-fijo {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+
+.total-fijo .interior {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.total-fijo .cifra {
+  flex: 1;
+  min-width: 140px;
+}
+
+.total-fijo .cifra small {
+  display: block;
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.total-fijo .cifra strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Avisos -------------------------------------------------------------- */
+
+.avisos {
+  position: fixed;
+  top: 62px;
+  right: 12px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(380px, calc(100vw - 24px));
+}
+
+.aviso {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radio-sm);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--texto-suave);
+  box-shadow: var(--sombra);
+  animation: entrar 180ms ease;
+}
+
+.aviso.exito {
+  border-left-color: var(--exito);
+}
+.aviso.error {
+  border-left-color: var(--error);
+}
+.aviso.atencion {
+  border-left-color: var(--atencion);
+}
+.aviso.info {
+  border-left-color: var(--azul-claro);
+}
+
+.aviso .texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.aviso strong {
+  display: block;
+  font-size: 14px;
+}
+
+.aviso span {
+  font-size: 13px;
+  color: var(--texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.aviso button {
+  border: none;
+  background: none;
+  color: var(--texto-suave);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+/* --- Etiquetas ----------------------------------------------------------- */
+
+.etiqueta {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+}
+
+.etiqueta.exito {
+  background: color-mix(in srgb, var(--exito) 18%, transparent);
+  color: var(--exito);
+}
+
+/* --- Login --------------------------------------------------------------- */
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.login .tarjeta {
+  width: 100%;
+  max-width: 380px;
+  margin: 0;
+}
+
+.login .marca {
+  text-align: center;
+  padding: 24px 16px 8px;
+}
+
+.login .marca strong {
+  display: block;
+  font-size: 20px;
+  color: var(--azul-claro);
+}
+
+.login .marca span {
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+/* --- Cargando ------------------------------------------------------------ */
+
+.cargando {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 700ms linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

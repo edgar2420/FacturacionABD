@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/login.tsx","./src/api.ts","./src/main.tsx","./src/reglas.ts","./src/tipos.ts","./src/componentes/ui.tsx","./src/pasos/pasocliente.tsx","./src/pasos/pasopago.tsx","./src/pasos/pasoproductos.tsx","./src/pasos/pasovendedor.tsx"],"version":"5.9.3"}
