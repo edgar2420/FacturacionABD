@@ -87,8 +87,22 @@ cp .env.example .env      # y completar ORACLE_PASSWORD
 npm run dev               # http://localhost:3001
 ```
 
-`oracledb` funciona en **modo Thin** — no hace falta instalar Oracle Instant Client.
-Si tu base no lo aceptara, define `ORACLE_CLIENT_DIR` en el `.env`.
+#### El modo Thick es obligatorio con esta base
+
+El usuario `ABD` de Oracle tiene la contrasena almacenada con el **verificador
+antiguo (10G)**. El modo Thin de `oracledb` no lo soporta y falla con:
+
+```
+NJS-116: password verifier type 0x939 is not supported by node-oracledb in Thin mode
+```
+
+Por eso hay que apuntar `ORACLE_CLIENT_DIR` al Oracle Instant Client, lo que activa
+el modo Thick (usa OCI, igual que `ojdbc6` en el WAR original, que si acepta ese
+formato). Verificado funcionando con Instant Client 23.26 en Windows.
+
+La alternativa seria que el DBA regenere el verificador con
+`ALTER USER abd IDENTIFIED BY ...` teniendo `SQLNET.ALLOWED_LOGON_VERSION_SERVER=12`,
+pero eso afecta tambien al WAR en produccion: no conviene tocarlo solo por esto.
 
 ### 2. Frontend
 
