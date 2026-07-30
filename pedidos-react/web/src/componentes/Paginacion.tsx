@@ -40,8 +40,9 @@ export function Paginacion({
         variante="secundario"
         disabled={!puedeAnterior || cargando}
         onClick={() => alCambiar(pagina - 1)}
-        icono={<IconoFlechaAtras tam={16} />}
+        icono={<IconoFlechaAtras tam={17} />}
         aria-label="Página anterior"
+        title="Página anterior"
       >
         Anterior
       </Boton>
@@ -66,9 +67,10 @@ export function Paginacion({
         disabled={!puedeSiguiente || cargando}
         onClick={() => alCambiar(pagina + 1)}
         aria-label="Página siguiente"
+        title="Página siguiente"
+        icono={<IconoFlechaAtras tam={17} style={{ transform: 'rotate(180deg)' }} />}
       >
         Siguiente
-        <IconoFlechaAtras tam={16} style={{ transform: 'rotate(180deg)' }} />
       </Boton>
     </nav>
   );

@@ -1110,3 +1110,249 @@ td {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ==========================================================================
+   Fecha con calendario nativo
+   ========================================================================== */
+
+.campo-fecha {
+  /* El icono del calendario del navegador se hace visible y clicable. */
+  position: relative;
+}
+
+.campo-fecha::-webkit-calendar-picker-indicator {
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+  margin-right: -2px;
+  border-radius: var(--radio-xs);
+  cursor: pointer;
+  opacity: 0.85;
+  filter: invert(38%) sepia(72%) saturate(1900%) hue-rotate(178deg) brightness(92%);
+}
+
+.campo-fecha::-webkit-calendar-picker-indicator:hover {
+  background: var(--marca-suave);
+  opacity: 1;
+}
+
+:root[data-tema='oscuro'] .campo-fecha::-webkit-calendar-picker-indicator {
+  filter: invert(72%) sepia(38%) saturate(900%) hue-rotate(166deg) brightness(103%);
+}
+
+.acciones-fecha {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.acciones-fecha .btn {
+  flex: 1;
+}
+
+/* ==========================================================================
+   Toasts (avisos de exito, no interrumpen)
+   ========================================================================== */
+
+.toasts {
+  position: fixed;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+
+  /* En celular abajo, cerca del pulgar y sin tapar el contenido. */
+  left: 12px;
+  right: 12px;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 14px;
+  border-radius: var(--radio-sm);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  box-shadow: var(--sombra-2);
+  animation: entrar-toast 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.toast .marca-toast {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 9px;
+}
+
+.toast.exito .marca-toast {
+  background: var(--exito-suave);
+  color: var(--exito);
+}
+
+.toast.info .marca-toast {
+  background: var(--marca-suave);
+  color: var(--cel-700);
+}
+
+.toast .texto-toast {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast .texto-toast strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.toast .texto-toast span {
+  display: block;
+  font-size: 13px;
+  color: var(--texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.toast > button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: var(--radio-xs);
+  background: none;
+  color: var(--texto-tenue);
+  cursor: pointer;
+}
+
+.toast > button:hover {
+  background: var(--superficie-3);
+  color: var(--texto);
+}
+
+@keyframes entrar-toast {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 700px) {
+  .toasts {
+    left: auto;
+    right: 20px;
+    bottom: auto;
+    top: 78px;
+    width: 370px;
+  }
+
+  @keyframes entrar-toast {
+    from {
+      transform: translateX(20px);
+      opacity: 0;
+    }
+  }
+}
+
+/* ==========================================================================
+   Tablas que se convierten en tarjetas en celular
+   --------------------------------------------------------------------------
+   Debajo de 700px la tabla deja de desplazarse de lado: cada fila pasa a ser
+   una tarjeta con sus datos etiquetados. Nada queda cortado y se puede tocar
+   con el dedo.
+   ========================================================================== */
+
+@media (max-width: 699px) {
+  .tabla-scroll:has(.tabla-tarjetas) {
+    overflow-x: visible;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tabla-tarjetas,
+  .tabla-tarjetas tbody,
+  .tabla-tarjetas tr,
+  .tabla-tarjetas td {
+    display: block;
+    width: auto;
+  }
+
+  .tabla-tarjetas thead {
+    /* Los encabezados no se pierden: pasan a ser la etiqueta de cada dato. */
+    display: none;
+  }
+
+  .tabla-tarjetas tr {
+    margin-bottom: 10px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-sm);
+    background: var(--superficie-2);
+    transition: border-color var(--transicion), background var(--transicion);
+  }
+
+  .tabla-tarjetas tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .tabla-tarjetas td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 3px 0;
+    border: none;
+    text-align: right;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .tabla-tarjetas td::before {
+    content: attr(data-etiqueta);
+    flex: none;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--texto-tenue);
+    text-align: left;
+  }
+
+  /* La descripcion va sola arriba, a ancho completo y sin etiqueta. */
+  .tabla-tarjetas td.principal-col {
+    display: block;
+    text-align: left;
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 14.5px;
+    font-weight: 700;
+  }
+
+  .tabla-tarjetas td.principal-col::before {
+    display: none;
+  }
+
+  /* La celda sin datos (la del boton eliminar) no ocupa lugar. */
+  .tabla-tarjetas td:empty {
+    display: none;
+  }
+
+  .tabla-tarjetas tr[aria-selected='true'] {
+    border-color: var(--cel-500);
+    background: var(--marca-suave);
+    box-shadow: none;
+  }
+
+  .seleccionable.tabla-tarjetas tbody tr:hover {
+    background: var(--superficie-3);
+  }
+}
