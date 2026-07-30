@@ -25,3 +25,13 @@
 #Otros Archivos generados
 /nbproject/
 
+#QA - Cypress
+/qa/node_modules/
+/qa/package-lock.json
+/qa/cypress/screenshots/
+/qa/cypress/videos/
+/qa/cypress/downloads/
+/qa/reportes/
+#Credenciales de las pruebas: NO versionar
+/qa/cypress.env.json
+
