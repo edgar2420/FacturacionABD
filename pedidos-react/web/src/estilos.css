@@ -4,15 +4,22 @@
    Claro y oscuro por preferencia del sistema, forzable con data-tema. */
 
 :root {
-  /* Marca: indigo profundo con acento cian. */
-  --marca-900: #1e1b4b;
-  --marca-700: #4338ca;
-  --marca-600: #4f46e5;
-  --marca-500: #6366f1;
-  --acento: #06b6d4;
+  /* Paleta tomada de las vistas JSF actuales (web/views/*.xhtml) para que
+     ambos sistemas se vean igual:
+       #3572E2 barra y botones principales
+       #085061 cabeceras y acciones de proceso
+       #045491 azul de apoyo
+       #aec7f5 botones secundarios
+       #73b846 confirmar / nuevo
+       #ed4037 cancelar */
+  --marca-900: #085061;
+  --marca-700: #045491;
+  --marca-600: #3572E2;
+  --marca-500: #5b8fe9;
+  --acento: #aec7f5;
 
-  --exito: #059669;
-  --error: #dc2626;
+  --exito: #73b846;
+  --error: #ed4037;
   --atencion: #d97706;
 
   /* Neutros */
@@ -42,14 +49,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --marca-700: #818cf8;
-    --marca-600: #6366f1;
-    --marca-500: #a5b4fc;
-    --acento: #22d3ee;
+    --marca-900: #063c49;
+    --marca-700: #4c8ef0;
+    --marca-600: #5b8fe9;
+    --marca-500: #8fb4f2;
+    --acento: #aec7f5;
 
-    --exito: #34d399;
-    --error: #f87171;
-    --atencion: #fbbf24;
+    --exito: #8ccc61;
+    --error: #f4695e;
+    --atencion: #f0ad4e;
 
     --fondo: #0b0d17;
     --superficie: #141726;
@@ -68,13 +76,13 @@
 }
 
 :root[data-tema='oscuro'] {
-  --marca-700: #818cf8;
-  --marca-600: #6366f1;
-  --marca-500: #a5b4fc;
-  --acento: #22d3ee;
-  --exito: #34d399;
-  --error: #f87171;
-  --atencion: #fbbf24;
+  --marca-700: #4c8ef0;
+  --marca-600: #5b8fe9;
+  --marca-500: #8fb4f2;
+  --acento: #aec7f5;
+  --exito: #8ccc61;
+  --error: #f4695e;
+  --atencion: #f0ad4e;
   --fondo: #0b0d17;
   --superficie: #141726;
   --superficie-2: #1c2032;
@@ -90,12 +98,13 @@
 }
 
 :root[data-tema='claro'] {
-  --marca-700: #4338ca;
-  --marca-600: #4f46e5;
-  --marca-500: #6366f1;
-  --acento: #06b6d4;
-  --exito: #059669;
-  --error: #dc2626;
+  --marca-900: #085061;
+  --marca-700: #045491;
+  --marca-600: #3572E2;
+  --marca-500: #5b8fe9;
+  --acento: #aec7f5;
+  --exito: #73b846;
+  --error: #ed4037;
   --atencion: #d97706;
   --fondo: #f6f7fb;
   --superficie: #ffffff;
@@ -1089,5 +1098,51 @@ tbody tr:last-child td {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================================================== */
+/* Paginacion                                                                 */
+/* ========================================================================== */
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borde);
+}
+
+.paginacion .btn {
+  padding: 9px 13px;
+  font-size: 13.5px;
+}
+
+.paginacion .indicador {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.paginacion .indicador b {
+  color: var(--texto);
+  font-weight: 650;
+}
+
+/* En celular los botones se reducen a la flecha para que quepa el indicador */
+@media (max-width: 420px) {
+  .paginacion .btn {
+    padding: 9px 11px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .paginacion .btn svg {
+    font-size: 14px;
   }
 }

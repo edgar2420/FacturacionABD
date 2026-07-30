@@ -124,9 +124,9 @@ de sesión viaja sin configuración extra de CORS.
 | `POST` | `/api/login` | Valida con `F_VALIDA_USUARIO` y abre sesión |
 | `GET` | `/api/sesion` | Usuario actual (para recuperar la sesión al recargar) |
 | `POST` | `/api/logout` | Cierra la sesión |
-| `GET` | `/api/clientes?valor=&tipo=N\|R\|C\|O` | Busca clientes |
-| `GET` | `/api/vendedores?valor=&tipo=N\|O` | Busca vendedores |
-| `GET` | `/api/productos?valor=&tipo=&cliente=&fechaEntrega=` | Productos con precio y saldo |
+| `GET` | `/api/clientes?valor=&tipo=N\|R\|C\|O&pagina=` | Busca clientes (paginado) |
+| `GET` | `/api/vendedores?valor=&tipo=N\|O&pagina=` | Busca vendedores (paginado) |
+| `GET` | `/api/productos?valor=&tipo=&cliente=&fechaEntrega=&pagina=` | Productos con precio y saldo (paginado) |
 | `POST` | `/api/pedidos` | Crea el pedido con su primera línea |
 | `POST` | `/api/pedidos/:nro/items` | Adiciona una línea |
 | `DELETE` | `/api/pedidos/:nro/items/:item` | Elimina una línea |
@@ -135,6 +135,28 @@ de sesión viaja sin configuración extra de CORS.
 | `POST` | `/api/pedidos/:nro/pagar` | Registra la forma de pago |
 
 Todas menos `/api/login` y `/api/salud` exigen sesión iniciada.
+
+### Paginación
+
+Las tres búsquedas devuelven páginas de **15 filas** (`porPagina` lo puede subir
+hasta 50). Sin esto, buscar clientes por la letra "A" devolvía **7.108 filas en
+una sola respuesta**.
+
+Hay dos formas de respuesta según lo que el servidor pueda saber:
+
+```jsonc
+// Clientes y vendedores: son consultas SQL, se puede contar el total.
+{ "items": [...], "total": 7108, "pagina": 1, "porPagina": 15 }
+
+// Productos: vienen de un REF CURSOR del paquete PL/SQL, no se puede contar
+// sin recorrerlo entero. Solo se informa si hay pagina siguiente.
+{ "items": [...], "pagina": 1, "porPagina": 15, "hayMas": true }
+```
+
+Clientes y vendedores usan `OFFSET ... FETCH NEXT` de Oracle 12c. Productos
+recorre el cursor descartando las filas previas y corta al llegar al límite,
+leyendo una de más para saber si hay siguiente: así no se traen miles de filas
+a memoria para mostrar quince.
 
 ---
 

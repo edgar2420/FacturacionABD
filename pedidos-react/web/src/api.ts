@@ -33,6 +33,22 @@ async function pedir<T>(url: string, opciones: RequestInit = {}): Promise<T> {
 
 const qs = (params: Record<string, string>) => new URLSearchParams(params).toString();
 
+/** Respuesta paginada con total conocido (consultas SQL). */
+export interface Pagina<T> {
+  items: T[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+}
+
+/** Respuesta paginada sin total (viene de un REF CURSOR, no se puede contar). */
+export interface PaginaCursor<T> {
+  items: T[];
+  pagina: number;
+  porPagina: number;
+  hayMas: boolean;
+}
+
 // --- Sesion -----------------------------------------------------------------
 
 export const iniciarSesion = (usuario: string, password: string) =>
@@ -44,18 +60,22 @@ export const cerrarSesion = () => pedir<{ ok: boolean }>('/api/logout', { method
 
 // --- Catalogos --------------------------------------------------------------
 
-export const buscarClientes = (valor: string, tipo: string) =>
-  pedir<Persona[]>(`/api/clientes?${qs({ valor, tipo })}`);
+export const buscarClientes = (valor: string, tipo: string, pagina = 1) =>
+  pedir<Pagina<Persona>>(`/api/clientes?${qs({ valor, tipo, pagina: String(pagina) })}`);
 
-export const buscarVendedores = (valor: string, tipo: string) =>
-  pedir<Persona[]>(`/api/vendedores?${qs({ valor, tipo })}`);
+export const buscarVendedores = (valor: string, tipo: string, pagina = 1) =>
+  pedir<Pagina<Persona>>(`/api/vendedores?${qs({ valor, tipo, pagina: String(pagina) })}`);
 
 export const buscarProductos = (
   valor: string,
   tipo: string,
   cliente: string,
-  fechaEntrega: string
-) => pedir<Producto[]>(`/api/productos?${qs({ valor, tipo, cliente, fechaEntrega })}`);
+  fechaEntrega: string,
+  pagina = 1
+) =>
+  pedir<PaginaCursor<Producto>>(
+    `/api/productos?${qs({ valor, tipo, cliente, fechaEntrega, pagina: String(pagina) })}`
+  );
 
 // --- Pedidos ----------------------------------------------------------------
 

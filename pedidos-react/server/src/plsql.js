@@ -39,24 +39,34 @@ async function filasDelCursor(cursor) {
  * A diferencia del original, aqui se usan bind variables en vez de concatenar
  * el texto del usuario dentro del SQL.
  */
-async function buscarClientes(valor, tipo) {
+async function buscarClientes(valor, tipo, { pagina = 1, porPagina = 15 } = {}) {
   const columnas = { N: 'UPPER(NOMBRE)', R: 'UPPER(RAZON_SOCIAL)', C: 'RUC', O: 'UPPER(CODIGO)' };
   const columna = columnas[tipo];
   if (!columna) throw new Error(`Tipo de busqueda de cliente no valido: ${tipo}`);
 
   const patron = tipo === 'C' ? `%${valor}%` : `%${String(valor).toUpperCase()}%`;
+  const desde = (pagina - 1) * porPagina;
 
   return conectar(async (cn) => {
+    const filtro = `FROM ABD.PERSONAS WHERE ${columna} LIKE :patron AND CODIGO_CLIENTE = 'SI'`;
+
+    // Primero el total, para poder mostrar "pagina 2 de 7".
+    const t = await cn.execute(`SELECT COUNT(*) TOTAL ${filtro}`, { patron }, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+    const total = Number(t.rows[0].TOTAL);
+
+    // Oracle 12c en adelante soporta OFFSET / FETCH NEXT.
     const r = await cn.execute(
       `SELECT CODIGO, NOMBRE, RAZON_SOCIAL, RUC, CIUDAD, EMAIL, DIRECCION_DOM, TELEFONO_DOM
-         FROM ABD.PERSONAS
-        WHERE ${columna} LIKE :patron
-          AND CODIGO_CLIENTE = 'SI'
-        ORDER BY NOMBRE`,
-      { patron },
+         ${filtro}
+        ORDER BY NOMBRE
+        OFFSET :desde ROWS FETCH NEXT :porPagina ROWS ONLY`,
+      { patron, desde, porPagina },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
-    return r.rows.map(mapearPersona);
+
+    return { items: r.rows.map(mapearPersona), total, pagina, porPagina };
   });
 }
 
@@ -78,24 +88,34 @@ async function obtenerCliente(codigo) {
  * CODIGO_EMPLEADO='SI' y CODIGO_VENDEDOR no nulo.
  * Tipos: N=por nombre (LIKE), O=por codigo de vendedor (igualdad).
  */
-async function buscarVendedores(valor, tipo) {
+async function buscarVendedores(valor, tipo, { pagina = 1, porPagina = 15 } = {}) {
   const texto = String(valor || '').trim().toUpperCase();
+  const desde = (pagina - 1) * porPagina;
 
   return conectar(async (cn) => {
-    const base = `SELECT CODIGO, NOMBRE, RAZON_SOCIAL, RUC, CIUDAD, EMAIL, DIRECCION_DOM, TELEFONO_DOM,
-                         CODIGO_VENDEDOR
-                    FROM ABD.PERSONAS
-                   WHERE CODIGO_EMPLEADO = 'SI' AND CODIGO_VENDEDOR IS NOT NULL`;
-
-    const sql =
-      tipo === 'O'
-        ? `${base} AND CODIGO_VENDEDOR = :valor ORDER BY TRIM(NOMBRE)`
-        : `${base} AND TRIM(UPPER(NOMBRE)) LIKE :valor ORDER BY TRIM(NOMBRE)`;
-
+    const base = `FROM ABD.PERSONAS
+                  WHERE CODIGO_EMPLEADO = 'SI' AND CODIGO_VENDEDOR IS NOT NULL`;
+    const condicion =
+      tipo === 'O' ? `${base} AND CODIGO_VENDEDOR = :valor` : `${base} AND TRIM(UPPER(NOMBRE)) LIKE :valor`;
     const bind = tipo === 'O' ? { valor: texto } : { valor: `%${texto}%` };
 
-    const r = await cn.execute(sql, bind, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-    return r.rows.map((f) => ({ ...mapearPersona(f), codigoVendedor: f.CODIGO_VENDEDOR }));
+    const t = await cn.execute(`SELECT COUNT(*) TOTAL ${condicion}`, bind, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+    const total = Number(t.rows[0].TOTAL);
+
+    const r = await cn.execute(
+      `SELECT CODIGO, NOMBRE, RAZON_SOCIAL, RUC, CIUDAD, EMAIL, DIRECCION_DOM, TELEFONO_DOM,
+              CODIGO_VENDEDOR
+         ${condicion}
+        ORDER BY TRIM(NOMBRE)
+        OFFSET :desde ROWS FETCH NEXT :porPagina ROWS ONLY`,
+      { ...bind, desde, porPagina },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    const items = r.rows.map((f) => ({ ...mapearPersona(f), codigoVendedor: f.CODIGO_VENDEDOR }));
+    return { items, total, pagina, porPagina };
   });
 }
 
@@ -124,8 +144,9 @@ function mapearPersona(f) {
  * Columnas del cursor (posicionales, ver DetalleProductos):
  * 1 almacen, 2 producto, 3 nombre, 4 unidad, 5 lote, 6 fecha(venc), 7 precio, 8 saldo
  */
-async function obtenerProductos({ busqueda, tipo, almacen, cliente, fechaEntrega }) {
+async function obtenerProductos({ busqueda, tipo, almacen, cliente, fechaEntrega, pagina = 1, porPagina = 15 }) {
   const texto = String(busqueda || '').toUpperCase();
+  const desde = (pagina - 1) * porPagina;
 
   return conectar(async (cn) => {
     const r = await cn.execute(
@@ -140,17 +161,42 @@ async function obtenerProductos({ busqueda, tipo, almacen, cliente, fechaEntrega
       }
     );
 
-    const filas = await filasDelCursor(r.outBinds.ret);
-    return filas.map((f) => ({
-      almacen: f[0],
-      producto: f[1],
-      nombre: f[2],
-      unidad: f[3],
-      lote: f[4],
-      fechaVencimiento: f[5],
-      precio: Number(f[6] ?? 0),
-      saldo: f[7]
-    }));
+    /*
+     * El paquete devuelve un REF CURSOR, no una consulta que podamos paginar
+     * en SQL. Se recorre el cursor descartando las filas anteriores a la
+     * pagina pedida y se corta al llegar al limite, leyendo una fila de mas
+     * para saber si hay pagina siguiente. Asi no se traen a memoria miles de
+     * filas solo para mostrar quince.
+     */
+    const cursor = r.outBinds.ret;
+    const items = [];
+    let leidas = 0;
+    let hayMas = false;
+    let fila;
+
+    while ((fila = await cursor.getRow())) {
+      leidas++;
+      if (leidas <= desde) continue;
+
+      if (items.length === porPagina) {
+        hayMas = true;
+        break;
+      }
+
+      items.push({
+        almacen: fila[0],
+        producto: fila[1],
+        nombre: fila[2],
+        unidad: fila[3],
+        lote: fila[4],
+        fechaVencimiento: fila[5],
+        precio: Number(fila[6] ?? 0),
+        saldo: fila[7]
+      });
+    }
+
+    await cursor.close();
+    return { items, pagina, porPagina, hayMas };
   });
 }
 

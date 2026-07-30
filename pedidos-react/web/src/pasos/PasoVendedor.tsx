@@ -10,6 +10,8 @@ import * as api from '../api';
 import { formatearFecha, validarFechaEntrega } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { IconoBuscar, IconoCalendario, IconoCheck } from '../componentes/iconos';
+import { Paginacion } from '../componentes/Paginacion';
+import type { Pagina } from '../api';
 import type { Persona, TipoBusquedaSimple } from '../tipos';
 
 export function PasoVendedor({
@@ -27,25 +29,25 @@ export function PasoVendedor({
 }) {
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState<TipoBusquedaSimple>('N');
-  const [resultados, setResultados] = useState<Persona[] | null>(null);
+  const [resultados, setResultados] = useState<Pagina<Persona> | null>(null);
   const [seleccionado, setSeleccionado] = useState<Persona | null>(null);
   const [buscando, setBuscando] = useState(false);
 
   const validacionFecha = fechaEntrega ? validarFechaEntrega(fechaEntrega) : { ok: false };
 
-  async function buscar(e: React.FormEvent) {
-    e.preventDefault();
+  async function traer(pagina: number, esNuevaBusqueda: boolean) {
     if (!valor.trim()) {
       alAvisar('atencion', 'Falta el dato de búsqueda', 'Escriba un nombre o código de vendedor.');
       return;
     }
 
     setBuscando(true);
-    setSeleccionado(null);
+    if (esNuevaBusqueda) setSeleccionado(null);
+
     try {
-      const lista = await api.buscarVendedores(valor.trim(), tipo);
-      setResultados(lista);
-      if (lista.length === 0) {
+      const r = await api.buscarVendedores(valor.trim(), tipo, pagina);
+      setResultados(r);
+      if (r.total === 0) {
         alAvisar('atencion', 'Vendedor no encontrado', 'Revise los datos de búsqueda e intente de nuevo.');
       }
     } catch (err) {
@@ -53,6 +55,11 @@ export function PasoVendedor({
     } finally {
       setBuscando(false);
     }
+  }
+
+  function buscar(e: React.FormEvent) {
+    e.preventDefault();
+    void traer(1, true);
   }
 
   function continuar() {
@@ -142,8 +149,8 @@ export function PasoVendedor({
       </Tarjeta>
 
       {resultados && (
-        <Tarjeta titulo={`Vendedores (${resultados.length})`}>
-          {resultados.length === 0 ? (
+        <Tarjeta titulo={`Vendedores (${resultados.total})`}>
+          {resultados.total === 0 ? (
             <Vacio mensaje="Sin coincidencias." />
           ) : (
             <>
@@ -157,7 +164,7 @@ export function PasoVendedor({
                     </tr>
                   </thead>
                   <tbody>
-                    {resultados.map((v) => (
+                    {resultados.items.map((v) => (
                       <tr
                         key={v.codigo}
                         aria-selected={seleccionado?.codigo === v.codigo}
@@ -171,6 +178,14 @@ export function PasoVendedor({
                   </tbody>
                 </table>
               </div>
+
+              <Paginacion
+                pagina={resultados.pagina}
+                porPagina={resultados.porPagina}
+                total={resultados.total}
+                cargando={buscando}
+                alCambiar={(p) => void traer(p, false)}
+              />
 
               <Boton
                 className="bloque"

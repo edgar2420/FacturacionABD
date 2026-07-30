@@ -16,7 +16,9 @@ import * as api from '../api';
 import { bolivianos, validarCantidad } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { IconoBasura, IconoBuscar, IconoCheck, IconoMas } from '../componentes/iconos';
+import { Paginacion } from '../componentes/Paginacion';
 import type { Confirmacion } from '../componentes/Modal';
+import type { PaginaCursor } from '../api';
 import type { LineaPedido, Persona, Producto, TipoBusquedaSimple } from '../tipos';
 
 export function PasoProductos({
@@ -48,7 +50,7 @@ export function PasoProductos({
 }) {
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState<TipoBusquedaSimple>('N');
-  const [resultados, setResultados] = useState<Producto[] | null>(null);
+  const [resultados, setResultados] = useState<PaginaCursor<Producto> | null>(null);
   const [elegido, setElegido] = useState<Producto | null>(null);
   const [cantidad, setCantidad] = useState('');
   const [buscando, setBuscando] = useState(false);
@@ -57,8 +59,7 @@ export function PasoProductos({
   const cant = Number(cantidad);
   const validacion = elegido ? validarCantidad(cant, elegido.saldo, elegido.nombre) : { ok: false };
 
-  async function buscar(e: React.FormEvent) {
-    e.preventDefault();
+  async function traer(pagina: number, esNuevaBusqueda: boolean) {
     if (!valor.trim()) {
       alAvisar(
         'atencion',
@@ -69,11 +70,12 @@ export function PasoProductos({
     }
 
     setBuscando(true);
-    setElegido(null);
+    if (esNuevaBusqueda) setElegido(null);
+
     try {
-      const lista = await api.buscarProductos(valor.trim(), tipo, cliente.codigo, fechaEntrega);
-      setResultados(lista);
-      if (lista.length === 0) {
+      const r = await api.buscarProductos(valor.trim(), tipo, cliente.codigo, fechaEntrega, pagina);
+      setResultados(r);
+      if (r.items.length === 0 && pagina === 1) {
         alAvisar(
           'atencion',
           'Producto no encontrado',
@@ -85,6 +87,11 @@ export function PasoProductos({
     } finally {
       setBuscando(false);
     }
+  }
+
+  function buscar(e: React.FormEvent) {
+    e.preventDefault();
+    void traer(1, true);
   }
 
   async function agregar() {
@@ -182,8 +189,8 @@ export function PasoProductos({
         </Tarjeta>
 
         {resultados && (
-          <Tarjeta titulo={`Productos disponibles (${resultados.length})`}>
-            {resultados.length === 0 ? (
+          <Tarjeta titulo="Productos disponibles">
+            {resultados.items.length === 0 ? (
               <Vacio mensaje="Sin coincidencias." />
             ) : (
               <div className="tabla-scroll">
@@ -198,7 +205,7 @@ export function PasoProductos({
                     </tr>
                   </thead>
                   <tbody>
-                    {resultados.map((p) => (
+                    {resultados.items.map((p) => (
                       <tr
                         key={`${p.producto}-${p.lote}`}
                         aria-selected={elegido?.producto === p.producto && elegido?.lote === p.lote}
@@ -215,6 +222,14 @@ export function PasoProductos({
                 </table>
               </div>
             )}
+
+            <Paginacion
+              pagina={resultados.pagina}
+              porPagina={resultados.porPagina}
+              hayMas={resultados.hayMas}
+              cargando={buscando}
+              alCambiar={(p) => void traer(p, false)}
+            />
           </Tarjeta>
         )}
 

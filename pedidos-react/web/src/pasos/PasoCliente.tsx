@@ -8,6 +8,8 @@ import { useState } from 'react';
 import * as api from '../api';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { IconoBuscar, IconoCheck } from '../componentes/iconos';
+import { Paginacion } from '../componentes/Paginacion';
+import type { Pagina } from '../api';
 import type { Persona, TipoBusquedaCliente } from '../tipos';
 
 const FILTROS: { valor: TipoBusquedaCliente; etiqueta: string }[] = [
@@ -26,23 +28,24 @@ export function PasoCliente({
 }) {
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState<TipoBusquedaCliente>('N');
-  const [resultados, setResultados] = useState<Persona[] | null>(null);
+  const [resultados, setResultados] = useState<Pagina<Persona> | null>(null);
   const [seleccionado, setSeleccionado] = useState<Persona | null>(null);
   const [buscando, setBuscando] = useState(false);
 
-  async function buscar(e: React.FormEvent) {
-    e.preventDefault();
+  /** Trae una pagina. Al cambiar de pagina no se limpia la seleccion previa. */
+  async function traer(pagina: number, esNuevaBusqueda: boolean) {
     if (!valor.trim()) {
       alAvisar('atencion', 'Falta el dato de búsqueda', 'Escriba un nombre, NIT o código de cliente.');
       return;
     }
 
     setBuscando(true);
-    setSeleccionado(null);
+    if (esNuevaBusqueda) setSeleccionado(null);
+
     try {
-      const lista = await api.buscarClientes(valor.trim(), tipo);
-      setResultados(lista);
-      if (lista.length === 0) {
+      const r = await api.buscarClientes(valor.trim(), tipo, pagina);
+      setResultados(r);
+      if (r.total === 0) {
         alAvisar('atencion', 'Cliente no encontrado', 'Revise los datos de búsqueda e intente de nuevo.');
       }
     } catch (err) {
@@ -50,6 +53,11 @@ export function PasoCliente({
     } finally {
       setBuscando(false);
     }
+  }
+
+  function buscar(e: React.FormEvent) {
+    e.preventDefault();
+    void traer(1, true);
   }
 
   return (
@@ -84,8 +92,8 @@ export function PasoCliente({
       </Tarjeta>
 
       {resultados && (
-        <Tarjeta titulo={`Resultados (${resultados.length})`}>
-          {resultados.length === 0 ? (
+        <Tarjeta titulo={`Resultados (${resultados.total})`}>
+          {resultados.total === 0 ? (
             <Vacio mensaje="Sin coincidencias. Pruebe con otro filtro." />
           ) : (
             <>
@@ -99,7 +107,7 @@ export function PasoCliente({
                     </tr>
                   </thead>
                   <tbody>
-                    {resultados.map((c) => (
+                    {resultados.items.map((c) => (
                       <tr
                         key={c.codigo}
                         aria-selected={seleccionado?.codigo === c.codigo}
@@ -113,6 +121,14 @@ export function PasoCliente({
                   </tbody>
                 </table>
               </div>
+
+              <Paginacion
+                pagina={resultados.pagina}
+                porPagina={resultados.porPagina}
+                total={resultados.total}
+                cargando={buscando}
+                alCambiar={(p) => void traer(p, false)}
+              />
 
               <Boton
                 className="bloque"

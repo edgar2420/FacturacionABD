@@ -30,6 +30,17 @@ app.use(
 /** Envuelve un handler async para que los errores lleguen al middleware final. */
 const asincrono = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
+/** Tamano de pagina por defecto y tope, para no devolver listados enormes. */
+const POR_PAGINA = 15;
+const POR_PAGINA_MAX = 50;
+
+/** Lee y acota los parametros de paginacion de la query. */
+function paginacion(req) {
+  const pagina = Math.max(1, Number(req.query.pagina) || 1);
+  const porPagina = Math.min(POR_PAGINA_MAX, Math.max(1, Number(req.query.porPagina) || POR_PAGINA));
+  return { pagina, porPagina };
+}
+
 /** Corta la peticion si no hay sesion iniciada. */
 function exigeSesion(req, res, next) {
   if (!req.session.usuario) {
@@ -104,7 +115,7 @@ app.get(
     if (!reglas.TIPOS_BUSQUEDA_CLIENTE.includes(tipo)) {
       return res.status(400).json({ error: `Tipo de busqueda no valido: ${tipo}` });
     }
-    res.json(await plsql.buscarClientes(valor, tipo));
+    res.json(await plsql.buscarClientes(valor, tipo, paginacion(req)));
   })
 );
 
@@ -126,7 +137,7 @@ app.get(
     if (!reglas.TIPOS_BUSQUEDA_VENDEDOR.includes(tipo)) {
       return res.status(400).json({ error: `Tipo de busqueda no valido: ${tipo}` });
     }
-    res.json(await plsql.buscarVendedores(valor, tipo));
+    res.json(await plsql.buscarVendedores(valor, tipo, paginacion(req)));
   })
 );
 
@@ -150,7 +161,8 @@ app.get(
       tipo,
       almacen: req.session.usuario.almacen,
       cliente,
-      fechaEntrega
+      fechaEntrega,
+      ...paginacion(req)
     });
 
     res.json(productos);
