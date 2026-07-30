@@ -13,6 +13,7 @@ import * as api from './api';
 import { Login } from './Login';
 import { BarraPasos, Boton } from './componentes/ui';
 import { ModalAviso, ModalConfirmacion } from './componentes/Modal';
+import { Toasts } from './componentes/Toast';
 import type { Confirmacion } from './componentes/Modal';
 import { IconoCarrito, IconoLuna, IconoSalir, IconoSol } from './componentes/iconos';
 import { PasoCliente } from './pasos/PasoCliente';
@@ -32,7 +33,7 @@ export default function App() {
    * Si el usuario eligio oscuro antes, se respeta esa eleccion.
    */
   const [tema, setTema] = useState<'claro' | 'oscuro'>(
-    () => (localStorage.getItem('tema') === 'oscuro' ? 'oscuro' : 'claro')
+    () => (localStorage.getItem('tema-pedidos') === 'oscuro' ? 'oscuro' : 'claro')
   );
 
   // --- Estado del pedido en curso ---
@@ -50,16 +51,26 @@ export default function App() {
    * seguidos no se pisen: el segundo aparece al cerrar el primero.
    */
   const [colaAvisos, setColaAvisos] = useState<Aviso[]>([]);
+  const [toasts, setToasts] = useState<Aviso[]>([]);
   const [confirmacion, setConfirmacion] = useState<Confirmacion | null>(null);
 
+  /**
+   * Lo que salio bien va en un toast que se va solo y no interrumpe.
+   * Los errores y las advertencias van en modal, porque ahi si hace falta
+   * que la persona lea y confirme.
+   */
   const avisar = useCallback((tono: Aviso['tono'], titulo: string, detalleTexto?: string) => {
-    setColaAvisos((previos) => [
-      ...previos,
-      { id: Date.now() + Math.random(), tono, titulo, detalle: detalleTexto }
-    ]);
+    const aviso = { id: Date.now() + Math.random(), tono, titulo, detalle: detalleTexto };
+
+    if (tono === 'exito' || tono === 'info') {
+      setToasts((previos) => [...previos, aviso]);
+    } else {
+      setColaAvisos((previos) => [...previos, aviso]);
+    }
   }, []);
 
   const cerrarAviso = useCallback(() => setColaAvisos((p) => p.slice(1)), []);
+  const cerrarToast = useCallback((id: number) => setToasts((p) => p.filter((t) => t.id !== id)), []);
   const confirmar = useCallback((c: Confirmacion) => setConfirmacion(c), []);
 
   // Retomar la sesion si la cookie sigue viva.
@@ -73,7 +84,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.dataset.tema = tema;
-    localStorage.setItem('tema', tema);
+    localStorage.setItem('tema-pedidos', tema);
   }, [tema]);
 
   function reiniciar() {
@@ -293,6 +304,8 @@ export default function App() {
           </div>
         </div>
       )}
+
+      <Toasts avisos={toasts} alCerrar={cerrarToast} />
 
       {avisoActual && <ModalAviso aviso={avisoActual} alCerrar={cerrarAviso} />}
 

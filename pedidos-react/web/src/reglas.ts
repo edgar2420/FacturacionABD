@@ -24,6 +24,30 @@ export function parsearFecha(texto: string): Date | null {
   return fecha;
 }
 
+/**
+ * El <input type="date"> trabaja en ISO (aaaa-mm-dd) y Oracle espera
+ * dd/MM/yyyy. Estas dos funciones traducen entre ambos.
+ */
+export function isoADdmmaaaa(iso: string): string {
+  if (!iso) return '';
+  const [a, m, d] = iso.split('-');
+  return a && m && d ? `${d}/${m}/${a}` : '';
+}
+
+export function ddmmaaaaAIso(texto: string): string {
+  if (!texto) return '';
+  const [d, m, a] = texto.split('/');
+  return d && m && a ? `${a}-${m}-${d}` : '';
+}
+
+/** Hoy en ISO, para usarlo como minimo del calendario. */
+export function hoyIso(): string {
+  const h = new Date();
+  return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(
+    h.getDate()
+  ).padStart(2, '0')}`;
+}
+
 export function formatearFecha(fecha: Date): string {
   const dd = String(fecha.getDate()).padStart(2, '0');
   const mm = String(fecha.getMonth() + 1).padStart(2, '0');

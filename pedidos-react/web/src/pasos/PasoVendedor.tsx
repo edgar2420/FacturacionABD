@@ -7,7 +7,7 @@
  */
 import { useState } from 'react';
 import * as api from '../api';
-import { formatearFecha, validarFechaEntrega } from '../reglas';
+import { ddmmaaaaAIso, formatearFecha, hoyIso, isoADdmmaaaa, validarFechaEntrega } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { IconoBuscar, IconoCalendario, IconoCheck } from '../componentes/iconos';
 import { Paginacion } from '../componentes/Paginacion';
@@ -101,26 +101,42 @@ export function PasoVendedor({
       </Tarjeta>
 
       <Tarjeta titulo="Fecha de entrega">
+        {/* type="date" abre el calendario propio del dispositivo: en celular
+            es el selector nativo, mucho mas comodo que teclear la fecha. */}
         <Campo
-          etiqueta="Fecha de entrega (dd/mm/aaaa)"
+          etiqueta="Fecha de entrega"
           ayuda="No puede ser anterior a hoy. Define el precio de los productos."
           error={fechaEntrega && !validacionFecha.ok ? validacionFecha.mensaje : undefined}
         >
           <input
-            type="text"
-            inputMode="numeric"
-            placeholder="dd/mm/aaaa"
-            value={fechaEntrega}
-            onChange={(e) => alCambiarFecha(e.target.value)}
+            type="date"
+            className="campo-fecha"
+            min={hoyIso()}
+            value={ddmmaaaaAIso(fechaEntrega)}
+            onChange={(e) => alCambiarFecha(isoADdmmaaaa(e.target.value))}
           />
         </Campo>
-        <Boton
-          variante="secundario"
-          icono={<IconoCalendario />}
-          onClick={() => alCambiarFecha(formatearFecha(new Date()))}
-        >
-          Usar la fecha de hoy
-        </Boton>
+
+        <div className="acciones-fecha">
+          <Boton
+            variante="secundario"
+            icono={<IconoCalendario />}
+            onClick={() => alCambiarFecha(formatearFecha(new Date()))}
+          >
+            Hoy
+          </Boton>
+          <Boton
+            variante="secundario"
+            icono={<IconoCalendario />}
+            onClick={() => {
+              const m = new Date();
+              m.setDate(m.getDate() + 1);
+              alCambiarFecha(formatearFecha(m));
+            }}
+          >
+            Mañana
+          </Boton>
+        </div>
       </Tarjeta>
 
       <Tarjeta titulo="Vendedor">
@@ -155,7 +171,7 @@ export function PasoVendedor({
           ) : (
             <>
               <div className="tabla-scroll">
-                <table className="seleccionable">
+                <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>
                       <th>Nombre</th>
@@ -170,9 +186,9 @@ export function PasoVendedor({
                         aria-selected={seleccionado?.codigo === v.codigo}
                         onClick={() => setSeleccionado(v)}
                       >
-                        <td className="principal-col">{v.nombre}</td>
-                        <td>{v.codigo}</td>
-                        <td>{v.ciudad}</td>
+                        <td className="principal-col" data-etiqueta="Nombre">{v.nombre}</td>
+                        <td data-etiqueta="Código">{v.codigo}</td>
+                        <td data-etiqueta="Ciudad">{v.ciudad}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -194,7 +194,7 @@ export function PasoProductos({
               <Vacio mensaje="Sin coincidencias." />
             ) : (
               <div className="tabla-scroll">
-                <table className="seleccionable">
+                <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>
                       <th>Descripción</th>
@@ -211,11 +211,11 @@ export function PasoProductos({
                         aria-selected={elegido?.producto === p.producto && elegido?.lote === p.lote}
                         onClick={() => setElegido(p)}
                       >
-                        <td className="principal-col">{p.nombre}</td>
-                        <td>{p.unidad}</td>
-                        <td className="num">{bolivianos(p.precio)}</td>
-                        <td>{p.fechaVencimiento}</td>
-                        <td className="num">{p.saldo}</td>
+                        <td className="principal-col" data-etiqueta="Descripción">{p.nombre}</td>
+                        <td data-etiqueta="Unidad">{p.unidad}</td>
+                        <td className="num" data-etiqueta="Precio">{bolivianos(p.precio)}</td>
+                        <td data-etiqueta="Vence">{p.fechaVencimiento}</td>
+                        <td className="num" data-etiqueta="Saldo">{p.saldo}</td>
                       </tr>
                     ))}
                   </tbody>

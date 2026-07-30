@@ -98,7 +98,7 @@ export function PasoCliente({
           ) : (
             <>
               <div className="tabla-scroll">
-                <table className="seleccionable">
+                <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>
                       <th>Razón social</th>
@@ -113,9 +113,9 @@ export function PasoCliente({
                         aria-selected={seleccionado?.codigo === c.codigo}
                         onClick={() => setSeleccionado(c)}
                       >
-                        <td className="principal-col">{c.nombre}</td>
-                        <td>{c.ruc}</td>
-                        <td>{c.ciudad}</td>
+                        <td className="principal-col" data-etiqueta="Razón social">{c.nombre}</td>
+                        <td data-etiqueta="NIT">{c.ruc}</td>
+                        <td data-etiqueta="Ciudad">{c.ciudad}</td>
                       </tr>
                     ))}
                   </tbody>
