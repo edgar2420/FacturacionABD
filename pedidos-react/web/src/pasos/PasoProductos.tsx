@@ -193,7 +193,7 @@ export function PasoProductos({
             {resultados.items.length === 0 ? (
               <Vacio mensaje="Sin coincidencias." />
             ) : (
-              <div className="tabla-scroll">
+              <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>
@@ -286,7 +286,7 @@ export function PasoProductos({
             {detalle.length === 0 ? (
               <Vacio mensaje="El pedido no tiene líneas." />
             ) : (
-              <div className="tabla-scroll">
+              <div className="tabla-scroll tarjetas-movil">
                 <table>
                   <thead>
                     <tr>

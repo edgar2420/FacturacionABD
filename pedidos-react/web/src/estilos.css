@@ -645,7 +645,12 @@ td {
 
 .seleccionable tbody tr[aria-selected='true'] {
   background: var(--marca-suave);
-  box-shadow: inset 3px 0 0 var(--cel-600);
+}
+
+.seleccionable tbody tr[aria-selected='true'] td {
+  border-top-color: var(--cel-400);
+  color: var(--cel-900);
+  font-weight: 600;
 }
 
 .vacio {
@@ -1120,20 +1125,30 @@ td {
   position: relative;
 }
 
-.campo-fecha::-webkit-calendar-picker-indicator {
-  width: 22px;
-  height: 22px;
-  padding: 3px;
-  margin-right: -2px;
-  border-radius: var(--radio-xs);
+.campo-fecha {
   cursor: pointer;
-  opacity: 0.85;
+  /* El valor no se pega al icono. */
+  padding-right: 46px;
+}
+
+.campo-fecha::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  width: 42px;
+  height: 100%;
+  padding: 0 12px;
+  cursor: pointer;
+  opacity: 0.9;
   filter: invert(38%) sepia(72%) saturate(1900%) hue-rotate(178deg) brightness(92%);
 }
 
 .campo-fecha::-webkit-calendar-picker-indicator:hover {
-  background: var(--marca-suave);
   opacity: 1;
+}
+
+/* El input de fecha necesita contexto de posicionamiento para el icono. */
+.campo:has(.campo-fecha) {
+  position: relative;
 }
 
 :root[data-tema='oscuro'] .campo-fecha::-webkit-calendar-picker-indicator {
@@ -1266,23 +1281,36 @@ td {
    Tablas que se convierten en tarjetas en celular
    --------------------------------------------------------------------------
    Debajo de 700px la tabla deja de desplazarse de lado: cada fila pasa a ser
-   una tarjeta con sus datos etiquetados. Nada queda cortado y se puede tocar
-   con el dedo.
+   una tarjeta con sus datos etiquetados. Nada queda cortado y se toca con el
+   dedo. La seleccionada se resalta entera.
    ========================================================================== */
 
 @media (max-width: 699px) {
-  .tabla-scroll:has(.tabla-tarjetas) {
-    overflow-x: visible;
+  /* El contenedor deja de recortar y de desplazarse. */
+  .tabla-scroll.tarjetas-movil {
+    overflow: visible;
     margin: 0;
     padding: 0;
   }
 
-  .tabla-tarjetas,
+  /* Importante: gana a la regla general ".tabla-scroll table { width: max-content }".
+     Sin esto la tarjeta se hacia mas ancha que la pantalla y los valores
+     quedaban fuera de la vista: se veian las etiquetas y nada mas. */
+  .tabla-scroll .tabla-tarjetas,
+  .tabla-tarjetas {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .tabla-tarjetas tbody,
   .tabla-tarjetas tr,
   .tabla-tarjetas td {
     display: block;
     width: auto;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .tabla-tarjetas thead {
@@ -1291,12 +1319,14 @@ td {
   }
 
   .tabla-tarjetas tr {
+    position: relative;
     margin-bottom: 10px;
-    padding: 12px 14px;
-    border: 1.5px solid var(--borde);
+    padding: 14px;
+    border: 2px solid var(--borde);
     border-radius: var(--radio-sm);
-    background: var(--superficie-2);
-    transition: border-color var(--transicion), background var(--transicion);
+    background: var(--superficie);
+    transition: border-color var(--transicion), background var(--transicion),
+      box-shadow var(--transicion);
   }
 
   .tabla-tarjetas tr:last-child {
@@ -1308,11 +1338,10 @@ td {
     align-items: baseline;
     justify-content: space-between;
     gap: 14px;
-    padding: 3px 0;
+    padding: 4px 0;
     border: none;
     text-align: right;
-    max-width: none;
-    min-width: 0;
+    font-variant-numeric: tabular-nums;
   }
 
   .tabla-tarjetas td::before {
@@ -1330,29 +1359,50 @@ td {
   .tabla-tarjetas td.principal-col {
     display: block;
     text-align: left;
-    padding-bottom: 8px;
-    margin-bottom: 6px;
+    padding: 0 0 9px;
+    margin-bottom: 7px;
     border-bottom: 1px solid var(--borde);
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 700;
+    line-height: 1.35;
   }
 
   .tabla-tarjetas td.principal-col::before {
     display: none;
   }
 
-  /* La celda sin datos (la del boton eliminar) no ocupa lugar. */
+  /* La celda del boton eliminar se alinea a la derecha, sin etiqueta. */
+  .tabla-tarjetas td:not([data-etiqueta]) {
+    justify-content: flex-end;
+    padding-top: 8px;
+  }
+
+  .tabla-tarjetas td:not([data-etiqueta])::before {
+    display: none;
+  }
+
   .tabla-tarjetas td:empty {
     display: none;
   }
 
-  .tabla-tarjetas tr[aria-selected='true'] {
-    border-color: var(--cel-500);
+  /* Seleccionada: resalta la tarjeta COMPLETA, sin marcas al costado. */
+  .seleccionable.tabla-tarjetas tbody tr[aria-selected='true'] {
+    border-color: var(--cel-600);
     background: var(--marca-suave);
-    box-shadow: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--cel-500) 22%, transparent);
+  }
+
+  .seleccionable.tabla-tarjetas tbody tr[aria-selected='true'] td.principal-col {
+    color: var(--cel-900);
+    border-bottom-color: var(--cel-300);
+  }
+
+  .seleccionable.tabla-tarjetas tbody tr[aria-selected='true'] td {
+    color: var(--cel-900);
   }
 
   .seleccionable.tabla-tarjetas tbody tr:hover {
-    background: var(--superficie-3);
+    border-color: var(--borde-fuerte);
+    background: var(--superficie-2);
   }
 }

@@ -114,6 +114,16 @@ export function PasoVendedor({
             min={hoyIso()}
             value={ddmmaaaaAIso(fechaEntrega)}
             onChange={(e) => alCambiarFecha(isoADdmmaaaa(e.target.value))}
+            /* Al tocar cualquier parte del campo se abre el calendario, no
+               solo el iconito: en celular ese icono es un blanco diminuto. */
+            onClick={(e) => {
+              const el = e.currentTarget as HTMLInputElement & { showPicker?: () => void };
+              try {
+                el.showPicker?.();
+              } catch {
+                /* Algunos navegadores solo permiten showPicker por gesto directo */
+              }
+            }}
           />
         </Campo>
 
@@ -170,7 +180,7 @@ export function PasoVendedor({
             <Vacio mensaje="Sin coincidencias." />
           ) : (
             <>
-              <div className="tabla-scroll">
+              <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>

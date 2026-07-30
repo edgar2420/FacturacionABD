@@ -97,7 +97,7 @@ export function PasoCliente({
             <Vacio mensaje="Sin coincidencias. Pruebe con otro filtro." />
           ) : (
             <>
-              <div className="tabla-scroll">
+              <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
                     <tr>
