@@ -1,0 +1,123 @@
+[
+  {
+    "modulo": "Facturacion",
+    "archivo": "facturacion.xhtml",
+    "nombre": "Facturacion",
+    "form": "facturacionForm",
+    "descripcion": "Busca una factura por tipo/numero/fecha/almacen, muestra su detalle y totales, permite facturar el pago e imprimir en formato carta o rollo.",
+    "controles": [
+      { "id": "facturacionForm:tipo", "tipo": "inputText", "rol": "filtro", "descripcion": "Tipo de documento" },
+      { "id": "facturacionForm:numero", "tipo": "inputText", "rol": "filtro", "descripcion": "Numero de documento" },
+      { "id": "facturacionForm:fecha", "tipo": "inputText", "rol": "filtro", "descripcion": "Fecha del documento" },
+      { "id": "facturacionForm:almacen", "tipo": "inputText", "rol": "filtro", "descripcion": "Almacen / sucursal" },
+      { "id": "facturacionForm:email", "tipo": "inputText", "rol": "dato", "descripcion": "Correo para envio de la factura" },
+      { "id": "facturacionForm:buscarFacturaBoton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar factura" },
+      { "id": "facturacionForm:myDataFiltro", "tipo": "panel", "rol": "contenedor", "descripcion": "Panel de filtros" },
+      { "id": "facturacionForm:myDataFactura", "tipo": "panel", "rol": "resultado", "descripcion": "Detalle de la factura encontrada" },
+      { "id": "facturacionForm:myDataTotal", "tipo": "panel", "rol": "resultado", "descripcion": "Totales de la factura" },
+      { "id": "facturacionForm:tipoImpresion", "tipo": "inputSwitch", "rol": "opcion", "descripcion": "Formato de impresion: carta / rollo" },
+      { "id": "facturacionForm:facturarPagosButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Facturar el pago (GRABA EN BASE DE DATOS)" },
+      { "id": "facturacionForm:imprimirFactueraButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Generar PDF de la factura" }
+    ]
+  },
+  {
+    "modulo": "Cobranzas",
+    "archivo": "cobranzas.xhtml",
+    "nombre": "Cobranzas",
+    "form": "cobranzasForm",
+    "descripcion": "Variante de facturacion con filtros adicionales por razon social y correo electronico.",
+    "controles": [
+      { "id": "cobranzasForm:tipo", "tipo": "inputText", "rol": "filtro", "descripcion": "Tipo de documento" },
+      { "id": "cobranzasForm:numero", "tipo": "inputText", "rol": "filtro", "descripcion": "Numero de documento" },
+      { "id": "cobranzasForm:fecha", "tipo": "inputText", "rol": "filtro", "descripcion": "Fecha del documento" },
+      { "id": "cobranzasForm:almacen", "tipo": "inputText", "rol": "filtro", "descripcion": "Almacen / sucursal" },
+      { "id": "cobranzasForm:razonSocial", "tipo": "inputText", "rol": "filtro", "descripcion": "Razon social del cliente" },
+      { "id": "cobranzasForm:correoElectronica", "tipo": "inputText", "rol": "filtro", "descripcion": "Correo electronico del cliente" },
+      { "id": "cobranzasForm:buscarFacturaBoton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar factura" },
+      { "id": "cobranzasForm:myDataFactura", "tipo": "panel", "rol": "resultado", "descripcion": "Detalle de la factura" },
+      { "id": "cobranzasForm:myDataTotal", "tipo": "panel", "rol": "resultado", "descripcion": "Totales" },
+      { "id": "cobranzasForm:tipoImpresion", "tipo": "inputSwitch", "rol": "opcion", "descripcion": "Formato de impresion" },
+      { "id": "cobranzasForm:facturarPagosButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Facturar el pago (GRABA EN BASE DE DATOS)" },
+      { "id": "cobranzasForm:imprimirFactueraButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Generar PDF" }
+    ]
+  },
+  {
+    "modulo": "Recibos",
+    "archivo": "recibos.xhtml",
+    "nombre": "Recibos de cobranza",
+    "form": "recibosForm",
+    "descripcion": "Busca un cliente, lista su deuda pendiente, registra el pago (moneda, monto, tipo de documento, banco) y emite el recibo en formato carta o rollo.",
+    "controles": [
+      { "id": "recibosForm:datoBusqueda", "tipo": "inputText", "rol": "filtro", "descripcion": "Texto de busqueda del cliente" },
+      { "id": "recibosForm:buscarClienteButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar cliente" },
+      { "id": "recibosForm:singleDT", "tipo": "dataTable", "rol": "resultado", "descripcion": "Clientes encontrados (seleccion simple)" },
+      { "id": "recibosForm:elegirClienteButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Elegir el cliente seleccionado" },
+      { "id": "recibosForm:myDataDeudas", "tipo": "panel", "rol": "resultado", "descripcion": "Deuda pendiente del cliente" },
+      { "id": "recibosForm:monedaPago", "tipo": "inputSwitch", "rol": "opcion", "descripcion": "Moneda del pago (Bs / USD)" },
+      { "id": "recibosForm:codMonedaPago", "tipo": "selectOneMenu", "rol": "opcion", "descripcion": "Codigo de moneda" },
+      { "id": "recibosForm:mntPagar", "tipo": "inputText", "rol": "dato", "descripcion": "Monto a pagar" },
+      { "id": "recibosForm:tipDocPago", "tipo": "selectOneMenu", "rol": "opcion", "descripcion": "Tipo de documento de pago" },
+      { "id": "recibosForm:banco", "tipo": "selectOneMenu", "rol": "opcion", "descripcion": "Banco" },
+      { "id": "recibosForm:tipoImpresion", "tipo": "inputSwitch", "rol": "opcion", "descripcion": "Formato del recibo: carta / rollo" },
+      { "id": "recibosForm:realizarPagoButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Registrar el pago (GRABA EN BASE DE DATOS)" },
+      { "id": "recibosForm:imprimirReciboButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Generar PDF del recibo" }
+    ]
+  },
+  {
+    "modulo": "Recibos",
+    "archivo": "impRecibos.xhtml",
+    "nombre": "Impresion de recibos",
+    "form": "facturacionForm",
+    "descripcion": "Consulta recibos ya emitidos por deposito, cliente, fecha o usuario, y los reimprime.",
+    "controles": [
+      { "id": "facturacionForm:deposito", "tipo": "inputText", "rol": "filtro", "descripcion": "Deposito" },
+      { "id": "facturacionForm:cliente", "tipo": "inputText", "rol": "filtro", "descripcion": "Cliente" },
+      { "id": "facturacionForm:fecha", "tipo": "inputText", "rol": "filtro", "descripcion": "Fecha" },
+      { "id": "facturacionForm:login", "tipo": "inputText", "rol": "filtro", "descripcion": "Usuario que emitio el recibo" },
+      { "id": "facturacionForm:tipoImpresion", "tipo": "inputSwitch", "rol": "opcion", "descripcion": "Formato de impresion" },
+      { "id": "facturacionForm:buscarRecibosBoton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar recibos" },
+      { "id": "facturacionForm:myDataFactura", "tipo": "panel", "rol": "resultado", "descripcion": "Recibos encontrados" }
+    ]
+  },
+  {
+    "modulo": "Pedidos",
+    "archivo": "pedidos.xhtml",
+    "nombre": "Pedidos",
+    "form": "pedidosForm",
+    "descripcion": "Alta de pedidos: elegir cliente y vendedor, buscar productos, cargar cantidades, ver el detalle con totales y cerrar el pedido eligiendo tipo de pago y banco.",
+    "controles": [
+      { "id": "pedidosForm:datoBusqueda", "tipo": "inputText", "rol": "filtro", "descripcion": "Busqueda de cliente" },
+      { "id": "pedidosForm:buscarClienteButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar cliente" },
+      { "id": "pedidosForm:singleDT", "tipo": "dataTable", "rol": "resultado", "descripcion": "Clientes encontrados" },
+      { "id": "pedidosForm:elegirClienteButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Elegir cliente" },
+      { "id": "pedidosForm:datoBusquedaVendedor", "tipo": "inputText", "rol": "filtro", "descripcion": "Busqueda de vendedor" },
+      { "id": "pedidosForm:buscarVendedorButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar vendedor" },
+      { "id": "pedidosForm:singleDT1", "tipo": "dataTable", "rol": "resultado", "descripcion": "Vendedores encontrados" },
+      { "id": "pedidosForm:elegirVendedorButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Elegir vendedor" },
+      { "id": "pedidosForm:productoBusqueda", "tipo": "inputText", "rol": "filtro", "descripcion": "Busqueda de producto" },
+      { "id": "pedidosForm:buscarProductoButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar producto" },
+      { "id": "pedidosForm:singleDT2", "tipo": "dataTable", "rol": "resultado", "descripcion": "Productos encontrados con precio" },
+      { "id": "pedidosForm:cantidadReserva", "tipo": "inputText", "rol": "dato", "descripcion": "Cantidad a reservar" },
+      { "id": "pedidosForm:crearPedidoButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Crear el pedido" },
+      { "id": "pedidosForm:adicionarProductoButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Adicionar producto al detalle" },
+      { "id": "pedidosForm:pedido", "tipo": "panel", "rol": "resultado", "descripcion": "Detalle del pedido en curso" },
+      { "id": "pedidosForm:terminarPedidooButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Terminar pedido" },
+      { "id": "pedidosForm:tipDocPago", "tipo": "selectOneMenu", "rol": "opcion", "descripcion": "Tipo de pago (incluye contra entrega)" },
+      { "id": "pedidosForm:banco", "tipo": "selectOneMenu", "rol": "opcion", "descripcion": "Banco" },
+      { "id": "pedidosForm:pagarPedidooButton", "tipo": "commandButton", "rol": "escritura", "descripcion": "Pagar pedido (GRABA EN BASE DE DATOS)" },
+      { "id": "pedidosForm:nuevoPedidoButton", "tipo": "commandButton", "rol": "navegacion", "descripcion": "Nuevo pedido" }
+    ]
+  },
+  {
+    "modulo": "Pedidos",
+    "archivo": "MisPedidos.xhtml",
+    "nombre": "Mis pedidos",
+    "form": "facturacionForm",
+    "descripcion": "Reporte de consulta de los pedidos del usuario, filtrado por almacen.",
+    "controles": [
+      { "id": "facturacionForm:almacen", "tipo": "inputText", "rol": "filtro", "descripcion": "Almacen" },
+      { "id": "facturacionForm:buscarpedidosButton", "tipo": "commandButton", "rol": "lectura", "descripcion": "Buscar pedidos" },
+      { "id": "facturacionForm:myDataPedidos", "tipo": "panel", "rol": "resultado", "descripcion": "Pedidos encontrados" }
+    ]
+  }
+]

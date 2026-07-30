@@ -1,0 +1,17 @@
+{
+  "name": "abdfacturacion-qa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Suite de pruebas E2E (Cypress) para ABDFacturacion",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "qa:humo": "cypress run --spec \"cypress/e2e/00-disponibilidad.cy.js,cypress/e2e/01-login.cy.js\"",
+    "qa:inventario": "cypress run --spec \"cypress/e2e/02-inventario.cy.js\"",
+    "qa:lectura": "cypress run --env permitirEscrituras=false",
+    "qa:completo": "cypress run --env permitirEscrituras=true"
+  },
+  "devDependencies": {
+    "cypress": "^13.15.0"
+  }
+}
