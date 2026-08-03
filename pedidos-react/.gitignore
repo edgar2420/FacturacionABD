@@ -4,3 +4,7 @@ dist/
 *.local
 .vite/
 *.tsbuildinfo
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
