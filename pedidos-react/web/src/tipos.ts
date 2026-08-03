@@ -24,16 +24,39 @@ export interface Persona {
   codigoVendedor?: string;
 }
 
-/** Fila de F_OBTENER_PRODUCTOS (objetos/DetalleProductos.java). */
+/** Un lote de un producto, tal como sale de F_OBTENER_PRODUCTOS. */
+export interface Lote {
+  lote: string;
+  /** Formato "dd/MM/yy", que es como lo devuelve el cursor. */
+  fechaVencimiento: string;
+  saldo: number;
+  precio: number;
+}
+
+/**
+ * Producto ya agrupado por el servidor: una fila por codigo, con el saldo de
+ * todos sus lotes sumado y los lotes en orden de despacho (vence antes ->
+ * menor saldo).
+ */
 export interface Producto {
   almacen: string;
   producto: string;
   nombre: string;
   unidad: string;
+  precio: number;
+  /** Suma del saldo de todos los lotes: es el que ve el vendedor. */
+  saldoTotal: number;
+  /** Vencimiento del primer lote que saldria. */
+  vencimientoProximo: string | null;
+  cantidadLotes: number;
+  lotes: Lote[];
+}
+
+/** Un tramo del reparto: cuanto sale de cada lote. */
+export interface TramoLote {
   lote: string;
   fechaVencimiento: string;
-  precio: number;
-  saldo: string;
+  cantidad: number;
 }
 
 /** Linea del pedido (objetos/DetallePedido.java). */

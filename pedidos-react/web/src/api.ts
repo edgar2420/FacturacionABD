@@ -1,5 +1,5 @@
 /** Cliente HTTP de la API de Pedidos. */
-import type { LineaPedido, Pedido, Persona, Producto, Usuario } from './tipos';
+import type { LineaPedido, Pedido, Persona, Producto, TramoLote, Usuario } from './tipos';
 
 /** Error con el mensaje que devolvio el servidor, listo para mostrar. */
 export class ErrorApi extends Error {
@@ -49,6 +49,12 @@ export interface PaginaCursor<T> {
   hayMas: boolean;
 }
 
+/** Productos: ya vienen agrupados y contados, asi que se sabe el total. */
+export interface PaginaProductos extends Pagina<Producto> {
+  /** true si se alcanzo el tope de filas al leer el cursor. */
+  truncado?: boolean;
+}
+
 // --- Sesion -----------------------------------------------------------------
 
 export const iniciarSesion = (usuario: string, password: string) =>
@@ -73,7 +79,7 @@ export const buscarProductos = (
   fechaEntrega: string,
   pagina = 1
 ) =>
-  pedir<PaginaCursor<Producto>>(
+  pedir<PaginaProductos>(
     `/api/productos?${qs({ valor, tipo, cliente, fechaEntrega, pagina: String(pagina) })}`
   );
 
@@ -83,6 +89,8 @@ interface RespuestaPedido {
   nroPedido: string;
   mensaje: string;
   detalle: LineaPedido[];
+  /** Como quedo repartida la cantidad entre los lotes. */
+  reparto?: TramoLote[];
 }
 
 export const crearPedido = (datos: {
@@ -96,9 +104,9 @@ export const crearPedido = (datos: {
 
 export const adicionarItem = (
   nroPedido: string,
-  datos: { cliente: string; producto: Producto; cantidad: number }
+  datos: { cliente: string; producto: Producto; cantidad: number; fechaEntrega: string }
 ) =>
-  pedir<{ nroLinea: string; mensaje: string; detalle: LineaPedido[] }>(
+  pedir<{ mensaje: string; detalle: LineaPedido[]; reparto?: TramoLote[] }>(
     `/api/pedidos/${nroPedido}/items`,
     { method: 'POST', body: JSON.stringify(datos) }
   );

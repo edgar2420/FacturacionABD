@@ -1,0 +1,13 @@
+{
+  "name": "pedidos-abd-qa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pruebas de extremo a extremo del modulo de Pedidos en React",
+  "scripts": {
+    "qa": "cypress run",
+    "qa:abrir": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "^13.15.0"
+  }
+}

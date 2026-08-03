@@ -13,13 +13,13 @@
  */
 import { useState } from 'react';
 import * as api from '../api';
-import { bolivianos, validarCantidad } from '../reglas';
+import { bolivianos, repartirEnLotes, validarCantidad } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { Modal } from '../componentes/Modal';
 import { IconoBasura, IconoBuscar, IconoCheck, IconoMas } from '../componentes/iconos';
 import { Paginacion } from '../componentes/Paginacion';
 import type { Confirmacion } from '../componentes/Modal';
-import type { PaginaCursor } from '../api';
+import type { PaginaProductos } from '../api';
 import type { LineaPedido, Persona, Producto, TipoBusquedaSimple } from '../tipos';
 
 export function PasoProductos({
@@ -51,14 +51,20 @@ export function PasoProductos({
 }) {
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState<TipoBusquedaSimple>('N');
-  const [resultados, setResultados] = useState<PaginaCursor<Producto> | null>(null);
+  const [resultados, setResultados] = useState<PaginaProductos | null>(null);
   const [elegido, setElegido] = useState<Producto | null>(null);
   const [cantidad, setCantidad] = useState('');
   const [buscando, setBuscando] = useState(false);
   const [guardando, setGuardando] = useState(false);
 
   const cant = Number(cantidad);
-  const validacion = elegido ? validarCantidad(cant, elegido.saldo, elegido.nombre) : { ok: false };
+  const validacion = elegido
+    ? validarCantidad(cant, elegido.saldoTotal, elegido.nombre)
+    : { ok: false };
+
+  // De que lotes saldria la cantidad pedida. Es solo una vista previa: el
+  // reparto bueno lo calcula el servidor con los saldos del momento.
+  const reparto = elegido && validacion.ok ? repartirEnLotes(elegido.lotes, cant) : [];
 
   async function traer(pagina: number, esNuevaBusqueda: boolean) {
     if (!valor.trim()) {
@@ -98,7 +104,7 @@ export function PasoProductos({
   async function agregar() {
     if (!elegido) return;
 
-    const v = validarCantidad(cant, elegido.saldo, elegido.nombre);
+    const v = validarCantidad(cant, elegido.saldoTotal, elegido.nombre);
     if (!v.ok) {
       alAvisar('atencion', 'Cantidad no válida', v.mensaje);
       return;
@@ -121,10 +127,11 @@ export function PasoProductos({
         const r = await api.adicionarItem(nroPedido, {
           cliente: cliente.codigo,
           producto: elegido,
-          cantidad: cant
+          cantidad: cant,
+          fechaEntrega
         });
         alCambiarDetalle(r.detalle);
-        alAvisar('exito', 'Producto adicionado', `${elegido.nombre} × ${cant}`);
+        alAvisar('exito', 'Producto adicionado', r.mensaje);
       }
 
       setElegido(null);
@@ -190,12 +197,14 @@ export function PasoProductos({
         </Tarjeta>
 
         {resultados && (
-          <Tarjeta titulo="Productos disponibles">
+          <Tarjeta titulo={`Productos disponibles (${resultados.total})`}>
             {resultados.items.length === 0 ? (
               <Vacio mensaje="Sin coincidencias." />
             ) : (
               <>
-                <p className="pista">Toque un producto para indicar la cantidad.</p>
+                <p className="pista">
+                  El saldo es la suma de todos los lotes. Se despacha primero lo que vence antes.
+                </p>
                 <div className="tabla-scroll tarjetas-movil">
                 <table className="seleccionable tabla-tarjetas">
                   <thead>
@@ -210,7 +219,7 @@ export function PasoProductos({
                   <tbody>
                     {resultados.items.map((p) => (
                       <tr
-                        key={`${p.producto}-${p.lote}`}
+                        key={p.producto}
                         onClick={() => {
                           setElegido(p);
                           setCantidad('');
@@ -219,8 +228,13 @@ export function PasoProductos({
                         <td className="principal-col" data-etiqueta="Descripción">{p.nombre}</td>
                         <td data-etiqueta="Unidad">{p.unidad}</td>
                         <td className="num" data-etiqueta="Precio">{bolivianos(p.precio)}</td>
-                        <td data-etiqueta="Vence">{p.fechaVencimiento}</td>
-                        <td className="num" data-etiqueta="Saldo">{p.saldo}</td>
+                        <td data-etiqueta="Vence">
+                          {p.vencimientoProximo ?? '—'}
+                          {p.cantidadLotes > 1 && (
+                            <span className="ayuda"> · {p.cantidadLotes} lotes</span>
+                          )}
+                        </td>
+                        <td className="num" data-etiqueta="Saldo total">{p.saldoTotal}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -232,7 +246,7 @@ export function PasoProductos({
             <Paginacion
               pagina={resultados.pagina}
               porPagina={resultados.porPagina}
-              hayMas={resultados.hayMas}
+              total={resultados.total}
               cargando={buscando}
               alCambiar={(p) => void traer(p, false)}
             />
@@ -306,7 +320,7 @@ export function PasoProductos({
       {elegido && (
         <Modal
           titulo={elegido.nombre}
-          subtitulo={`Lote ${elegido.lote} · vence ${elegido.fechaVencimiento}`}
+          subtitulo={`${elegido.producto} · ${elegido.cantidadLotes} lote(s) · saldo ${elegido.saldoTotal} ${elegido.unidad}`}
           ancho="detalle"
           alCerrar={() => setElegido(null)}
           pie={
@@ -328,31 +342,54 @@ export function PasoProductos({
           <dl className="datos">
             <dt>Precio</dt>
             <dd>Bs {bolivianos(elegido.precio)}</dd>
-            <dt>Saldo</dt>
+            <dt>Saldo total</dt>
             <dd>
-              {elegido.saldo} {elegido.unidad}
+              {elegido.saldoTotal} {elegido.unidad}
             </dd>
-            <dt>Código</dt>
-            <dd>{elegido.producto}</dd>
+            <dt>Vence</dt>
+            <dd>{elegido.vencimientoProximo ?? '—'}</dd>
           </dl>
 
           <div style={{ marginTop: 14 }}>
             <Campo
               etiqueta="Cantidad a reservar"
               error={cantidad && !validacion.ok ? validacion.mensaje : undefined}
-              ayuda={`Máximo ${elegido.saldo} ${elegido.unidad}`}
+              ayuda={`Máximo ${elegido.saldoTotal} ${elegido.unidad}, sumando los ${elegido.cantidadLotes} lote(s)`}
             >
               <input
                 type="number"
                 inputMode="numeric"
                 min={1}
-                max={Number(elegido.saldo) || undefined}
+                max={elegido.saldoTotal || undefined}
                 value={cantidad}
                 placeholder="0"
                 onChange={(e) => setCantidad(e.target.value)}
               />
             </Campo>
           </div>
+
+          {/* De donde va a salir la mercaderia. Se muestra siempre que haya
+              cantidad valida, aunque salga de un solo lote, para que el
+              vendedor sepa que lote esta comprometiendo. */}
+          {reparto.length > 0 && (
+            <div className="reparto">
+              <p className="titulo-reparto">
+                Sale de {reparto.length === 1 ? 'este lote' : `estos ${reparto.length} lotes`}
+                <span className="ayuda"> (primero el que vence antes)</span>
+              </p>
+              <ul>
+                {reparto.map((t) => (
+                  <li key={t.lote}>
+                    <span className="lote">{t.lote}</span>
+                    <span className="vence">vence {t.fechaVencimiento}</span>
+                    <b>
+                      {t.cantidad} {elegido.unidad}
+                    </b>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {cantidad && validacion.ok && (
             <p className="subtotal-modal">

@@ -12,6 +12,7 @@ const config = require('./config');
 const { iniciarPool, cerrarPool } = require('./db');
 const plsql = require('./plsql');
 const reglas = require('./reglas');
+const lotes = require('./lotes');
 
 const app = express();
 
@@ -156,20 +157,120 @@ app.get(
     const fecha = reglas.validarFechaEntrega(fechaEntrega);
     if (!fecha.ok) return res.status(400).json({ error: fecha.mensaje });
 
-    const productos = await plsql.obtenerProductos({
+    const { filas, truncado } = await plsql.obtenerProductosPorLote({
       busqueda: valor,
       tipo,
       almacen: req.session.usuario.almacen,
       cliente,
-      fechaEntrega,
-      ...paginacion(req)
+      fechaEntrega
     });
 
-    res.json(productos);
+    // Una fila por producto con el saldo de todos sus lotes sumado, ordenadas
+    // por el lote que vence antes y, a igual fecha, por el saldo mas bajo.
+    const productos = lotes.ordenarProductos(lotes.agruparPorProducto(filas));
+
+    const { pagina, porPagina } = paginacion(req);
+    const desde = (pagina - 1) * porPagina;
+
+    res.json({
+      items: productos.slice(desde, desde + porPagina),
+      total: productos.length,
+      pagina,
+      porPagina,
+      truncado
+    });
   })
 );
 
 // --- Pedidos ----------------------------------------------------------------
+
+/**
+ * Vuelve a leer un producto de Oracle con sus lotes frescos.
+ *
+ * Se relee a proposito en vez de confiar en lo que manda el navegador: entre
+ * que el vendedor busco el producto y le da a "Adicionar" pueden pasar minutos
+ * y otro vendedor puede haberse llevado el lote. El reparto tiene que hacerse
+ * contra el saldo de este momento, no contra el de la pantalla.
+ */
+async function leerProductoConLotes({ almacen, cliente, fechaEntrega, codigo }) {
+  const { filas } = await plsql.obtenerProductosPorLote({
+    busqueda: codigo,
+    tipo: 'O',
+    almacen,
+    cliente,
+    fechaEntrega
+  });
+
+  // El paquete puede devolver coincidencias parciales; nos quedamos con el
+  // codigo exacto.
+  const propias = filas.filter(
+    (f) => String(f.producto).toUpperCase() === String(codigo).toUpperCase()
+  );
+  if (propias.length === 0) return null;
+
+  return lotes.agruparPorProducto(propias)[0];
+}
+
+/**
+ * Carga una cantidad al pedido repartiendola entre los lotes (FEFO).
+ *
+ * Cada tramo del reparto es una linea del pedido, porque cada linea de
+ * IBSVENTA.LIN_PEDIDOS guarda un solo lote. Es decir: pedir 200 unidades que
+ * estan en tres lotes genera tres lineas, y el vendedor lo ve asi en el
+ * detalle.
+ *
+ * Ojo con la atomicidad: F_CREAR_PEDIDO y F_CREAR_DETALLE_PEDIDO hacen COMMIT
+ * dentro del propio procedimiento, asi que no se pueden envolver en una
+ * transaccion desde aqui. Si un tramo falla a mitad, se compensa borrando las
+ * lineas del producto (F_ELIMINAR_DETALLE_PEDIDO borra por codigo de item), y
+ * solo si el producto no estaba ya en el pedido de antes; si estaba, borrar se
+ * llevaria por delante lineas buenas, asi que se informa el estado real y se
+ * deja que la persona decida.
+ */
+async function cargarProductoEnPedido({ sesion, cliente, nombreCliente, vendedor, fechaEntrega, producto, reparto, nroPedido }) {
+  const almacen = sesion.almacen;
+  const tramos = [];
+  let numero = nroPedido;
+
+  for (const tramo of reparto) {
+    const comun = {
+      almacen,
+      cliente,
+      codItem: producto.producto,
+      cantidad: tramo.cantidad,
+      unidad: producto.unidad,
+      porcDescuento: 0,
+      lote: tramo.lote,
+      fechaVencimiento: tramo.fechaVencimiento
+    };
+
+    // La primera linea de un pedido nuevo va con F_CREAR_PEDIDO, que crea la
+    // cabecera y la linea a la vez; las demas con F_CREAR_DETALLE_PEDIDO.
+    const r = numero
+      ? await plsql.adicionarItem({ ...comun, nroPedido: numero, login: sesion.login })
+      : await plsql.crearPedido({
+          ...comun,
+          nombreCliente,
+          fechaEntrega,
+          login: sesion.login,
+          vendedor
+        });
+
+    if (!r.ok) {
+      return {
+        ok: false,
+        nroPedido: numero,
+        tramosHechos: tramos,
+        mensaje: r.mensaje || 'No se pudo cargar el producto'
+      };
+    }
+
+    if (!numero) numero = r.nroPedido;
+    tramos.push({ lote: tramo.lote, cantidad: tramo.cantidad, fechaVencimiento: tramo.fechaVencimiento });
+  }
+
+  return { ok: true, nroPedido: numero, tramosHechos: tramos };
+}
 
 app.post(
   '/api/pedidos',
@@ -177,39 +278,59 @@ app.post(
   asincrono(async (req, res) => {
     const { cliente, nombreCliente, vendedor, fechaEntrega, producto, cantidad } = req.body || {};
 
-    if (!cliente || !vendedor || !producto) {
+    if (!cliente || !vendedor || !producto || !producto.producto) {
       return res.status(400).json({ error: 'Faltan cliente, vendedor o producto' });
     }
 
     const fecha = reglas.validarFechaEntrega(fechaEntrega);
     if (!fecha.ok) return res.status(400).json({ error: fecha.mensaje });
 
-    const cant = reglas.validarCantidad(cantidad, producto.saldo, producto.nombre);
-    if (!cant.ok) return res.status(400).json({ error: cant.mensaje });
+    const almacen = req.session.usuario.almacen;
 
-    const r = await plsql.crearPedido({
-      almacen: req.session.usuario.almacen,
+    const fresco = await leerProductoConLotes({
+      almacen,
+      cliente,
+      fechaEntrega,
+      codigo: producto.producto
+    });
+    if (!fresco) return res.status(404).json({ error: 'El producto ya no esta disponible' });
+
+    const plan = lotes.repartirEnLotes(fresco.lotes, cantidad);
+    if (!plan.ok) return res.status(422).json({ error: plan.mensaje });
+
+    const r = await cargarProductoEnPedido({
+      sesion: req.session.usuario,
       cliente,
       nombreCliente,
-      fechaEntrega,
-      login: req.session.usuario.login,
       vendedor,
-      codItem: producto.producto,
-      cantidad: Number(cantidad),
-      unidad: producto.unidad,
-      porcDescuento: 0,
-      lote: producto.lote,
-      fechaVencimiento: producto.fechaVencimiento
+      fechaEntrega,
+      producto: fresco,
+      reparto: plan.reparto
     });
 
-    if (!r.ok) return res.status(422).json({ error: r.mensaje || 'No se pudo crear el pedido' });
+    if (!r.ok && !r.nroPedido) {
+      return res.status(422).json({ error: r.mensaje || 'No se pudo crear el pedido' });
+    }
 
-    const detalle = await plsql.obtenerDetallePedido(
-      req.session.usuario.almacen,
-      r.nroPedido
-    );
+    const detalle = await plsql.obtenerDetallePedido(almacen, r.nroPedido);
 
-    res.status(201).json({ nroPedido: r.nroPedido, mensaje: r.mensaje, detalle });
+    if (!r.ok) {
+      // La cabecera y parte de las lineas ya existen en Oracle: no se borra
+      // nada por si acaso, se devuelve el estado real y el aviso.
+      return res.status(207).json({
+        nroPedido: r.nroPedido,
+        detalle,
+        parcial: true,
+        error: `El pedido se creo pero no se pudieron cargar todos los lotes. ${r.mensaje}`
+      });
+    }
+
+    res.status(201).json({
+      nroPedido: r.nroPedido,
+      mensaje: `Se reservaron ${cantidad} ${fresco.unidad} de ${fresco.nombre} en ${r.tramosHechos.length} lote(s).`,
+      reparto: r.tramosHechos,
+      detalle
+    });
   })
 );
 
@@ -217,31 +338,64 @@ app.post(
   '/api/pedidos/:nro/items',
   exigeSesion,
   asincrono(async (req, res) => {
-    const { cliente, producto, cantidad } = req.body || {};
-    if (!cliente || !producto) return res.status(400).json({ error: 'Faltan cliente o producto' });
+    const { cliente, producto, cantidad, fechaEntrega } = req.body || {};
+    if (!cliente || !producto || !producto.producto) {
+      return res.status(400).json({ error: 'Faltan cliente o producto' });
+    }
 
-    const cant = reglas.validarCantidad(cantidad, producto.saldo, producto.nombre);
-    if (!cant.ok) return res.status(400).json({ error: cant.mensaje });
+    const fecha = reglas.validarFechaEntrega(fechaEntrega);
+    if (!fecha.ok) return res.status(400).json({ error: fecha.mensaje });
 
     const almacen = req.session.usuario.almacen;
+    const nro = req.params.nro;
 
-    const r = await plsql.adicionarItem({
+    const fresco = await leerProductoConLotes({
       almacen,
-      nroPedido: req.params.nro,
       cliente,
-      codItem: producto.producto,
-      cantidad: Number(cantidad),
-      unidad: producto.unidad,
-      porcDescuento: 0,
-      login: req.session.usuario.login,
-      lote: producto.lote,
-      fechaVencimiento: producto.fechaVencimiento
+      fechaEntrega,
+      codigo: producto.producto
+    });
+    if (!fresco) return res.status(404).json({ error: 'El producto ya no esta disponible' });
+
+    const plan = lotes.repartirEnLotes(fresco.lotes, cantidad);
+    if (!plan.ok) return res.status(422).json({ error: plan.mensaje });
+
+    // Para saber si se puede compensar en caso de fallo a mitad del reparto.
+    const detallePrevio = await plsql.obtenerDetallePedido(almacen, nro);
+    const yaEstaba = detallePrevio.some((l) => l.codigoItem === fresco.producto);
+
+    const r = await cargarProductoEnPedido({
+      sesion: req.session.usuario,
+      cliente,
+      producto: fresco,
+      reparto: plan.reparto,
+      nroPedido: nro
     });
 
-    if (!r.ok) return res.status(422).json({ error: r.mensaje || 'No se pudo adicionar el item' });
+    if (!r.ok) {
+      let aviso = r.mensaje;
 
-    const detalle = await plsql.obtenerDetallePedido(almacen, req.params.nro);
-    res.json({ nroLinea: r.nroLinea, mensaje: r.mensaje, detalle });
+      if (r.tramosHechos.length > 0 && !yaEstaba) {
+        // Se deshace lo cargado: el producto no estaba antes, asi que borrar
+        // por codigo de item solo se lleva lo que acabamos de insertar.
+        const vuelta = await plsql.eliminarItem({ almacen, nroPedido: nro, item: fresco.producto });
+        aviso = vuelta.ok
+          ? `${r.mensaje} No se cargo nada: se deshizo lo que ya se habia reservado.`
+          : `${r.mensaje} Ademas no se pudo deshacer lo ya reservado; revise el detalle del pedido.`;
+      } else if (r.tramosHechos.length > 0) {
+        aviso = `${r.mensaje} Quedaron cargados ${r.tramosHechos.length} lote(s) de los ${plan.reparto.length} previstos; revise el detalle.`;
+      }
+
+      const detalle = await plsql.obtenerDetallePedido(almacen, nro);
+      return res.status(422).json({ error: aviso, detalle });
+    }
+
+    const detalle = await plsql.obtenerDetallePedido(almacen, nro);
+    res.json({
+      mensaje: `Se reservaron ${cantidad} ${fresco.unidad} de ${fresco.nombre} en ${r.tramosHechos.length} lote(s).`,
+      reparto: r.tramosHechos,
+      detalle
+    });
   })
 );
 

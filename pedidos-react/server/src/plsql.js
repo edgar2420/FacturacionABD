@@ -143,10 +143,18 @@ function mapearPersona(f) {
  *
  * Columnas del cursor (posicionales, ver DetalleProductos):
  * 1 almacen, 2 producto, 3 nombre, 4 unidad, 5 lote, 6 fecha(venc), 7 precio, 8 saldo
+ *
+ * Devuelve las filas CRUDAS, una por lote. Agruparlas por producto es tarea de
+ * lotes.js; aqui solo se lee.
  */
-async function obtenerProductos({ busqueda, tipo, almacen, cliente, fechaEntrega, pagina = 1, porPagina = 15 }) {
+
+/** Tope de seguridad al volcar el cursor de productos. El catalogo de un
+ *  almacen ronda las 250 filas producto-lote; esto solo evita que una consulta
+ *  degenerada se coma la memoria del servidor. */
+const MAX_FILAS_PRODUCTOS = 5000;
+
+async function obtenerProductosPorLote({ busqueda, tipo, almacen, cliente, fechaEntrega }) {
   const texto = String(busqueda || '').toUpperCase();
-  const desde = (pagina - 1) * porPagina;
 
   return conectar(async (cn) => {
     const r = await cn.execute(
@@ -162,28 +170,28 @@ async function obtenerProductos({ busqueda, tipo, almacen, cliente, fechaEntrega
     );
 
     /*
-     * El paquete devuelve un REF CURSOR, no una consulta que podamos paginar
-     * en SQL. Se recorre el cursor descartando las filas anteriores a la
-     * pagina pedida y se corta al llegar al limite, leyendo una fila de mas
-     * para saber si hay pagina siguiente. Asi no se traen a memoria miles de
-     * filas solo para mostrar quince.
+     * Se vuelca el cursor entero, no una pagina.
+     *
+     * Antes se paginaba sobre el cursor, pero ahora las filas hay que
+     * agruparlas por producto para sumar los saldos, y eso no se puede hacer
+     * bien viendo solo quince filas: los lotes de un mismo producto caerian
+     * partidos entre dos paginas y el saldo saldria incompleto. Primero se
+     * agrupa todo y despues se pagina lo agrupado.
+     *
+     * Es barato: un almacen tiene del orden de 250 filas producto-lote.
      */
     const cursor = r.outBinds.ret;
-    const items = [];
-    let leidas = 0;
-    let hayMas = false;
+    const filas = [];
+    let truncado = false;
     let fila;
 
     while ((fila = await cursor.getRow())) {
-      leidas++;
-      if (leidas <= desde) continue;
-
-      if (items.length === porPagina) {
-        hayMas = true;
+      if (filas.length >= MAX_FILAS_PRODUCTOS) {
+        truncado = true;
         break;
       }
 
-      items.push({
+      filas.push({
         almacen: fila[0],
         producto: fila[1],
         nombre: fila[2],
@@ -191,12 +199,12 @@ async function obtenerProductos({ busqueda, tipo, almacen, cliente, fechaEntrega
         lote: fila[4],
         fechaVencimiento: fila[5],
         precio: Number(fila[6] ?? 0),
-        saldo: fila[7]
+        saldo: Number(fila[7] ?? 0)
       });
     }
 
     await cursor.close();
-    return { items, pagina, porPagina, hayMas };
+    return { filas, truncado };
   });
 }
 
@@ -485,7 +493,7 @@ module.exports = {
   buscarClientes,
   obtenerCliente,
   buscarVendedores,
-  obtenerProductos,
+  obtenerProductosPorLote,
   crearPedido,
   adicionarItem,
   eliminarItem,

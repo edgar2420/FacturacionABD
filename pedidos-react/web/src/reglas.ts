@@ -5,7 +5,7 @@
  * al usuario antes de mandar la peticion; la validacion que manda es la del
  * servidor.
  */
-import type { LineaPedido, Pagado, TipoDocPago } from './tipos';
+import type { LineaPedido, Lote, Pagado, TipoDocPago, TramoLote } from './tipos';
 
 /** "dd/MM/yyyy" -> Date. null si el formato o la fecha no son validos. */
 export function parsearFecha(texto: string): Date | null {
@@ -68,7 +68,11 @@ export function validarFechaEntrega(texto: string): { ok: boolean; mensaje?: str
   return { ok: true };
 }
 
-/** La cantidad no puede superar el saldo del lote (PedidosBean.crearPedido). */
+/**
+ * La cantidad no puede superar el saldo disponible (PedidosBean.crearPedido).
+ * Desde que los lotes se muestran sumados, el saldo que se compara es el
+ * TOTAL del producto, no el de un lote suelto.
+ */
 export function validarCantidad(
   cantidad: number,
   saldo: string | number,
@@ -86,6 +90,64 @@ export function validarCantidad(
     };
   }
   return { ok: true };
+}
+
+/**
+ * Vista previa del reparto entre lotes.
+ *
+ * Es un espejo de server/src/lotes.js: sirve para que el vendedor vea de que
+ * lotes va a salir la mercaderia ANTES de confirmar. El reparto que vale es el
+ * que calcula el servidor con los saldos del momento, no este.
+ *
+ * Criterio (el que pidio el usuario): sale primero el lote que vence antes y,
+ * a igual vencimiento, el de menor saldo.
+ */
+export function parsearVencimiento(valor: string | null | undefined): Date | null {
+  if (typeof valor !== 'string') return null;
+
+  const m = valor.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if (!m) return null;
+
+  const dia = Number(m[1]);
+  const mes = Number(m[2]);
+  // El cursor manda el año en dos cifras ("30/09/26"): son vencimientos de
+  // medicamentos, siempre de este siglo.
+  const anio = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
+
+  const fecha = new Date(anio, mes - 1, dia);
+  if (fecha.getFullYear() !== anio || fecha.getMonth() !== mes - 1 || fecha.getDate() !== dia) {
+    return null;
+  }
+  return fecha;
+}
+
+export function ordenDespacho(a: Lote, b: Lote): number {
+  const fa = parsearVencimiento(a.fechaVencimiento);
+  const fb = parsearVencimiento(b.fechaVencimiento);
+
+  if (fa && fb && fa.getTime() !== fb.getTime()) return fa.getTime() - fb.getTime();
+  if (fa && !fb) return -1;
+  if (!fa && fb) return 1;
+
+  if (a.saldo !== b.saldo) return a.saldo - b.saldo;
+  return String(a.lote).localeCompare(String(b.lote));
+}
+
+export function repartirEnLotes(lotes: Lote[], cantidad: number): TramoLote[] {
+  if (!Number.isFinite(cantidad) || cantidad <= 0) return [];
+
+  const disponibles = [...(lotes ?? [])].filter((l) => l.saldo > 0).sort(ordenDespacho);
+  const tramos: TramoLote[] = [];
+  let restante = cantidad;
+
+  for (const l of disponibles) {
+    if (restante <= 0) break;
+    const toma = Math.min(restante, l.saldo);
+    tramos.push({ lote: l.lote, fechaVencimiento: l.fechaVencimiento, cantidad: toma });
+    restante -= toma;
+  }
+
+  return tramos;
 }
 
 /** Si -> Contado | En -> CEntrega | No -> CxC (PedidosBean.pagarPedido). */
