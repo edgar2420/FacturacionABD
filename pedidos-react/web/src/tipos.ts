@@ -6,9 +6,24 @@ export interface Usuario {
   rol: string;
   /** UNI_NEG del usuario: es el almacen con el que opera. */
   almacen: string;
+  /** Nombre legible del almacen ("Santa Cruz", "Cochabamba"...). */
+  almacenNombre?: string;
+  /** Departamento al que sirve ese almacen. */
+  almacenRegion?: string | null;
   imprimeFactura: boolean;
   /** true cuando se entro por ALMACEN_DEV, sin fila en ABD.USUARIOS. */
   modoDesarrollo?: boolean;
+}
+
+/**
+ * Comparacion entre la ciudad del cliente y el almacen del vendedor.
+ * Solo informa: no bloquea la venta.
+ */
+export interface Zona {
+  estado: 'coincide' | 'otra-region' | 'desconocida';
+  regionAlmacen: string | null;
+  regionCliente: string | null;
+  mensaje?: string;
 }
 
 /** ABD.PERSONAS. Sirve tanto para clientes como para vendedores. */
@@ -22,6 +37,8 @@ export interface Persona {
   direccion: string | null;
   telefono: string | null;
   codigoVendedor?: string;
+  /** Solo en clientes: si su ciudad corresponde al almacen del vendedor. */
+  zona?: Zona;
 }
 
 /** Un lote de un producto, tal como sale de F_OBTENER_PRODUCTOS. */

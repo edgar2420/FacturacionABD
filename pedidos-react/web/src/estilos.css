@@ -1483,6 +1483,62 @@ td {
   background: var(--superficie-2);
 }
 
+/* ==========================================================================
+   Almacen y region
+   ========================================================================== */
+
+/* Chapa con el almacen del vendedor. Va en la barra, siempre visible: de ese
+   almacen sale el stock y ahi se graba el pedido. */
+.chapa-almacen {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--marca-borde);
+  background: var(--marca-suave);
+  color: var(--cel-800);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Marca en la lista de clientes cuando la ciudad no es la del almacen. */
+.marca-otra-region {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--atencion-suave);
+  color: var(--atencion);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Aviso dentro de la ficha del cliente. Avisa, no impide continuar. */
+.aviso-zona {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 11px 13px;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--atencion);
+  background: var(--atencion-suave);
+  color: var(--atencion);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.aviso-zona svg {
+  flex: none;
+  margin-top: 1px;
+}
+
 /* De que lotes sale la cantidad pedida (reparto FEFO). */
 .reparto {
   margin-top: 14px;

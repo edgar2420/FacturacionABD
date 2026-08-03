@@ -165,3 +165,12 @@ export const IconoMas = (p: Props) => (
     <path d="M12 5v14M5 12h14" />
   </Base>
 );
+
+/** Almacen: un galpon con su porton. */
+export const IconoAlmacen = (p: Props) => (
+  <Base {...p}>
+    <path d="M3 21V9l9-5 9 5v12" />
+    <path d="M9 21v-6h6v6" />
+    <path d="M3 21h18" />
+  </Base>
+);

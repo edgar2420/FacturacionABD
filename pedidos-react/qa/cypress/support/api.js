@@ -8,7 +8,16 @@
  * El reparto entre lotes se calcula aqui con la misma regla que el servidor,
  * para que las pruebas comprueben la regla y no un valor escrito a mano.
  */
-import { CLIENTE, PEDIDO, PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE, USUARIO, VENDEDOR, linea } from './datos';
+import {
+  CLIENTE,
+  CLIENTE_OTRA_REGION,
+  PEDIDO,
+  PRODUCTO_TRES_LOTES,
+  PRODUCTO_UN_LOTE,
+  USUARIO,
+  VENDEDOR,
+  linea
+} from './datos';
 
 const PRODUCTOS = [PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE];
 
@@ -67,11 +76,15 @@ export function simularApi(opciones = {}) {
   cy.intercept('POST', '/api/logout', { statusCode: 200, body: { ok: true } }).as('logout');
 
   cy.intercept('GET', '/api/clientes*', (req) => {
-    const valor = new URL(req.url).searchParams.get('valor') || '';
-    const hay = CLIENTE.nombre.toUpperCase().includes(valor.toUpperCase()) || valor === '';
+    const valor = (new URL(req.url).searchParams.get('valor') || '').toUpperCase();
+    const todos = [CLIENTE, CLIENTE_OTRA_REGION];
+    const items = valor
+      ? todos.filter((c) => c.nombre.toUpperCase().includes(valor))
+      : todos;
+
     req.reply({
       statusCode: 200,
-      body: { items: hay ? [CLIENTE] : [], total: hay ? 1 : 0, pagina: 1, porPagina: 15 }
+      body: { items, total: items.length, pagina: 1, porPagina: 15 }
     });
   }).as('clientes');
 

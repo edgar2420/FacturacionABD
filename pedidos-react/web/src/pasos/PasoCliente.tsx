@@ -12,7 +12,7 @@ import { useState } from 'react';
 import * as api from '../api';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { Modal } from '../componentes/Modal';
-import { IconoBuscar, IconoCheck } from '../componentes/iconos';
+import { IconoAlerta, IconoBuscar, IconoCheck } from '../componentes/iconos';
 import { Paginacion } from '../componentes/Paginacion';
 import type { Pagina } from '../api';
 import type { Persona, TipoBusquedaCliente } from '../tipos';
@@ -125,7 +125,15 @@ export function PasoCliente({
                           {c.nombre}
                         </td>
                         <td data-etiqueta="NIT">{c.ruc}</td>
-                        <td data-etiqueta="Ciudad">{c.ciudad}</td>
+                        <td data-etiqueta="Ciudad">
+                          {c.ciudad}
+                          {c.zona?.estado === 'otra-region' && (
+                            <span className="marca-otra-region" title={c.zona.mensaje}>
+                              <IconoAlerta tam={14} />
+                              otra región
+                            </span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -175,6 +183,15 @@ export function PasoCliente({
             <dt>Correo</dt>
             <dd>{enDetalle.email || '—'}</dd>
           </dl>
+
+          {/* Aviso, no bloqueo: decide el vendedor. La ciudad de ABD.PERSONAS
+              es texto libre y esta demasiado sucia para impedir una venta. */}
+          {enDetalle.zona?.estado === 'otra-region' && (
+            <p className="aviso-zona">
+              <IconoAlerta tam={18} />
+              <span>{enDetalle.zona.mensaje}</span>
+            </p>
+          )}
         </Modal>
       )}
     </>

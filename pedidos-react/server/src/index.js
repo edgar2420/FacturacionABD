@@ -13,6 +13,7 @@ const { iniciarPool, cerrarPool } = require('./db');
 const plsql = require('./plsql');
 const reglas = require('./reglas');
 const lotes = require('./lotes');
+const zonas = require('./zonas');
 
 const app = express();
 
@@ -40,6 +41,11 @@ function paginacion(req) {
   const pagina = Math.max(1, Number(req.query.pagina) || 1);
   const porPagina = Math.min(POR_PAGINA_MAX, Math.max(1, Number(req.query.porPagina) || POR_PAGINA));
   return { pagina, porPagina };
+}
+
+/** Anade al cliente el resultado de comparar su ciudad con el almacen. */
+function conZona(cliente, almacen) {
+  return { ...cliente, zona: zonas.comparar(almacen, cliente.ciudad) };
 }
 
 /** Corta la peticion si no hay sesion iniciada. */
@@ -92,6 +98,13 @@ app.post(
       };
     }
 
+    // El almacen manda: de el sale el stock y con el se graba el pedido. Se
+    // envia su nombre legible para poder mostrarlo siempre en pantalla, que el
+    // vendedor sepa de donde esta vendiendo.
+    const alm = zonas.datosAlmacen(datos.almacen);
+    datos.almacenNombre = alm?.nombre ?? datos.almacen;
+    datos.almacenRegion = alm?.region ?? null;
+
     req.session.usuario = datos;
     res.json(datos);
   })
@@ -116,7 +129,13 @@ app.get(
     if (!reglas.TIPOS_BUSQUEDA_CLIENTE.includes(tipo)) {
       return res.status(400).json({ error: `Tipo de busqueda no valido: ${tipo}` });
     }
-    res.json(await plsql.buscarClientes(valor, tipo, paginacion(req)));
+
+    const pagina = await plsql.buscarClientes(valor, tipo, paginacion(req));
+
+    // Se marca si el cliente parece de otra region que el almacen del vendedor.
+    // Es solo un aviso: no se filtra ni se bloquea, porque la ciudad de
+    // ABD.PERSONAS es texto libre y esta demasiado sucia para decidir con ella.
+    res.json({ ...pagina, items: pagina.items.map((c) => conZona(c, req.session.usuario.almacen)) });
   })
 );
 
@@ -126,7 +145,7 @@ app.get(
   asincrono(async (req, res) => {
     const cliente = await plsql.obtenerCliente(req.params.codigo);
     if (!cliente) return res.status(404).json({ error: 'Cliente no encontrado' });
-    res.json(cliente);
+    res.json(conZona(cliente, req.session.usuario.almacen));
   })
 );
 
