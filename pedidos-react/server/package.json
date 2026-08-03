@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
-    "test": "node --test \"pruebas/**/*.test.js\""
+    "test": "node --test \"pruebas/**/*.test.js\"",
+    "prueba:reparto": "node pruebas/reparto-integracion.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

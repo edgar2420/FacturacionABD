@@ -15,6 +15,16 @@ const reglas = require('./reglas');
 const lotes = require('./lotes');
 const zonas = require('./zonas');
 
+/**
+ * Donde se GRABAN los pedidos.
+ *
+ * Con MODO_PRUEBA=1 se usan las tablas IBSVENTA.PPEDIDOS / PLIN_PEDIDOS, que
+ * son copia exacta de las reales, y no se llama al paquete. Los catalogos
+ * (clientes, vendedores, productos y sus saldos) se leen SIEMPRE de produccion
+ * con plsql: solo cambia donde se escribe.
+ */
+const pedidos = config.modoPrueba ? require('./plsql-prueba') : plsql;
+
 const app = express();
 
 app.use(express.json());
@@ -104,6 +114,9 @@ app.post(
     const alm = zonas.datosAlmacen(datos.almacen);
     datos.almacenNombre = alm?.nombre ?? datos.almacen;
     datos.almacenRegion = alm?.region ?? null;
+
+    // Que se vea en pantalla si los pedidos NO se estan grabando de verdad.
+    datos.modoPrueba = config.modoPrueba;
 
     req.session.usuario = datos;
     res.json(datos);
@@ -266,8 +279,8 @@ async function cargarProductoEnPedido({ sesion, cliente, nombreCliente, vendedor
     // La primera linea de un pedido nuevo va con F_CREAR_PEDIDO, que crea la
     // cabecera y la linea a la vez; las demas con F_CREAR_DETALLE_PEDIDO.
     const r = numero
-      ? await plsql.adicionarItem({ ...comun, nroPedido: numero, login: sesion.login })
-      : await plsql.crearPedido({
+      ? await pedidos.adicionarItem({ ...comun, nroPedido: numero, login: sesion.login })
+      : await pedidos.crearPedido({
           ...comun,
           nombreCliente,
           fechaEntrega,
@@ -331,7 +344,7 @@ app.post(
       return res.status(422).json({ error: r.mensaje || 'No se pudo crear el pedido' });
     }
 
-    const detalle = await plsql.obtenerDetallePedido(almacen, r.nroPedido);
+    const detalle = await pedidos.obtenerDetallePedido(almacen, r.nroPedido);
 
     if (!r.ok) {
       // La cabecera y parte de las lineas ya existen en Oracle: no se borra
@@ -380,7 +393,7 @@ app.post(
     if (!plan.ok) return res.status(422).json({ error: plan.mensaje });
 
     // Para saber si se puede compensar en caso de fallo a mitad del reparto.
-    const detallePrevio = await plsql.obtenerDetallePedido(almacen, nro);
+    const detallePrevio = await pedidos.obtenerDetallePedido(almacen, nro);
     const yaEstaba = detallePrevio.some((l) => l.codigoItem === fresco.producto);
 
     const r = await cargarProductoEnPedido({
@@ -397,7 +410,7 @@ app.post(
       if (r.tramosHechos.length > 0 && !yaEstaba) {
         // Se deshace lo cargado: el producto no estaba antes, asi que borrar
         // por codigo de item solo se lleva lo que acabamos de insertar.
-        const vuelta = await plsql.eliminarItem({ almacen, nroPedido: nro, item: fresco.producto });
+        const vuelta = await pedidos.eliminarItem({ almacen, nroPedido: nro, item: fresco.producto });
         aviso = vuelta.ok
           ? `${r.mensaje} No se cargo nada: se deshizo lo que ya se habia reservado.`
           : `${r.mensaje} Ademas no se pudo deshacer lo ya reservado; revise el detalle del pedido.`;
@@ -405,11 +418,11 @@ app.post(
         aviso = `${r.mensaje} Quedaron cargados ${r.tramosHechos.length} lote(s) de los ${plan.reparto.length} previstos; revise el detalle.`;
       }
 
-      const detalle = await plsql.obtenerDetallePedido(almacen, nro);
+      const detalle = await pedidos.obtenerDetallePedido(almacen, nro);
       return res.status(422).json({ error: aviso, detalle });
     }
 
-    const detalle = await plsql.obtenerDetallePedido(almacen, nro);
+    const detalle = await pedidos.obtenerDetallePedido(almacen, nro);
     res.json({
       mensaje: `Se reservaron ${cantidad} ${fresco.unidad} de ${fresco.nombre} en ${r.tramosHechos.length} lote(s).`,
       reparto: r.tramosHechos,
@@ -424,7 +437,7 @@ app.delete(
   asincrono(async (req, res) => {
     const almacen = req.session.usuario.almacen;
 
-    const r = await plsql.eliminarItem({
+    const r = await pedidos.eliminarItem({
       almacen,
       nroPedido: req.params.nro,
       item: req.params.item
@@ -432,7 +445,7 @@ app.delete(
 
     if (!r.ok) return res.status(422).json({ error: r.mensaje || 'No se pudo eliminar el item' });
 
-    const detalle = await plsql.obtenerDetallePedido(almacen, req.params.nro);
+    const detalle = await pedidos.obtenerDetallePedido(almacen, req.params.nro);
     res.json({ mensaje: r.mensaje, detalle });
   })
 );
@@ -443,8 +456,8 @@ app.get(
   asincrono(async (req, res) => {
     const almacen = req.session.usuario.almacen;
     const [pedido, detalle] = await Promise.all([
-      plsql.obtenerPedido(almacen, req.params.nro),
-      plsql.obtenerDetallePedido(almacen, req.params.nro)
+      pedidos.obtenerPedido(almacen, req.params.nro),
+      pedidos.obtenerDetallePedido(almacen, req.params.nro)
     ]);
 
     if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
@@ -458,7 +471,7 @@ app.post(
   asincrono(async (req, res) => {
     const almacen = req.session.usuario.almacen;
 
-    const r = await plsql.terminarPedido({
+    const r = await pedidos.terminarPedido({
       almacen,
       nroPedido: req.params.nro,
       login: req.session.usuario.login
@@ -467,8 +480,8 @@ app.post(
     if (!r.ok) return res.status(422).json({ error: r.mensaje || 'No se pudo terminar el pedido' });
 
     const [pedido, detalle] = await Promise.all([
-      plsql.obtenerPedido(almacen, req.params.nro),
-      plsql.obtenerDetallePedido(almacen, req.params.nro)
+      pedidos.obtenerPedido(almacen, req.params.nro),
+      pedidos.obtenerDetallePedido(almacen, req.params.nro)
     ]);
 
     res.json({ mensaje: r.mensaje, pedido, detalle });
@@ -490,7 +503,7 @@ app.post(
 
     const almacen = req.session.usuario.almacen;
 
-    const r = await plsql.pagarPedido({
+    const r = await pedidos.pagarPedido({
       almacen,
       nroPedido: req.params.nro,
       login: req.session.usuario.login,
@@ -504,8 +517,8 @@ app.post(
     if (!r.ok) return res.status(422).json({ error: r.mensaje || 'No se pudo pagar el pedido' });
 
     const [pedido, detalle] = await Promise.all([
-      plsql.obtenerPedido(almacen, req.params.nro),
-      plsql.obtenerDetallePedido(almacen, req.params.nro)
+      pedidos.obtenerPedido(almacen, req.params.nro),
+      pedidos.obtenerDetallePedido(almacen, req.params.nro)
     ]);
 
     res.json({ mensaje: r.mensaje, pedido, detalle });
@@ -526,6 +539,12 @@ async function arrancar() {
   await iniciarPool();
   app.listen(config.puerto, () => {
     console.log(`API de Pedidos escuchando en http://localhost:${config.puerto}`);
+    if (config.modoPrueba) {
+      console.log(
+        'MODO PRUEBA: los pedidos se graban en IBSVENTA.PPEDIDOS y PLIN_PEDIDOS.\n' +
+        '             Los catalogos y saldos se siguen leyendo de produccion.'
+      );
+    }
   });
 }
 
