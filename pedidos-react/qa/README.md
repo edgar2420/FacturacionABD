@@ -89,15 +89,20 @@ Se busca por **texto visible y roles** (`contains('button', 'Buscar cliente')`,
 menudo; las pruebas tienen que sobrevivir a eso y fallar solo cuando se rompe
 el comportamiento.
 
-## Si Cypress no arranca en Windows
+## Si Cypress no arranca: `bad option: --smoke-test`
 
-Puede fallar con `bad option: --smoke-test`. Es el binario, no la suite:
+No es el binario ni la suite. Es la variable de entorno **`ELECTRON_RUN_AS_NODE`**:
+si vale `1`, Cypress (que es una aplicación Electron) arranca como si fuera
+Node, y entonces no entiende sus propios argumentos.
 
+La ponen algunos entornos que a su vez son Electron, como la terminal integrada
+de VS Code. Se comprueba y se quita así:
+
+```powershell
+$env:ELECTRON_RUN_AS_NODE          # si imprime 1, es esto
+Remove-Item Env:\ELECTRON_RUN_AS_NODE
+npx cypress run
 ```
-npx cypress cache clear
-npx cypress install --force
-npx cypress verify
-```
 
-Si sigue igual, suele ser el antivirus bloqueando el ejecutable de Electron en
-`%LOCALAPPDATA%\Cypress\Cache`.
+Reinstalar el binario NO lo arregla, porque el binario está bien. Antes de
+perder tiempo con `cypress install --force`, revisa esta variable.

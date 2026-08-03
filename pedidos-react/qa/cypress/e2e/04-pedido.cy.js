@@ -1,15 +1,29 @@
 /// <reference types="cypress" />
 import { PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE } from '../support/datos';
 
-/** Deja un pedido creado con 10 unidades del producto de tres lotes. */
+/**
+ * Deja un pedido creado con UNA linea.
+ *
+ * Son 3 unidades a proposito: caben enteras en F244 (saldo 5), asi que el
+ * pedido queda con una sola linea y estas pruebas pueden contar items sin
+ * depender del reparto. El reparto en varias lineas se prueba en 03-lotes.
+ */
 function crearPedidoBase() {
   cy.buscarProductos();
   cy.abrirProducto(PRODUCTO_TRES_LOTES.nombre);
   cy.get('[role="dialog"]').within(() => {
-    cy.get('input[type="number"]').type('10');
+    cy.get('input[type="number"]').type('3');
     cy.contains('button', 'Crear pedido').click();
   });
   cy.wait('@crearPedido');
+  cy.contains('1 ítem(s)').should('be.visible');
+}
+
+/** Busca otro producto. Se apunta por el placeholder, que es inequivoco. */
+function buscarOtro(texto) {
+  cy.get('input[placeholder="Nombre o código"]').clear().type(texto);
+  cy.contains('button', 'Buscar producto').click();
+  cy.wait('@productos');
 }
 
 describe('Paso 3 y 4: pedido y pago', () => {
@@ -25,15 +39,13 @@ describe('Paso 3 y 4: pedido y pago', () => {
 
   it('la barra de total queda fija con el importe', () => {
     crearPedidoBase();
-    cy.get('.total-fijo').should('be.visible').and('contain', '500,00');
+    // 3 unidades x Bs 50.
+    cy.get('.total-fijo').should('be.visible').and('contain', '150,00');
   });
 
   it('el segundo producto se adiciona, no crea otro pedido', () => {
     crearPedidoBase();
-
-    cy.campo('Producto').clear().type('CEFTRIAXONA');
-    cy.contains('button', 'Buscar producto').click();
-    cy.wait('@productos');
+    buscarOtro('CEFTRIAXONA');
 
     cy.abrirProducto(PRODUCTO_UN_LOTE.nombre);
     cy.get('[role="dialog"]').within(() => {
@@ -49,10 +61,7 @@ describe('Paso 3 y 4: pedido y pago', () => {
 
   it('manda la fecha de entrega al adicionar, que hace falta para el precio', () => {
     crearPedidoBase();
-
-    cy.campo('Producto').clear().type('CEFTRIAXONA');
-    cy.contains('button', 'Buscar producto').click();
-    cy.wait('@productos');
+    buscarOtro('CEFTRIAXONA');
     cy.abrirProducto(PRODUCTO_UN_LOTE.nombre);
     cy.get('[role="dialog"]').within(() => {
       cy.get('input[type="number"]').type('2');
@@ -87,6 +96,7 @@ describe('Paso 3 y 4: pedido y pago', () => {
     cy.entrar({ adicionarFalla: true });
     cy.llegarAProductos();
     crearPedidoBase();
+    buscarOtro('CEFTRIAXONA');
 
     cy.abrirProducto(PRODUCTO_UN_LOTE.nombre);
     cy.get('[role="dialog"]').within(() => {
