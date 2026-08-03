@@ -35,5 +35,18 @@ module.exports = {
    * Sirve para probar la interfaz sin dar de alta un usuario. Dejar VACIO en
    * cualquier despliegue real.
    */
-  almacenDev: process.env.ALMACEN_DEV || null
+  almacenDev: process.env.ALMACEN_DEV || null,
+
+  /**
+   * Modo prueba.
+   *
+   * Con MODO_PRUEBA=1 los pedidos se graban en IBSVENTA.PPEDIDOS y
+   * PLIN_PEDIDOS en vez de llamar al paquete, que escribe en las tablas
+   * reales. Los catalogos (clientes, vendedores, productos y sus saldos) se
+   * siguen leyendo de produccion: solo cambia donde se ESCRIBE.
+   *
+   * Sirve para recorrer el flujo entero sin dejar pedidos de verdad. Dejar
+   * VACIO en cualquier despliegue real.
+   */
+  modoPrueba: process.env.MODO_PRUEBA === '1'
 };
