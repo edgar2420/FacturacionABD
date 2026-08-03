@@ -1,5 +1,6 @@
 /** Piezas visuales reutilizables. Sin librerias externas. */
-import type { ReactNode } from 'react';
+import { cloneElement, isValidElement, useId } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { IconoCheck } from './iconos';
 
 export function Tarjeta({
@@ -24,6 +25,9 @@ export function Tarjeta({
   );
 }
 
+/** Etiquetas que se enlazan sole con su control mediante id/htmlFor. */
+const CONTROLES = ['input', 'select', 'textarea'];
+
 export function Campo({
   etiqueta,
   ayuda,
@@ -35,10 +39,26 @@ export function Campo({
   error?: string;
   children: ReactNode;
 }) {
+  const id = useId();
+
+  /*
+   * La etiqueta se enlaza con el control. Sin esto un lector de pantalla lee
+   * la caja de texto sin decir para que es, y tocar la etiqueta en el celular
+   * no da el foco al campo.
+   *
+   * Solo se enlaza cuando el hijo es directamente un control; si viene
+   * envuelto (el campo de contraseña, que trae el boton del ojo al lado) se
+   * deja como estaba, porque el id caeria sobre el div y no serviria.
+   */
+  const esControl = isValidElement(children) && CONTROLES.includes(children.type as string);
+  const control = esControl
+    ? cloneElement(children as ReactElement, { id })
+    : children;
+
   return (
     <div className="campo">
-      <label>{etiqueta}</label>
-      {children}
+      <label htmlFor={esControl ? id : undefined}>{etiqueta}</label>
+      {control}
       {error ? (
         <span className="error-campo">{error}</span>
       ) : (
