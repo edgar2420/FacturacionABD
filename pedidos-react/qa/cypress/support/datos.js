@@ -7,24 +7,49 @@
  * sean realistas.
  */
 
+/** El almacen sale de ABD.USUARIOS.UNI_NEG. FAB sirve a Santa Cruz. */
 export const USUARIO = {
   login: 'abd',
   nombre: 'abd',
   rol: 'DEV',
   almacen: 'AL-VEN-ABD-FAB',
+  almacenNombre: 'Fábrica',
+  almacenRegion: 'SANTA CRUZ',
   imprimeFactura: false,
   modoDesarrollo: true
 };
 
+/** Cliente de la MISMA region que el almacen: no debe salir ningun aviso. */
 export const CLIENTE = {
   codigo: 'I00060',
   nombre: 'IMP.AMP.FAVIMA (MAYO-09)',
   razonSocial: 'IMPORTADORA FAVIMA S.R.L.',
   ruc: '1023456789',
-  ciudad: 'LA PAZ',
+  ciudad: 'SANTA CRUZ-WARNES',
   email: 'ventas@favima.bo',
   direccion: 'AV. ARCE 1234',
-  telefono: '2771234'
+  telefono: '2771234',
+  zona: { estado: 'coincide', regionAlmacen: 'SANTA CRUZ', regionCliente: 'SANTA CRUZ' }
+};
+
+/** Cliente de OTRA region: debe avisar, pero dejar continuar. */
+export const CLIENTE_OTRA_REGION = {
+  codigo: 'C00099',
+  nombre: 'FCIA. SANIDAD Y VIDA (CBBA)',
+  razonSocial: 'FARMACIA SANIDAD Y VIDA',
+  ruc: '9988776655',
+  ciudad: 'COCHABAMBA',
+  email: null,
+  direccion: 'AV. AYACUCHO 55',
+  telefono: '4412233',
+  zona: {
+    estado: 'otra-region',
+    regionAlmacen: 'SANTA CRUZ',
+    regionCliente: 'COCHABAMBA',
+    mensaje:
+      'Este cliente figura en COCHABAMBA y usted trabaja con el almacén de Fábrica (SANTA CRUZ). ' +
+      'El pedido saldría de SANTA CRUZ.'
+  }
 };
 
 export const VENDEDOR = {

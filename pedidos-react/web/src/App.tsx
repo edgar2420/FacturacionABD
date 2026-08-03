@@ -16,7 +16,7 @@ import { ModalAviso, ModalConfirmacion } from './componentes/Modal';
 import { Toasts } from './componentes/Toast';
 import { PieApp } from './componentes/PieApp';
 import type { Confirmacion } from './componentes/Modal';
-import { IconoCarrito, IconoLuna, IconoSalir, IconoSol } from './componentes/iconos';
+import { IconoAlmacen, IconoCarrito, IconoLuna, IconoSalir, IconoSol } from './componentes/iconos';
 import { PasoCliente } from './pasos/PasoCliente';
 import { PasoVendedor } from './pasos/PasoVendedor';
 import { PasoProductos } from './pasos/PasoProductos';
@@ -173,6 +173,13 @@ export default function App() {
             DEV
           </span>
         )}
+
+        {/* El almacen determina de donde sale el stock y donde se graba el
+            pedido, asi que va siempre visible, tambien en celular. */}
+        <span className="chapa-almacen" title={`Almacén ${usuario.almacen}`}>
+          <IconoAlmacen tam={14} />
+          {usuario.almacenNombre ?? usuario.almacen}
+        </span>
 
         <div className="usuario">
           <b>{usuario.nombre}</b>

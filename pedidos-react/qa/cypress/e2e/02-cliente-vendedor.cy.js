@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { entregaIso } from '../support/datos';
+import { CLIENTE, CLIENTE_OTRA_REGION, entregaIso } from '../support/datos';
 
 describe('Paso 1 y 2: cliente y vendedor', () => {
   beforeEach(() => cy.entrar());
@@ -101,6 +101,71 @@ describe('Paso 1 y 2: cliente y vendedor', () => {
     cy.elegirCliente();
     cy.elegirVendedor(entregaIso());
     cy.contains('button', 'Buscar producto').should('be.visible');
+  });
+
+  /**
+   * Almacen y region.
+   *
+   * El stock ya esta aislado por almacen en el servidor (sale de UNI_NEG, no
+   * del navegador). Aqui se comprueba lo otro: que el vendedor VEA con que
+   * almacen trabaja, y que se le AVISE si el cliente parece de otra region,
+   * sin impedirle vender.
+   */
+  describe('almacen y region', () => {
+    it('la barra muestra siempre el almacen del vendedor', () => {
+      cy.get('.chapa-almacen').should('be.visible').and('contain', 'Fábrica');
+    });
+
+    it('marca en la lista al cliente de otra region', () => {
+      cy.campo('Dato a buscar').type('FCIA');
+      cy.contains('button', 'Buscar cliente').click();
+      cy.wait('@clientes');
+
+      cy.contains('table tbody tr', CLIENTE_OTRA_REGION.nombre).within(() => {
+        cy.contains('otra región').should('be.visible');
+      });
+    });
+
+    it('no marca al cliente de la misma region, aunque la ciudad sea compuesta', () => {
+      cy.campo('Dato a buscar').type('FAVIMA');
+      cy.contains('button', 'Buscar cliente').click();
+      cy.wait('@clientes');
+
+      // "SANTA CRUZ-WARNES" es Santa Cruz: no debe salir aviso.
+      cy.contains('table tbody tr', CLIENTE.nombre).within(() => {
+        cy.contains('otra región').should('not.exist');
+      });
+    });
+
+    it('la ficha explica por que avisa, y deja continuar igual', () => {
+      cy.campo('Dato a buscar').type('FCIA');
+      cy.contains('button', 'Buscar cliente').click();
+      cy.wait('@clientes');
+      cy.contains('table tbody tr', CLIENTE_OTRA_REGION.nombre).click();
+
+      cy.get('[role="dialog"]').within(() => {
+        cy.get('.aviso-zona')
+          .should('be.visible')
+          .and('contain', 'COCHABAMBA')
+          .and('contain', 'Fábrica');
+
+        // Avisa, NO bloquea: el boton sigue activo.
+        cy.contains('button', 'Elegir cliente').should('be.enabled').click();
+      });
+
+      cy.contains('Cliente elegido').should('be.visible');
+    });
+
+    it('la ficha del cliente de la misma region no lleva aviso', () => {
+      cy.campo('Dato a buscar').type('FAVIMA');
+      cy.contains('button', 'Buscar cliente').click();
+      cy.wait('@clientes');
+      cy.contains('table tbody tr', CLIENTE.nombre).click();
+
+      cy.get('[role="dialog"]').within(() => {
+        cy.get('.aviso-zona').should('not.exist');
+      });
+    });
   });
 
   it('se puede volver a un paso anterior desde la barra de pasos', () => {
