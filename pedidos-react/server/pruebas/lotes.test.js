@@ -13,6 +13,7 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert');
 
 const {
+  esResto,
   parsearVencimiento,
   compararLotes,
   agruparPorProducto,
@@ -60,9 +61,62 @@ describe('parsearVencimiento', () => {
   });
 });
 
+describe('restos (lotes de muy poco saldo)', () => {
+  test('un lote de 3 o menos es resto; de 4 ya no', () => {
+    assert.ok(esResto({ saldo: 1 }));
+    assert.ok(esResto({ saldo: 3 }));
+    assert.ok(!esResto({ saldo: 4 }));
+    assert.ok(!esResto({ saldo: 0 }), 'sin saldo no es resto, es lote vacio');
+  });
+
+  test('los restos salen ANTES que todo, aunque venzan mucho mas tarde', () => {
+    // Caso real de PT026: el lote de 1 unidad vence en 2030 y el grande en
+    // 2027. Con el orden puro por fecha, la unidad no salia nunca.
+    const resto = { lote: '1030037', fechaVencimiento: '01/05/30', saldo: 1 };
+    const grande = { lote: '6080001', fechaVencimiento: '30/11/27', saldo: 520 };
+    assert.ok(compararLotes(resto, grande) < 0, 'el resto va primero');
+  });
+
+  test('entre restos manda el vencimiento', () => {
+    const a = { lote: 'A', fechaVencimiento: '01/05/30', saldo: 1 };
+    const b = { lote: 'B', fechaVencimiento: '30/09/29', saldo: 3 };
+    assert.ok(compararLotes(a, b) > 0, 'B vence antes, va primero');
+  });
+
+  test('entre lotes normales no cambia nada: sigue mandando la fecha', () => {
+    const a = { lote: 'A', fechaVencimiento: '31/12/26', saldo: 10 };
+    const b = { lote: 'B', fechaVencimiento: '30/09/26', saldo: 900 };
+    assert.ok(compararLotes(a, b) > 0, 'B vence antes, va primero');
+  });
+
+  test('el caso de la captura: PT026 pidiendo 600', () => {
+    const lotesPT026 = [
+      { lote: '6080001', fechaVencimiento: '30/11/27', saldo: 520 },
+      { lote: '1030008', fechaVencimiento: '31/08/28', saldo: 1200 },
+      { lote: '1030013', fechaVencimiento: '30/09/29', saldo: 1 },
+      { lote: '1030037', fechaVencimiento: '01/05/30', saldo: 1 },
+      { lote: '1030036', fechaVencimiento: '01/05/30', saldo: 3 }
+    ];
+
+    const r = repartirEnLotes(lotesPT026, 600);
+    assert.ok(r.ok);
+    assert.deepStrictEqual(
+      r.reparto.map((t) => [t.lote, t.cantidad]),
+      [
+        ['1030013', 1],   // restos primero, entre ellos el que vence antes
+        ['1030037', 1],
+        ['1030036', 3],
+        ['6080001', 520], // luego lo normal, por vencimiento
+        ['1030008', 75]
+      ]
+    );
+  });
+});
+
 describe('compararLotes', () => {
   test('primero el que vence antes', () => {
-    const a = { lote: 'A', fechaVencimiento: '31/12/26', saldo: 1 };
+    // Los dos por encima del limite de resto, para que mande la fecha.
+    const a = { lote: 'A', fechaVencimiento: '31/12/26', saldo: 10 };
     const b = { lote: 'B', fechaVencimiento: '30/09/26', saldo: 900 };
     assert.ok(compararLotes(a, b) > 0, 'B vence antes, tiene que ir primero');
   });
@@ -76,9 +130,18 @@ describe('compararLotes', () => {
 
   test('el lote sin fecha legible se va al final', () => {
     const conFecha = { lote: 'A', fechaVencimiento: '31/12/30', saldo: 10 };
-    const sinFecha = { lote: 'B', fechaVencimiento: null, saldo: 1 };
+    const sinFecha = { lote: 'B', fechaVencimiento: null, saldo: 50 };
     assert.ok(compararLotes(sinFecha, conFecha) > 0);
     assert.ok(compararLotes(conFecha, sinFecha) < 0);
+  });
+
+  test('un resto sin fecha legible sigue saliendo primero', () => {
+    // Chocan dos reglas: "sin fecha va al final" y "los restos van primero".
+    // Gana el resto: son como mucho 3 unidades, el riesgo es nulo y el objetivo
+    // es justo sacarlas de en medio.
+    const restoSinFecha = { lote: 'B', fechaVencimiento: null, saldo: 1 };
+    const normal = { lote: 'A', fechaVencimiento: '31/12/26', saldo: 100 };
+    assert.ok(compararLotes(restoSinFecha, normal) < 0);
   });
 
   test('el orden es estable con lotes identicos salvo el codigo', () => {

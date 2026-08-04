@@ -5,17 +5,17 @@
  * La regla que se comprueba aqui es la que pidio el usuario:
  *
  *   - En la lista se ve UNA fila por producto, con el saldo de todos sus lotes
- *     sumado, ordenada por lo que vence antes y, a igual fecha, por lo que
- *     tiene menos saldo.
- *   - Al reservar, la mercaderia sale primero del lote que vence antes; entre
- *     lotes que vencen el mismo dia, primero el de menor saldo.
+ *     sumado, y se muestra el vencimiento mas proximo de todos.
+ *   - Al reservar salen primero los "restos" (lotes de 3 unidades o menos),
+ *     para liquidarlos; despues, lo que vence antes; y a igual fecha, el de
+ *     menor saldo.
  *
  * Producto de referencia (PT982, CALCUSAN):
  *   F244  30/09/26  saldo   5
  *   F245  30/09/26  saldo 120
  *   F250  31/12/26  saldo 200   -> saldo total 325
  */
-import { PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE } from '../support/datos';
+import { PRODUCTO_CON_RESTOS, PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE } from '../support/datos';
 
 describe('Lotes sumados y reparto', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('Lotes sumados y reparto', () => {
 
   describe('la lista', () => {
     it('muestra una sola fila por producto, no una por lote', () => {
-      cy.get('table.seleccionable tbody tr').should('have.length', 2);
+      cy.get('table.seleccionable tbody tr').should('have.length', 3);
       cy.contains('table.seleccionable tbody tr', PRODUCTO_TRES_LOTES.nombre).should(
         'have.length',
         1
@@ -147,6 +147,65 @@ describe('Lotes sumados y reparto', () => {
         cy.get('input[type="number"]').type('2');
         cy.get('.reparto li').should('have.length', 1);
         cy.get('.reparto li').should('contain', '233052027');
+      });
+    });
+  });
+
+  /**
+   * Los "restos": lotes de 3 unidades o menos.
+   *
+   * Casi siempre son los que vencen mas tarde, asi que con el orden puro por
+   * fecha se quedaban en el almacen para siempre. Ahora salen primero.
+   *
+   * Producto de referencia (PT026):
+   *   1030013  30/09/29  saldo    1   <- resto
+   *   1030036  01/05/30  saldo    3   <- resto
+   *   6080001  30/11/27  saldo  520
+   *   1030008  31/08/28  saldo 1201
+   */
+  describe('restos de poco saldo', () => {
+    it('los lotes chicos salen primero, aunque venzan mucho mas tarde', () => {
+      cy.abrirProducto(PRODUCTO_CON_RESTOS.nombre);
+      cy.get('[role="dialog"]').within(() => {
+        cy.get('input[type="number"]').type('600');
+
+        // 1 + 3 (restos) + 520 + 76 = 600, en cuatro lotes.
+        cy.get('.reparto li').should('have.length', 4);
+        cy.get('.reparto li').eq(0).should('contain', '1030013').and('contain', '1 PZA');
+        cy.get('.reparto li').eq(1).should('contain', '1030036').and('contain', '3 PZA');
+        // Y despues lo normal, por vencimiento.
+        cy.get('.reparto li').eq(2).should('contain', '6080001').and('contain', '520 PZA');
+        cy.get('.reparto li').eq(3).should('contain', '1030008').and('contain', '76 PZA');
+      });
+    });
+
+    it('se marcan como "resto" para que no parezca un error de orden', () => {
+      cy.abrirProducto(PRODUCTO_CON_RESTOS.nombre);
+      cy.get('[role="dialog"]').within(() => {
+        cy.get('input[type="number"]').type('600');
+
+        cy.get('.reparto li').eq(0).find('.resto').should('be.visible');
+        cy.get('.reparto li').eq(1).find('.resto').should('be.visible');
+        // El lote grande no lleva la marca.
+        cy.get('.reparto li').eq(2).find('.resto').should('not.exist');
+      });
+    });
+
+    it('la lista muestra el vencimiento mas proximo, no el del primer resto', () => {
+      // El primer lote a despachar vence 30/09/29, pero el grueso del stock
+      // caduca el 30/11/27: es esa la fecha que hay que enseñar.
+      cy.contains('table.seleccionable tbody tr', PRODUCTO_CON_RESTOS.nombre).within(() => {
+        cy.contains('30/11/27').should('exist');
+        cy.contains('30/09/29').should('not.exist');
+      });
+    });
+
+    it('pidiendo poco, sale solo del resto', () => {
+      cy.abrirProducto(PRODUCTO_CON_RESTOS.nombre);
+      cy.get('[role="dialog"]').within(() => {
+        cy.get('input[type="number"]').type('1');
+        cy.get('.reparto li').should('have.length', 1);
+        cy.get('.reparto li').should('contain', '1030013');
       });
     });
   });

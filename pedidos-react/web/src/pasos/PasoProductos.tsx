@@ -13,7 +13,7 @@
  */
 import { useState } from 'react';
 import * as api from '../api';
-import { bolivianos, repartirEnLotes, validarCantidad } from '../reglas';
+import { bolivianos, esResto, repartirEnLotes, validarCantidad } from '../reglas';
 import { Boton, Campo, Tarjeta, Vacio } from '../componentes/ui';
 import { Modal } from '../componentes/Modal';
 import { IconoBasura, IconoBuscar, IconoCheck, IconoMas } from '../componentes/iconos';
@@ -375,18 +375,26 @@ export function PasoProductos({
             <div className="reparto">
               <p className="titulo-reparto">
                 Sale de {reparto.length === 1 ? 'este lote' : `estos ${reparto.length} lotes`}
-                <span className="ayuda"> (primero el que vence antes)</span>
+                <span className="ayuda"> (primero los restos, luego lo que vence antes)</span>
               </p>
               <ul>
-                {reparto.map((t) => (
-                  <li key={t.lote}>
-                    <span className="lote">{t.lote}</span>
-                    <span className="vence">vence {t.fechaVencimiento}</span>
-                    <b>
-                      {t.cantidad} {elegido.unidad}
-                    </b>
-                  </li>
-                ))}
+                {reparto.map((t) => {
+                  // Se marca el lote que sale por ser un resto y no por fecha,
+                  // que si no parece un error de orden.
+                  const lote = elegido.lotes.find((l) => l.lote === t.lote);
+                  return (
+                    <li key={t.lote}>
+                      <span className="lote">{t.lote}</span>
+                      <span className="vence">
+                        vence {t.fechaVencimiento}
+                        {lote && esResto(lote) && <em className="resto">resto</em>}
+                      </span>
+                      <b>
+                        {t.cantidad} {elegido.unidad}
+                      </b>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}

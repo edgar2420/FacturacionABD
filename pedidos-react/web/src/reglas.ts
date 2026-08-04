@@ -121,7 +121,25 @@ export function parsearVencimiento(valor: string | null | undefined): Date | nul
   return fecha;
 }
 
+/**
+ * Hasta cuantas unidades se considera "resto". Tiene que valer lo mismo que
+ * SALDO_RESTO en server/src/lotes.js: si se cambia alli, se cambia aqui.
+ */
+export const SALDO_RESTO = 3;
+
+export function esResto(lote: Lote): boolean {
+  return lote.saldo > 0 && lote.saldo <= SALDO_RESTO;
+}
+
+/**
+ * Orden de despacho: primero los restos para liquidarlos, despues por
+ * vencimiento (antes el que caduca antes) y, a igual fecha, el de menor saldo.
+ */
 export function ordenDespacho(a: Lote, b: Lote): number {
+  const ra = esResto(a);
+  const rb = esResto(b);
+  if (ra !== rb) return ra ? -1 : 1;
+
   const fa = parsearVencimiento(a.fechaVencimiento);
   const fb = parsearVencimiento(b.fechaVencimiento);
 

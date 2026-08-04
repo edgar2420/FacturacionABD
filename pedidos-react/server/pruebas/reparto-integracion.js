@@ -126,11 +126,21 @@ async function paso(titulo, fn) {
     assert.deepStrictEqual(detalle.map((l) => l.item), plan.reparto.map((_, i) => i + 1));
   });
 
-  await paso('el primer lote es el que vence antes', () => {
-    const f = (t) => lotes.parsearVencimiento(t);
-    const primero = f(detalle[0].fechaVencimiento);
-    const ultimo = f(detalle[detalle.length - 1].fechaVencimiento);
-    if (primero && ultimo) assert.ok(primero <= ultimo, 'el orden de vencimiento esta al reves');
+  await paso('las lineas salen en el orden de despacho (restos, luego vencimiento)', () => {
+    // No basta con mirar solo las fechas: desde que los restos salen primero,
+    // un lote de una unidad que caduca tarde puede encabezar el pedido.
+    for (let i = 1; i < detalle.length; i++) {
+      const anterior = { lote: detalle[i - 1].lote, fechaVencimiento: detalle[i - 1].fechaVencimiento, saldo: null };
+      const actual = { lote: detalle[i].lote, fechaVencimiento: detalle[i].fechaVencimiento, saldo: null };
+      // El saldo original lo tiene el plan, no la linea grabada.
+      anterior.saldo = prod.lotes.find((l) => l.lote === anterior.lote)?.saldo ?? 0;
+      actual.saldo = prod.lotes.find((l) => l.lote === actual.lote)?.saldo ?? 0;
+
+      assert.ok(
+        lotes.compararLotes(anterior, actual) <= 0,
+        `el lote ${actual.lote} deberia ir antes que ${anterior.lote}`
+      );
+    }
   });
 
   await paso('el precio lo calculo Oracle, no viene en cero', () => {

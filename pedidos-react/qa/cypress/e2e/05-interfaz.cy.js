@@ -199,6 +199,30 @@ describe('Interfaz', () => {
       });
     });
 
+    it('sin pedido todavia, la tabla de productos usa el ancho entero', () => {
+      cy.entrar();
+      cy.llegarAProductos();
+      cy.buscarProductos();
+
+      // Sin pedido no se pinta el aside. La tabla tiene que ocupar las dos
+      // columnas: si no, se aprieta a la izquierda y el saldo queda cortado.
+      cy.get('.disposicion > .lateral').should('not.exist');
+      cy.get('.disposicion > .principal').then(($p) => {
+        cy.get('.contenido').then(($c) => {
+          const ancho = $p[0].getBoundingClientRect().width;
+          const total = $c[0].getBoundingClientRect().width;
+          expect(ancho / total, 'la columna ocupa casi todo el ancho').to.be.greaterThan(0.9);
+        });
+      });
+
+      // Y la ultima columna de la tabla tiene que verse entera.
+      cy.contains('th', 'Saldo').then(($th) => {
+        const th = $th[0].getBoundingClientRect();
+        const caja = $th.closest('.tabla-scroll')[0].getBoundingClientRect();
+        expect(th.right, 'la columna Saldo no queda cortada').to.be.at.most(caja.right + 1);
+      });
+    });
+
     it('la pagina tampoco se desplaza en horizontal en pantalla ancha', () => {
       cy.entrar();
       cy.campo('Dato a buscar').type('FAVIMA');
