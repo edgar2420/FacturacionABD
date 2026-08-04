@@ -72,6 +72,11 @@ export function PasoCliente({
 
   return (
     <>
+      {/* En escritorio, el formulario a la izquierda y los resultados a la
+          derecha. El aside va primero en el HTML para que en celular, donde no
+          hay dos columnas, se siga viendo el formulario antes que la tabla. */}
+      <div className="disposicion busqueda">
+      <aside className="lateral">
       <Tarjeta titulo="Cliente">
         <form onSubmit={buscar}>
           <div className="fila">
@@ -100,6 +105,18 @@ export function PasoCliente({
           </Boton>
         </form>
       </Tarjeta>
+      </aside>
+
+      <div className="principal">
+      {!resultados && (
+        <div className="espera-busqueda solo-escritorio">
+          <div>
+            <IconoBuscar tam={30} />
+            <b>Todavía no hay búsqueda</b>
+            <span>Escriba un nombre, NIT o código y los resultados saldrán aquí.</span>
+          </div>
+        </div>
+      )}
 
       {resultados && (
         <Tarjeta titulo={`Resultados (${resultados.total})`}>
@@ -151,6 +168,8 @@ export function PasoCliente({
           )}
         </Tarjeta>
       )}
+      </div>
+      </div>
 
       {enDetalle && (
         <Modal

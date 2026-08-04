@@ -86,6 +86,10 @@ export function PasoVendedor({
 
   return (
     <>
+      {/* Igual que en el paso del cliente: en escritorio los datos y la
+          busqueda a la izquierda, los resultados a la derecha. */}
+      <div className="disposicion busqueda">
+      <aside className="lateral">
       <Tarjeta titulo="Cliente elegido">
         <dl className="datos">
           <dt>Código</dt>
@@ -172,6 +176,18 @@ export function PasoVendedor({
           </Boton>
         </form>
       </Tarjeta>
+      </aside>
+
+      <div className="principal">
+      {!resultados && (
+        <div className="espera-busqueda solo-escritorio">
+          <div>
+            <IconoBuscar tam={30} />
+            <b>Todavía no hay búsqueda</b>
+            <span>Indique la fecha de entrega y busque el vendedor.</span>
+          </div>
+        </div>
+      )}
 
       {resultados && (
         <Tarjeta titulo={`Vendedores (${resultados.total})`}>
@@ -215,6 +231,8 @@ export function PasoVendedor({
           )}
         </Tarjeta>
       )}
+      </div>
+      </div>
 
       {enDetalle && (
         <Modal

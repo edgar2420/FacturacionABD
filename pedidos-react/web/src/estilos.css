@@ -1165,7 +1165,18 @@ td {
   }
 }
 
-/* Escritorio: el pedido en curso acompana el desplazamiento */
+/* Solo se ve en escritorio: en celular seria ruido. */
+.solo-escritorio {
+  display: none;
+}
+
+/* ==========================================================================
+   Escritorio
+   ==========================================================================
+
+   En una pantalla ancha, apilar el formulario y despues los resultados deja
+   media pantalla vacia y obliga a bajar para ver lo que uno acaba de buscar.
+   Se reparte en dos columnas y la de al lado acompana el desplazamiento.  */
 @media (min-width: 1024px) {
   .contenido {
     max-width: 1120px;
@@ -1175,6 +1186,15 @@ td {
     max-width: 1120px;
   }
 
+  .solo-escritorio {
+    display: block;
+  }
+
+  /* Va despues de .solo-escritorio a proposito, para que gane el grid. */
+  .espera-busqueda {
+    display: grid;
+  }
+
   .disposicion {
     display: grid;
     grid-template-columns: minmax(0, 1.6fr) minmax(310px, 1fr);
@@ -1182,14 +1202,73 @@ td {
     gap: 18px;
   }
 
-  .disposicion > .lateral {
-    position: sticky;
-    top: 88px;
+  /* En los pasos de busqueda manda la tabla, asi que el formulario va en la
+     columna estrecha y a la izquierda. El aside va primero en el HTML, con lo
+     que en celular se sigue viendo el formulario antes que los resultados. */
+  .disposicion.busqueda {
+    grid-template-columns: minmax(300px, 0.85fr) minmax(0, 2fr);
   }
 
-  .disposicion > .lateral .tarjeta {
+  .disposicion > .lateral {
+    position: sticky;
+    top: 82px;
+  }
+
+  .disposicion > .lateral .tarjeta:last-child {
     margin-bottom: 0;
   }
+
+  /* Con mas ancho, los nombres largos de producto y razon social caben. */
+  .principal-col {
+    max-width: 420px;
+  }
+
+  /* Filas algo mas compactas: en escritorio entran mas de un vistazo. */
+  td {
+    padding: 10px 12px;
+  }
+
+  /* La fila entera se siente pulsable, no solo el texto. */
+  .seleccionable tbody tr:hover td {
+    border-top-color: var(--cel-300);
+  }
+
+  /* Un formulario de dos campos estirado a 1100px es incomodo de leer. */
+  .caja-estrecha {
+    max-width: 640px;
+  }
+}
+
+/* Aviso de la columna vacia mientras no se ha buscado nada.
+   Ojo: aqui NO se declara `display`. Lo pone .solo-escritorio (none) y, en la
+   consulta de escritorio, se cambia a grid. Si se declarara aqui ganaria esta
+   por ir despues, las dos tienen la misma especificidad, y el aviso se colaria
+   en el celular. Paso exactamente eso y lo detecto la prueba. */
+.espera-busqueda {
+  place-items: center;
+  min-height: 260px;
+  padding: 30px;
+  border: 1px dashed var(--borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--superficie-2);
+  color: var(--texto-tenue);
+  text-align: center;
+}
+
+.espera-busqueda svg {
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.espera-busqueda b {
+  display: block;
+  font-size: 14px;
+  color: var(--texto-suave);
+  margin-bottom: 3px;
+}
+
+.espera-busqueda span {
+  font-size: 12.5px;
 }
 
 @media (min-width: 1320px) {
