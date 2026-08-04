@@ -2,158 +2,267 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Informe QA · Módulo Pedidos ABD</title>
+<title>Informe de QA · Módulo Pedidos ABD</title>
 <style>
   @page { size: A4; margin: 16mm 14mm 18mm 14mm; }
-
   * { box-sizing: border-box; }
 
   body {
-    font-family: "Segoe UI", "Calibri", system-ui, sans-serif;
-    font-size: 10.2pt;
-    line-height: 1.5;
-    color: #1c2530;
-    margin: 0;
+    font-family: "Segoe UI", Calibri, system-ui, sans-serif;
+    font-size: 10.3pt; line-height: 1.55; color: #1c2530; margin: 0;
   }
 
   h1 { font-size: 20pt; margin: 0 0 4px; letter-spacing: -0.4px; color: #01579b; }
-  h2 {
-    font-size: 13pt; margin: 22px 0 8px; padding-bottom: 5px;
-    border-bottom: 2px solid #0277bd; color: #01579b;
-    page-break-after: avoid;
-  }
-  h3 { font-size: 11pt; margin: 15px 0 5px; color: #024f7e; page-break-after: avoid; }
-  h4 { font-size: 10.2pt; margin: 11px 0 3px; color: #1c2530; page-break-after: avoid; }
-  p  { margin: 0 0 7px; }
-  ul, ol { margin: 0 0 8px; padding-left: 18px; }
-  li { margin-bottom: 3px; }
+  h2 { font-size: 13.5pt; margin: 24px 0 9px; padding-bottom: 5px;
+       border-bottom: 2px solid #0277bd; color: #01579b; page-break-after: avoid; }
+  h3 { font-size: 11.2pt; margin: 17px 0 6px; color: #024f7e; page-break-after: avoid; }
+  h4 { font-size: 10.3pt; margin: 12px 0 4px; page-break-after: avoid; }
+  p  { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 9px; padding-left: 19px; }
+  li { margin-bottom: 4px; }
 
-  .portada {
-    border: 1px solid #b3e0f5; border-left: 5px solid #0277bd;
-    background: #f3faff; padding: 16px 18px; border-radius: 6px; margin-bottom: 6px;
-  }
-  .sub { color: #4a5b6b; font-size: 10pt; margin: 0; }
-  .meta { margin-top: 10px; font-size: 9pt; color: #4a5b6b; }
+  .portada { border: 1px solid #b3e0f5; border-left: 5px solid #0277bd;
+             background: #f3faff; padding: 17px 19px; border-radius: 6px; }
+  .sub  { color: #4a5b6b; font-size: 10.5pt; margin: 0; }
+  .meta { margin-top: 11px; font-size: 9pt; color: #4a5b6b; }
   .meta b { color: #1c2530; }
 
-  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9.2pt; }
+  table { width: 100%; border-collapse: collapse; margin: 9px 0 13px; font-size: 9.3pt; }
   th, td { border: 1px solid #cfe3ef; padding: 5px 7px; text-align: left; vertical-align: top; }
   th { background: #e3f3fc; font-weight: 700; color: #01579b; }
   tbody tr:nth-child(even) { background: #f8fcff; }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
-  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.8pt; }
-  pre {
-    background: #f4f7f9; border: 1px solid #dbe6ee; border-left: 3px solid #0277bd;
-    padding: 8px 10px; margin: 6px 0 10px; border-radius: 4px;
-    font-family: Consolas, "Courier New", monospace; font-size: 8.6pt;
-    line-height: 1.4; white-space: pre-wrap; word-break: break-word;
-  }
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.9pt; }
+  pre { background: #f4f7f9; border: 1px solid #dbe6ee; border-left: 3px solid #0277bd;
+        padding: 8px 11px; margin: 7px 0 11px; border-radius: 4px;
+        font-family: Consolas, "Courier New", monospace; font-size: 8.6pt;
+        line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
 
-  .caja { padding: 9px 12px; border-radius: 5px; margin: 9px 0 12px; border: 1px solid; }
-  .grave  { background: #fdecec; border-color: #e57373; }
-  .medio  { background: #fff6e5; border-color: #ffb74d; }
-  .leve   { background: #f1f6f9; border-color: #b0c4d0; }
-  .bien   { background: #eaf7ee; border-color: #81c784; }
-  .caja p:last-child { margin-bottom: 0; }
+  .caja { padding: 10px 13px; border-radius: 5px; margin: 10px 0 13px; border: 1px solid; }
+  .grave { background: #fdecec; border-color: #e57373; }
+  .medio { background: #fff6e5; border-color: #ffb74d; }
+  .leve  { background: #f1f6f9; border-color: #b0c4d0; }
+  .bien  { background: #eaf7ee; border-color: #81c784; }
+  .caja p:last-child, .caja ul:last-child, .caja pre:last-child { margin-bottom: 0; }
 
-  .etq {
-    display: inline-block; padding: 1px 7px; border-radius: 10px;
-    font-size: 8pt; font-weight: 700; color: #fff; margin-right: 5px;
-    vertical-align: 1px;
-  }
-  .e-grave { background: #c62828; }
-  .e-medio { background: #ef6c00; }
-  .e-leve  { background: #546e7a; }
-  .e-ok    { background: #2e7d32; }
-  .e-abierto { background: #b71c1c; }
-  .e-cerrado { background: #2e7d32; }
-  .e-latente { background: #6a1b9a; }
+  .etq { display: inline-block; padding: 1px 7px; border-radius: 10px;
+         font-size: 8pt; font-weight: 700; color: #fff; margin-right: 5px; vertical-align: 1px; }
+  .e-grave{background:#c62828} .e-medio{background:#ef6c00} .e-leve{background:#546e7a}
+  .e-abierto{background:#b71c1c} .e-cerrado{background:#2e7d32} .e-latente{background:#6a1b9a}
 
-  .antes-despues { display: flex; gap: 10px; margin: 8px 0 12px; }
-  .antes-despues > div { flex: 1; padding: 9px 11px; border-radius: 5px; font-size: 9.3pt; }
-  .col-antes   { background: #fdf1f1; border: 1px solid #e8b4b4; }
-  .col-despues { background: #eef8f1; border: 1px solid #a5d6b3; }
-  .col-antes b, .col-despues b { display: block; margin-bottom: 4px; font-size: 9pt; }
+  .paso { border-left: 3px solid #0277bd; padding-left: 12px; margin: 12px 0; }
+  .paso h4 { color: #01579b; margin-top: 0; }
 
-  .nota { font-size: 8.8pt; color: #4a5b6b; font-style: italic; }
+  .ad { display: flex; gap: 10px; margin: 9px 0 13px; }
+  .ad > div { flex: 1; padding: 9px 12px; border-radius: 5px; font-size: 9.4pt; }
+  .a1 { background: #fdf1f1; border: 1px solid #e8b4b4; }
+  .a2 { background: #eef8f1; border: 1px solid #a5d6b3; }
+  .a1 b, .a2 b { display: block; margin-bottom: 4px; font-size: 9pt; }
+
+  .nota  { font-size: 9pt; color: #4a5b6b; font-style: italic; }
   .salto { page-break-before: always; }
   .evita { page-break-inside: avoid; }
-  footer { margin-top: 20px; padding-top: 8px; border-top: 1px solid #cfe3ef;
-           font-size: 8.5pt; color: #64757f; }
+  footer { margin-top: 22px; padding-top: 9px; border-top: 1px solid #cfe3ef;
+           font-size: 8.6pt; color: #64757f; }
 </style>
 </head>
 <body>
 
 <div class="portada">
   <h1>Informe de QA — Módulo de Pedidos</h1>
-  <p class="sub">Laboratorios ABD · Qué tenía el sistema, qué se mejoró y qué sigue mal</p>
+  <p class="sub">Qué tenía el sistema, cómo lo revisé, qué encontré y qué mejoré</p>
   <div class="meta">
-    <b>Sistema original:</b> ABDFacturacion (Java EE / JSF) &nbsp;·&nbsp;
-    <b>Nuevo:</b> pedidos-react &nbsp;·&nbsp;
-    <b>Base:</b> Oracle 12c · PDBABD (producción)<br>
-    <b>Fecha:</b> 4 de agosto de 2026 &nbsp;·&nbsp;
-    <b>Repositorio:</b> github.com/edgar2420/FacturacionABD &nbsp;·&nbsp;
-    <b>Rama:</b> main
+    <b>Autor:</b> Ing. Edgar Rojas Apaza &nbsp;·&nbsp;
+    <b>Fecha:</b> 4 de agosto de 2026<br>
+    <b>Sistema revisado:</b> ABDFacturacion (Java EE / JSF) &nbsp;·&nbsp;
+    <b>Sistema nuevo:</b> pedidos-react<br>
+    <b>Base de datos:</b> Oracle 12c · PDBABD &nbsp;·&nbsp;
+    <b>Repositorio:</b> github.com/edgar2420/FacturacionABD · rama <span class="mono">main</span>
   </div>
 </div>
 
+<h2>1. Por qué hice este trabajo y hasta dónde llegué</h2>
+
+<p>Me pidieron migrar el módulo de Pedidos a una interfaz moderna. Antes de
+tocar nada quise saber exactamente qué tenía entre manos: dónde estaba la
+lógica, qué funcionaba bien y qué no. Este informe es el resultado de esa
+revisión y de lo que construí después.</p>
+
+<p><b>Lo que sí revisé:</b> el módulo de Pedidos completo —búsqueda de clientes,
+vendedores y productos, creación del pedido, manejo de lotes, cierre y pago— más
+la parte de la base de datos que ese módulo usa.</p>
+
+<p><b>Lo que no revisé:</b> Facturas, Recibos, PreFacturas, MisPedidos ni los
+reportes de Jasper. No entraban en el encargo. Tampoco modifiqué ni una línea
+del proyecto Java original ni de la base de datos.</p>
+
 <div class="caja leve">
-  <p><b>Cómo leer este informe.</b> Todo lo que aquí se afirma está verificado
-  contra la base de datos real o contra el código fuente, y se indica de dónde
-  sale cada dato. Cuando algo no se ha podido comprobar, se dice expresamente.
-  Ninguna comprobación modificó datos de producción.</p>
+  <p><b>Regla que me puse desde el principio.</b> El sistema apunta a la base de
+  <b>producción</b> (<span class="mono">192.168.0.5/PDBABD</span>). Así que me
+  impuse tres cosas y las cumplí:</p>
+  <ol style="margin-bottom:0">
+    <li>Contra producción, <b>solo consultas de lectura</b>.</li>
+    <li>Cualquier prueba que necesite escribir va a <b>tablas de prueba</b> aparte.</li>
+    <li>Todo lo que afirme en este informe tiene que estar <b>comprobado</b>, no
+        supuesto. Y si algo no lo pude comprobar, lo digo.</li>
+  </ol>
 </div>
 
-<h2>1. Resumen</h2>
+<h2>2. Cómo hice el QA, paso a paso</h2>
 
+<p>Esta parte es la que más me interesa dejar escrita, porque cualquiera del
+equipo puede repetirla y llegar a lo mismo. No es magia: son cuatro frentes.</p>
+
+<div class="paso">
+<h4>Paso 1 — Leer el código Java para entender qué hace realmente</h4>
+<p>Empecé por los DAO y los beans, que es donde está el flujo:
+<span class="mono">src/java/dao/PedidosDao.java</span> y
+<span class="mono">src/java/beans/PedidosBean.java</span>.</p>
+<p>Lo primero que descubrí me ahorró semanas: <b>la lógica de negocio no está en
+Java</b>. Los DAO solo abren la conexión, llaman a una función de Oracle y
+traducen el resultado. Toda la inteligencia vive en el paquete
+<span class="mono">ABD.PCK_OPERACIONES</span>.</p>
+<p>Eso cambió mi enfoque por completo: reescribir la pantalla no cambia las
+reglas. La aplicación nueva tenía que llamar a <b>las mismas funciones</b>, no
+reimplementarlas.</p>
+</div>
+
+<div class="paso">
+<h4>Paso 2 — Leer el código PL/SQL, que es donde de verdad pasan las cosas</h4>
+<p>El código fuente de un paquete de Oracle se puede leer desde la propia base,
+sin necesidad de que nadie te pase archivos. Esta es la consulta:</p>
+<pre>SELECT LINE, TEXT
+  FROM ALL_SOURCE
+ WHERE OWNER = 'ABD'
+   AND NAME  = 'PCK_OPERACIONES'
+   AND TYPE  = 'PACKAGE BODY'
+ ORDER BY LINE;</pre>
+<p>Con eso leí una por una las funciones que usa Pedidos. Aquí salieron la mitad
+de los defectos de este informe. Es tedioso pero no hay atajo: son las líneas
+que realmente insertan, borran y calculan.</p>
+<p>Un detalle que conviene saber: <b>hay funciones repetidas con distinto número
+de parámetros</b>. <span class="mono">F_OBTENER_PRODUCTOS</span> tiene dos
+versiones, una de 3 parámetros y otra de 5. Si uno lee solo la primera que
+aparece, saca conclusiones equivocadas. Hay que buscar todas.</p>
+</div>
+
+<div class="paso">
+<h4>Paso 3 — Preguntarle a los datos, no a la documentación</h4>
+<p>Este fue el paso más útil. En vez de suponer cómo se usa el sistema, se lo
+pregunté a los 16.547 pedidos que ya existen.</p>
+<p><b>Ejemplo 1 — ¿de verdad cada usuario trabaja con un solo almacén?</b></p>
+<pre>SELECT CASE WHEN u.UNI_NEG = p.ALMACEN THEN 'coincide' ELSE 'DISTINTO' END situacion,
+       COUNT(*) pedidos
+  FROM IBSVENTA.PEDIDOS p
+  LEFT JOIN ABD.USUARIOS u ON u.LOGIN = p.LOGIN
+ GROUP BY CASE WHEN u.UNI_NEG = p.ALMACEN THEN 'coincide' ELSE 'DISTINTO' END;</pre>
+<p>Resultado: 16.544 coinciden, 3 son de usuarios ya dados de baja. Ni uno
+distinto. La regla se cumple sola desde hace años.</p>
+
+<p><b>Ejemplo 2 — ¿a qué ciudad le vende cada almacén?</b> Iba a asumir que
+<span class="mono">AL-VEN-ABD-FAB</span> era La Paz, porque «FAB» es la fábrica.
+Menos mal que lo comprobé:</p>
+<pre>SELECT p.ALMACEN, pe.CIUDAD, COUNT(*) pedidos
+  FROM IBSVENTA.PEDIDOS p
+  JOIN ABD.PERSONAS pe ON pe.CODIGO = p.CLIENTE
+ GROUP BY p.ALMACEN, pe.CIUDAD
+ ORDER BY p.ALMACEN, COUNT(*) DESC;</pre>
+<p>El 90 % de los 16.385 pedidos de FAB fueron a clientes de <b>Santa Cruz</b>,
+no de La Paz. Si me hubiera fiado del nombre, todo lo que construí encima
+habría estado mal.</p>
+<p class="nota">Lección: los nombres de los códigos mienten; el histórico no.</p>
+</div>
+
+<div class="paso">
+<h4>Paso 4 — Escribir pruebas automáticas, en tres niveles</h4>
+<p>El sistema original no tenía ninguna prueba. Armé 124, en tres niveles, y
+cada nivel sirve para algo distinto:</p>
 <table>
-  <thead>
-    <tr><th style="width:44%">Área</th><th class="num">Antes</th><th class="num">Ahora</th></tr>
-  </thead>
+  <thead><tr><th style="width:22%">Nivel</th><th class="num" style="width:9%">Nº</th><th>Para qué sirve</th><th style="width:24%">Necesita base</th></tr></thead>
   <tbody>
-    <tr><td>Filas por producto en la búsqueda</td><td class="num">1 por lote</td><td class="num">1 por producto</td></tr>
-    <tr><td>Saldo que ve el vendedor</td><td class="num">el de un lote suelto</td><td class="num">suma de todos</td></tr>
-    <tr><td>Elección de lote al vender</td><td class="num">manual</td><td class="num">automática (FEFO)</td></tr>
-    <tr><td>Paginación de búsquedas</td><td class="num">ninguna</td><td class="num">15 por página</td></tr>
-    <tr><td>Clientes devueltos en una búsqueda</td><td class="num">hasta 7.108</td><td class="num">15</td></tr>
-    <tr><td>Pruebas automáticas</td><td class="num">0</td><td class="num">124</td></tr>
-    <tr><td>Consultas con inyección SQL</td><td class="num">sí</td><td class="num">no</td></tr>
-    <tr><td>Uso en celular</td><td class="num">tabla cortada</td><td class="num">tarjetas</td></tr>
+    <tr><td><b>Unitarias</b><br><span class="nota">node:test</span></td><td class="num">51</td>
+        <td>Las reglas puras: el reparto de lotes, las fechas, las cantidades, el reconocimiento de ciudades. Corren en menos de un segundo, así que las lanzo mientras programo.</td>
+        <td>No</td></tr>
+    <tr><td><b>De interfaz</b><br><span class="nota">Cypress</span></td><td class="num">63</td>
+        <td>Abren la aplicación en un navegador de verdad y hacen lo que haría un vendedor: buscar, tocar, escribir, confirmar.</td>
+        <td>No, va simulada</td></tr>
+    <tr><td><b>De integración</b><br><span class="nota">script propio</span></td><td class="num">10</td>
+        <td>Contra Oracle real, con lotes y saldos de verdad, para confirmar que lo que se graba es lo que tiene que grabarse.</td>
+        <td>Sí, en tablas de prueba</td></tr>
   </tbody>
 </table>
+<p><b>Por qué las de Cypress no tocan la base.</b> Esto no es comodidad, es
+obligación: si las pruebas hablaran con producción, cada vez que las corriera
+estaría creando pedidos reales. Así que intercepto todas las llamadas a la API y
+respondo con datos de prueba. La aplicación no nota la diferencia.</p>
+<p><b>Cómo escribí las pruebas para que duren.</b> Busco por <b>texto visible</b>
+—«Buscar cliente», «Elegir vendedor»— y no por clases de CSS. El diseño de esta
+aplicación lo cambié cinco veces; si las pruebas dependieran del CSS, se
+romperían en cada cambio y acabaría ignorándolas. Buscando por texto solo fallan
+cuando de verdad se rompe algo.</p>
+</div>
 
-<p><b>Defectos encontrados:</b> 11. De ellos <b>5 corregidos</b> en la nueva
-aplicación, <b>4 siguen abiertos</b> porque están en la base de datos o en el
-sistema JSF, y <b>2 son latentes</b> (no hacen daño hoy, pero lo harán si
-cambian los datos).</p>
+<div class="paso">
+<h4>Paso 5 — Probar lo que escribe, sin escribir en producción</h4>
+<p>Me quedaba lo más delicado: comprobar que el reparto en lotes graba bien.
+Eso obliga a escribir, y escribir en producción era justo lo que no quería.</p>
+<p>Me pasaron dos tablas de prueba,
+<span class="mono">IBSVENTA.PPEDIDOS</span> y
+<span class="mono">PLIN_PEDIDOS</span>. Lo primero fue verificar que sirvieran:</p>
+<pre>SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH
+  FROM ALL_TAB_COLUMNS
+ WHERE OWNER = 'IBSVENTA' AND TABLE_NAME IN ('PPEDIDOS','PLIN_PEDIDOS')
+ ORDER BY TABLE_NAME, COLUMN_ID;</pre>
+<p>Son copia exacta: 32 y 23 columnas, mismos tipos, ninguna de más ni de menos.
+Pero encontré el problema: <b>ningún código de la base las usa</b>. El paquete
+sigue insertando en las tablas reales, y eso no se puede redirigir desde afuera
+porque el <span class="mono">INSERT</span> está dentro del PL/SQL.</p>
+<p>La solución fue un <b>modo prueba</b> en el servidor
+(<span class="mono">MODO_PRUEBA=1</span>): cuando está activo, la aplicación
+escribe directo en las tablas de prueba en vez de llamar al paquete. Los
+catálogos, saldos y lotes se siguen leyendo de producción, que es justo lo que
+quiero para probar con datos de verdad. <b>Solo cambia dónde se escribe.</b></p>
+<p>El precio sí es el real: llamo a <span class="mono">IBSADM.GET_IMPORTE</span>,
+la misma función que usa el paquete.</p>
+</div>
 
-<h2>2. Qué tenía la aplicación antes</h2>
+<div class="paso">
+<h4>Paso 6 — Comprobar que no ensucié nada</h4>
+<p>Después de cada prueba que escribe, verifico. No basta con confiar:</p>
+<pre>SELECT NUMERO, LOGIN, ALMACEN, TO_CHAR(FECHA,'DD/MM HH24:MI') cuando, ESTADO
+  FROM IBSVENTA.PEDIDOS
+ WHERE FECHA >= TRUNC(SYSDATE)
+ ORDER BY FECHA;</pre>
+<p>Los 9 pedidos del día eran de <span class="mono">jcoulthad</span>,
+<span class="mono">ecespedes</span>, <span class="mono">jrevollo</span> y
+<span class="mono">rriveros</span> —vendedores reales—. Ninguno mío. Y las
+tablas de prueba quedaron en cero, porque el script se limpia solo al terminar.</p>
+</div>
 
-<h3>2.1 Tecnología</h3>
+<h2 class="salto">3. Qué me encontré</h2>
+
+<h3>3.1 La tecnología</h3>
 <table>
   <tbody>
-    <tr><td style="width:30%"><b>Lenguaje y plataforma</b></td><td>Java 8, Java EE 7 Web</td></tr>
+    <tr><td style="width:28%"><b>Plataforma</b></td><td>Java 8, Java EE 7 Web</td></tr>
     <tr><td><b>Interfaz</b></td><td>JSF 2.2 (Facelets) con PrimeFaces 6.0, renderkit PRIMEFACES_MOBILE</td></tr>
-    <tr><td><b>Persistencia</b></td><td>Hibernate 4.3.10 con mapeos XML (<span class="mono">.hbm.xml</span>)</td></tr>
-    <tr><td><b>Base de datos</b></td><td>Oracle 12c — esquemas ABD, IBSVENTA, IBSADM, IBSPLA</td></tr>
-    <tr><td><b>Informes</b></td><td>JasperReports 5.6, iText, PDFBox, ZXing (QR)</td></tr>
+    <tr><td><b>Persistencia</b></td><td>Hibernate 4.3.10 con mapeos XML</td></tr>
+    <tr><td><b>Base</b></td><td>Oracle 12c — esquemas ABD, IBSVENTA, IBSADM, IBSPLA</td></tr>
+    <tr><td><b>Informes</b></td><td>JasperReports 5.6, iText, PDFBox, ZXing para los QR</td></tr>
     <tr><td><b>Servidor</b></td><td>Payara 5 / GlassFish</td></tr>
-    <tr><td><b>Compilación</b></td><td>Apache Ant + NetBeans. Sin Maven: los JAR van por ruta absoluta</td></tr>
+    <tr><td><b>Compilación</b></td><td>Ant + NetBeans, sin Maven. Los JAR van por ruta absoluta, así que el proyecto solo compila en la máquina donde se armó</td></tr>
   </tbody>
 </table>
 
-<h3>2.2 Dónde está la lógica de negocio</h3>
-<p>No está en Java. Vive en el paquete <span class="mono">ABD.PCK_OPERACIONES</span>
-de Oracle. Las clases Java solo orquestan: abren la conexión, llaman a la
-función y traducen el resultado.</p>
-
+<h3>3.2 Dónde vive la lógica</h3>
+<p>En Oracle, no en Java. Estas son las funciones del paquete que usa Pedidos:</p>
 <table>
-  <thead><tr><th style="width:38%">Función del paquete</th><th>Qué hace</th></tr></thead>
+  <thead><tr><th style="width:37%">Función</th><th>Qué hace</th></tr></thead>
   <tbody>
     <tr><td class="mono">F_VALIDA_USUARIO</td><td>Comprueba usuario y contraseña</td></tr>
     <tr><td class="mono">F_OBTENER_PRODUCTOS</td><td>Catálogo con precio y saldo, <b>una fila por lote</b></td></tr>
-    <tr><td class="mono">F_CREAR_PEDIDO</td><td>Crea la cabecera y la primera línea a la vez</td></tr>
+    <tr><td class="mono">F_CREAR_PEDIDO</td><td>Crea la cabecera y la primera línea juntas</td></tr>
     <tr><td class="mono">F_CREAR_DETALLE_PEDIDO</td><td>Añade una línea más</td></tr>
     <tr><td class="mono">F_ELIMINAR_DETALLE_PEDIDO</td><td>Borra líneas <b>por código de ítem</b></td></tr>
     <tr><td class="mono">F_TERMINAR_PEDIDO</td><td>Totaliza y pasa el estado a «V»</td></tr>
@@ -161,22 +270,17 @@ función y traducen el resultado.</p>
   </tbody>
 </table>
 
-<p class="nota">Consecuencia práctica: reescribir la interfaz no cambia las
-reglas del negocio. La aplicación nueva llama a las mismas funciones.</p>
-
-<h3>2.3 Organización por almacenes</h3>
-<p>Todo el sistema gira alrededor del almacén, que sale de la columna
-<span class="mono">UNI_NEG</span> de <span class="mono">ABD.USUARIOS</span>.
-Hay ocho:</p>
-
+<h3>3.3 Los almacenes</h3>
+<p>Todo gira alrededor del almacén, que sale de
+<span class="mono">ABD.USUARIOS.UNI_NEG</span>. Hay ocho:</p>
 <table>
-  <thead><tr><th>Almacén</th><th class="num">Usuarios</th><th class="num">Productos con saldo</th><th>Corresponde a</th></tr></thead>
+  <thead><tr><th>Almacén</th><th class="num">Usuarios</th><th class="num">Productos con saldo</th><th>Le vende a</th></tr></thead>
   <tbody>
-    <tr><td class="mono">AL-VEN-ABD-FAB</td><td class="num">87</td><td class="num">110</td><td>Santa Cruz (90 % de su histórico)</td></tr>
+    <tr><td class="mono">AL-VEN-ABD-FAB</td><td class="num">87</td><td class="num">110</td><td>Santa Cruz (90 % del histórico)</td></tr>
     <tr><td class="mono">AL-SUM-ABD-FAB</td><td class="num">31</td><td class="num">0</td><td>Suministros de planta, no vende</td></tr>
     <tr><td class="mono">AL-VEN-ABD-LPZ</td><td class="num">29</td><td class="num">96</td><td>La Paz</td></tr>
-    <tr><td class="mono">AL-VEN-ABD-CB1</td><td class="num">27</td><td class="num">111</td><td>Cochabamba (80 % de su histórico)</td></tr>
-    <tr><td class="mono">AL-VEN-ABD-SUC</td><td class="num">8</td><td class="num">93</td><td>Sucre (95 % de su histórico)</td></tr>
+    <tr><td class="mono">AL-VEN-ABD-CB1</td><td class="num">27</td><td class="num">111</td><td>Cochabamba (80 %)</td></tr>
+    <tr><td class="mono">AL-VEN-ABD-SUC</td><td class="num">8</td><td class="num">93</td><td>Sucre (95 %)</td></tr>
     <tr><td class="mono">AL-VEN-ABD-SC8</td><td class="num">3</td><td class="num">0</td><td>Santa Cruz, sin stock cargado</td></tr>
     <tr><td class="mono">AL-VEN-ABD-ORU</td><td class="num">3</td><td class="num">83</td><td>Oruro</td></tr>
     <tr><td class="mono">AL-VEN-ABD-ARG</td><td class="num">1</td><td class="num">0</td><td>Argentina</td></tr>
@@ -184,51 +288,52 @@ Hay ocho:</p>
 </table>
 
 <div class="caja bien">
-  <p><span class="etq e-ok">BIEN</span><b>El aislamiento por almacén funciona
-  y siempre funcionó.</b> De 16.547 pedidos históricos, <b>16.544</b> tienen el
-  almacén que corresponde al <span class="mono">UNI_NEG</span> de quien los grabó.
-  Ninguna persona tiene cuenta en dos almacenes y ningún usuario grabó nunca en
-  dos. Los 3 restantes son de usuarios ya dados de baja.</p>
+  <p><b>Buena noticia:</b> el aislamiento por almacén funciona y siempre
+  funcionó. Lo comprobé con la consulta del Paso 3. Nadie tiene cuenta en dos
+  almacenes y nadie grabó nunca en dos. <b>Vender existencias de un almacén
+  desde otro ya era imposible</b> antes de que yo tocara nada.</p>
 </div>
 
-<h3>2.4 El problema de los lotes</h3>
-<p>El catálogo devolvía <b>una fila por cada lote</b>. Para el almacén de
-Fábrica: <b>233 filas</b> para solo <b>110 productos</b>; 60 de esos productos
-tienen más de un lote.</p>
-
+<h3>3.4 El problema de los lotes, que era el encargo de fondo</h3>
+<p>El catálogo devolvía <b>una fila por cada lote</b>. En el almacén de Fábrica:
+233 filas para solo 110 productos. Sesenta de esos productos tienen más de un
+lote.</p>
 <p>El vendedor tenía que elegir el lote a mano y solo veía el saldo de ese lote.
-Ejemplo real del producto PT982:</p>
-
+Con el producto PT982:</p>
 <table>
   <thead><tr><th>Lote</th><th>Vence</th><th class="num">Saldo</th></tr></thead>
   <tbody>
     <tr><td class="mono">F244</td><td>30/09/26</td><td class="num">5</td></tr>
     <tr><td class="mono">F245</td><td>30/09/26</td><td class="num">120</td></tr>
     <tr><td class="mono">F250</td><td>31/12/26</td><td class="num">200</td></tr>
-    <tr><td colspan="2"><b>Disponible de verdad</b></td><td class="num"><b>325</b></td></tr>
+    <tr><td colspan="2"><b>Había de verdad</b></td><td class="num"><b>325</b></td></tr>
   </tbody>
 </table>
-
 <p>Si el cliente pedía 300, el vendedor veía tres filas y ninguna llegaba a 300.
-<b>Parecía que no había stock, habiendo de sobra.</b></p>
+<b>Parecía que no había stock, habiendo de sobra.</b> Ese era el problema a
+resolver.</p>
 
-<h2 class="salto">3. Defectos encontrados</h2>
+<h2 class="salto">4. Los defectos que encontré</h2>
 
-<h3>3.1 Graves</h3>
+<p>Son once. De cada uno digo <b>cómo lo detecté</b> y <b>cómo comprobarlo</b>,
+para que nadie tenga que creerme sin más.</p>
+
+<h3>4.1 Graves</h3>
 
 <div class="caja grave evita">
   <h4><span class="etq e-grave">GRAVE</span><span class="etq e-abierto">ABIERTO</span>
   D-01 · La contraseña no se comprueba si el usuario no tiene clave guardada</h4>
   <p><b>Dónde:</b> <span class="mono">ABD.PCK_OPERACIONES.F_VALIDA_USUARIO</span></p>
-  <p>Cuando el usuario no tiene fila en la tabla de claves, la variable interna
-  queda a NULL. La comparación <span class="mono">x_encriptado != v_clave</span>
-  contra NULL no da ni verdadero ni falso: da <b>desconocido</b>. El
-  <span class="mono">IF</span> nunca se cumple y la función devuelve
-  <span class="mono">'1'</span>, es decir «acceso concedido», <b>con cualquier
-  contraseña</b>.</p>
-  <p><b>Afecta también al sistema JSF en producción</b>, no solo al nuevo.</p>
-  <p><b>No corregido:</b> está en la base de datos, y la instrucción fue no
-  tocarla. Requiere revisión por parte de quien la administra.</p>
+  <p><b>Cómo lo encontré:</b> leyendo el cuerpo de la función. Cuando el usuario
+  no tiene fila en la tabla de claves, la variable interna queda en NULL. Y en
+  Oracle, comparar contra NULL no da verdadero ni falso: da <b>desconocido</b>.
+  El <span class="mono">IF</span> que debería rechazar el acceso nunca se cumple,
+  y la función termina devolviendo <span class="mono">'1'</span>, o sea «adelante»,
+  <b>con cualquier contraseña</b>.</p>
+  <p><b>Afecta también al sistema JSF que está en producción hoy</b>, no solo al
+  nuevo.</p>
+  <p><b>No lo corregí</b> porque está en la base y no debía tocarla. Lo dejo
+  levantado para quien la administra.</p>
 </div>
 
 <div class="caja grave evita">
@@ -236,49 +341,56 @@ Ejemplo real del producto PT982:</p>
   D-02 · Inyección SQL en la búsqueda de clientes</h4>
   <p><b>Dónde:</b> <span class="mono">PedidosDao.buscarCliente()</span>, línea 125</p>
   <pre>sql = "from Personas where upper(nombre) like '%"+valor.toUpperCase()+"%' and codigoCliente='SI' order by nombre";</pre>
-  <p>El texto que escribe el usuario se pega dentro de la consulta. Una comilla
-  simple basta para alterarla. El patrón se repite en varias consultas del mismo
-  archivo.</p>
-  <p><b>Corregido en la aplicación nueva:</b> se usan variables de vínculo
-  (<i>bind variables</i>), el valor viaja aparte de la consulta.
-  <span class="nota">El código Java original no se modificó.</span></p>
+  <p><b>Cómo lo encontré:</b> a simple vista. Lo que escribe el usuario se pega
+  dentro de la consulta. Una comilla simple basta para alterarla. El mismo patrón
+  se repite en varias consultas del archivo.</p>
+  <p><b>Cómo lo corregí:</b> en la aplicación nueva uso variables de vínculo
+  (<i>bind variables</i>). El valor viaja aparte de la consulta, así que por
+  mucho que el usuario escriba comillas, Oracle lo trata como texto y nunca como
+  instrucción. El código Java original lo dejé intacto.</p>
 </div>
 
 <div class="caja grave evita">
   <h4><span class="etq e-grave">GRAVE</span><span class="etq e-abierto">ABIERTO</span>
   D-03 · El precio que se muestra no es el que se graba</h4>
-  <p><b>Dónde:</b> <span class="mono">F_OBTENER_PRODUCTOS</span> frente a
-  <span class="mono">F_CREAR_DETALLE_PEDIDO</span></p>
-  <p>La pantalla pide el precio con la <b>fecha de entrega</b>:</p>
+  <p><b>Cómo lo encontré:</b> comparando las dos funciones. La que arma la
+  pantalla pide el precio con la <b>fecha de entrega</b>:</p>
   <pre>IBSADM.get_precio('P', i.codigo, p_cliente, p_almacen, to_date(p_fecha,'dd/mm/yyyy'))</pre>
-  <p>Pero al grabar la línea se calcula con <b>la fecha de hoy</b>:</p>
-  <pre>v_fecha   DATE := SYSDATE;
+  <p>Pero la que graba la línea lo calcula con <b>la fecha de hoy</b>:</p>
+  <pre>v_fecha  DATE := SYSDATE;
 v_precio := IBSADM.GET_IMPORTE('P', p_item, p_cliente, p_almacen, v_fecha, 'BS', p_cantidad, v_dcto);</pre>
-  <p><b>Comprobado en la base</b> con el producto PT982 y el cliente I00060:</p>
+  <p><b>Cómo comprobarlo</b> (producto PT982, cliente I00060):</p>
+  <pre>SELECT IBSADM.GET_PRECIO('P','PT982','I00060','AL-VEN-ABD-FAB',
+                         TO_DATE('04/09/2026','dd/mm/yyyy')) * (-1) precio_pantalla,
+       IBSADM.GET_IMPORTE('P','PT982','I00060','AL-VEN-ABD-FAB',
+                          SYSDATE,'BS',1,0) precio_grabado
+  FROM DUAL;</pre>
   <table>
-    <thead><tr><th>Cálculo</th><th>Fecha usada</th><th class="num">Precio</th></tr></thead>
+    <thead><tr><th>Cálculo</th><th>Fecha que usa</th><th class="num">Precio</th></tr></thead>
     <tbody>
-      <tr><td>Lo que ve el vendedor</td><td>04/09/2026 (entrega)</td><td class="num">Bs 50,00</td></tr>
-      <tr><td>Lo que se graba</td><td>hoy (SYSDATE)</td><td class="num"><b>Bs 45,00</b></td></tr>
+      <tr><td>Lo que ve el vendedor</td><td>04/09/2026, la entrega</td><td class="num">Bs 50,00</td></tr>
+      <tr><td>Lo que queda grabado</td><td>hoy</td><td class="num"><b>Bs 45,00</b></td></tr>
     </tbody>
   </table>
-  <p>Una diferencia del <b>10 %</b> en este producto. Ocurre siempre que la
-  fecha de entrega caiga en un tramo de precio distinto al de hoy.</p>
-  <p><b>No corregido:</b> el cálculo está dentro del PL/SQL. La aplicación nueva
-  llama al mismo procedimiento y por tanto <b>hereda el defecto</b>. Corregirlo
-  exige cambiar el paquete.</p>
+  <p>Un <b>10 % de diferencia</b> en este producto. Pasa siempre que la fecha de
+  entrega caiga en un tramo de precio distinto al de hoy.</p>
+  <p><b>No lo pude corregir:</b> el cálculo está dentro del PL/SQL, y como la
+  aplicación nueva llama al mismo procedimiento, <b>hereda el defecto</b>.
+  Arreglarlo exige cambiar el paquete.</p>
 </div>
 
-<h3>3.2 Medios</h3>
+<h3>4.2 Medios</h3>
 
 <div class="caja medio evita">
   <h4><span class="etq e-medio">MEDIO</span><span class="etq e-cerrado">CORREGIDO</span>
   D-04 · Búsquedas sin límite</h4>
-  <p>Ninguna consulta tenía paginación. Buscar clientes por la letra «A»
-  devolvía <b>7.108 registros</b> en una sola respuesta, todos a la pantalla.</p>
-  <p><b>Corregido:</b> 15 por página, tope de 50. Los productos, que vienen de
-  un cursor, se agrupan antes de paginar para que los lotes de un mismo producto
-  no queden partidos entre dos páginas.</p>
+  <p><b>Cómo lo encontré:</b> buscando clientes por la letra «A» y mirando lo que
+  volvía. <b>7.108 registros</b> en una sola respuesta, todos a la pantalla.
+  Ninguna consulta tenía paginación.</p>
+  <p><b>Cómo lo corregí:</b> 15 por página, tope de 50. Con los productos tuve
+  que hilar más fino: vienen de un cursor y hay que <b>agruparlos por producto
+  antes de paginar</b>, porque si no los lotes de un mismo producto quedan
+  partidos entre dos páginas y el saldo sale incompleto.</p>
 </div>
 
 <div class="caja medio evita">
@@ -286,51 +398,61 @@ v_precio := IBSADM.GET_IMPORTE('P', p_item, p_cliente, p_almacen, v_fecha, 'BS',
   D-05 · Llamada mal escrita al eliminar una línea</h4>
   <p><b>Dónde:</b> <span class="mono">PedidosDao.eliminarDetallePedido()</span>, línea 671</p>
   <pre>conn.prepareCall("{? = call ABD.PCK_OPERACIONES.F_ELIMINAR_DETALLE_PEDIDO(?,?,?,?)");</pre>
-  <p>Falta la llave de cierre <span class="mono">}</span>. La cadena está mal
-  formada. Además el mensaje de error del <span class="mono">catch</span> dice
+  <p><b>Cómo lo encontré:</b> comparando esta llamada con las demás del mismo
+  archivo. Falta la llave de cierre <span class="mono">}</span>. Y de paso, el
+  mensaje del <span class="mono">catch</span> dice
   <span class="mono">F_ELIMINARAR_DETALLE_PEDIDO</span>, con una sílaba de más.</p>
-  <p><b>Corregido en la aplicación nueva:</b> la llamada se hace correctamente.</p>
+  <p><b>Cómo lo corregí:</b> en la aplicación nueva la llamada va bien formada.</p>
 </div>
 
 <div class="caja medio evita">
   <h4><span class="etq e-medio">MEDIO</span><span class="etq e-abierto">ABIERTO</span>
   D-06 · Credenciales en texto plano dentro del repositorio</h4>
-  <p><span class="mono">src/java/hibernate.cfg.xml</span> y los
-  <span class="mono">constantes*.properties</span> llevan usuario y contraseña
-  de Oracle escritos tal cual. <span class="mono">web/WEB-INF/web.xml</span>
+  <p><span class="mono">hibernate.cfg.xml</span> y los
+  <span class="mono">constantes*.properties</span> llevan el usuario y la
+  contraseña de Oracle escritos tal cual. El <span class="mono">web.xml</span>
   lleva las claves de reCAPTCHA.</p>
-  <p><b>No corregido</b> por decisión de no modificar el proyecto Java. Si el
-  repositorio se hace público o se comparte, esas credenciales deben rotarse
-  <b>antes</b>. En la aplicación nueva las credenciales están en un archivo
-  <span class="mono">.env</span> excluido del control de versiones.</p>
+  <p><b>No lo corregí</b> porque no debía tocar el proyecto Java. Pero si el
+  repositorio se hace público o se comparte con alguien de fuera, <b>esas
+  credenciales hay que rotarlas antes</b>. En mi aplicación las saqué a un
+  archivo <span class="mono">.env</span> que está excluido del control de
+  versiones.</p>
 </div>
 
 <div class="caja medio evita">
   <h4><span class="etq e-medio">MEDIO</span><span class="etq e-abierto">ABIERTO</span>
   D-07 · No existe relación entre cliente y almacén</h4>
-  <p><span class="mono">ABD.PERSONAS</span> solo tiene una columna
-  <span class="mono">CIUDAD</span> de texto libre. Nada impide que un vendedor
-  de un departamento le venda a un cliente de otro. El sistema JSF tampoco lo
-  impide: su consulta no filtra por almacén ni por ciudad.</p>
-  <p>Y los datos no permiten deducirlo con seguridad. En el histórico conviven:</p>
+  <p><b>Cómo lo encontré:</b> buscando una columna que ligara al cliente con un
+  almacén. No hay ninguna: <span class="mono">ABD.PERSONAS</span> solo tiene
+  <span class="mono">CIUDAD</span>, y es texto libre. El sistema JSF tampoco
+  filtra: su consulta no menciona almacén ni ciudad.</p>
+  <p>Pensé en deducirlo de la ciudad, hasta que miré cómo está escrita:</p>
   <pre>SANTA CRUZ · SANTA RUZ · SAANTA CRUZ · SANTA CRU · SABTA CRUZ
-SNTA CRUZ · SANTA CRUZZ · SANTAC RUZ · SANT CRUZ · SANTA CRUZ-MONTERO
-SANTA CRUZ-WARNES · SATELITE · EL ALTO · LA PAZ - EL ALTO</pre>
-  <p><b>Mitigado, no resuelto:</b> la aplicación nueva <b>avisa</b> cuando la
-  ciudad del cliente no corresponde al almacén, pero <b>no bloquea</b>. Bloquear
-  con estos datos dejaría fuera clientes legítimos. La solución de fondo es una
-  columna de almacén en <span class="mono">PERSONAS</span>, y eso toca la base.</p>
+SNTA CRUZ · SANTA CRUZZ · SANTAC RUZ · SANT CRUZ
+SANTA CRUZ-MONTERO · SANTA CRUZ-WARNES · SATELITE · EL ALTO</pre>
+  <p>Todo eso es la misma ciudad escrita de nueve maneras, más localidades que
+  pertenecen al departamento.</p>
+  <p><b>Qué hice:</b> <b>avisar, no bloquear</b>. La aplicación marca al cliente
+  que parece de otra región y lo explica al elegirlo, pero deja continuar.
+  Bloquear con estos datos dejaría fuera clientes buenos, y un aviso falso enseña
+  a ignorar los avisos. La solución de fondo es una columna de almacén en
+  <span class="mono">PERSONAS</span>, y eso ya toca la base.</p>
 </div>
 
-<h3>3.3 Latentes — no molestan hoy, molestarán mañana</h3>
+<h3>4.3 Latentes — hoy no molestan, mañana sí</h3>
 
 <div class="caja medio evita">
   <h4><span class="etq e-medio">MEDIO</span><span class="etq e-latente">LATENTE</span>
-  D-08 · El almacén se compara con LIKE, no por igualdad</h4>
+  D-08 · El almacén se compara con LIKE en vez de con igualdad</h4>
   <p><b>Dónde:</b> <span class="mono">F_OBTENER_PRODUCTOS</span></p>
   <pre>and s.codigo_almacen LIKE '%'||p_almacen||'%'</pre>
-  <p>Pedir el almacén <span class="mono">AL-VEN-ABD-CB1</span> devuelve también
-  las filas de otros dos que lo contienen como subcadena:</p>
+  <p><b>Cómo lo encontré:</b> leyendo la consulta me llamó la atención el
+  <span class="mono">LIKE</span>, y fui a ver si había almacenes que fueran
+  subcadena de otros:</p>
+  <pre>SELECT CODIGO_ALMACEN, COUNT(*) filas, SUM(SALDO_ACTUAL) saldo
+  FROM IBSVENTA.SALDOS_ITEMS
+ WHERE CODIGO_ALMACEN LIKE '%AL-VEN-ABD-CB1%'
+ GROUP BY CODIGO_ALMACEN;</pre>
   <table>
     <thead><tr><th>Almacén que casa</th><th class="num">Filas</th><th class="num">Saldo</th></tr></thead>
     <tbody>
@@ -339,39 +461,44 @@ SANTA CRUZ-WARNES · SATELITE · EL ALTO · LA PAZ - EL ALTO</pre>
       <tr><td class="mono">3AL-VEN-ABD-CB1</td><td class="num">2</td><td class="num">0</td></tr>
     </tbody>
   </table>
-  <p><b>Hoy no causa error</b> porque esos almacenes tienen saldo cero y el
-  filtro los descarta. Pero el día que alguien cargue existencias en
-  <span class="mono">.AL-VEN-ABD-CB1</span>, se sumarán al catálogo de
-  Cochabamba <b>sin que nadie lo note</b>. Lo mismo ocurre con FAB, LPZ y ARG.</p>
-  <p><b>No corregido:</b> está dentro del PL/SQL.</p>
+  <p>Hay almacenes con un punto y con un número delante. Pedir Cochabamba
+  devuelve los tres.</p>
+  <p><b>Hoy no da números malos</b> porque esos dos tienen saldo cero y el filtro
+  los descarta. Pero el día que alguien cargue existencias en
+  <span class="mono">.AL-VEN-ABD-CB1</span>, se van a sumar al catálogo de
+  Cochabamba <b>sin que nadie se entere</b>. Lo mismo pasa con FAB, LPZ y ARG.</p>
 </div>
 
 <div class="caja medio evita">
   <h4><span class="etq e-medio">MEDIO</span><span class="etq e-latente">LATENTE</span>
-  D-09 · El saldo mostrado no descuenta lo pendiente de entrega</h4>
-  <p>La misma consulta filtra por
+  D-09 · El saldo que se muestra no descuenta lo pendiente de entrega</h4>
+  <p>La consulta filtra por
   <span class="mono">HAVING SUM(saldo_actual − pendiente_entrega) &gt; 0</span>
   pero <b>devuelve</b> <span class="mono">SUM(saldo_actual)</span>, sin restar.
-  El número que se enseña es mayor que lo realmente disponible.</p>
-  <p><b>Hoy no causa error:</b> se revisaron las 14.749 filas de stock del
-  almacén de Fábrica y <b>ninguna</b> tiene
-  <span class="mono">pendiente_entrega</span> distinto de cero. La columna no se
-  está usando.</p>
-  <p>Si algún día se empieza a usar, el vendedor verá más stock del que hay y se
-  podrá vender por encima del disponible.</p>
+  O sea que el número que se enseña es mayor que lo realmente disponible.</p>
+  <p><b>Cómo comprobé si importa:</b></p>
+  <pre>SELECT COUNT(*) filas,
+       SUM(CASE WHEN NVL(PENDIENTE_ENTREGA,0) > 0 THEN 1 ELSE 0 END) con_pendiente
+  FROM IBSVENTA.SALDOS_ITEMS
+ WHERE CODIGO_ALMACEN = 'AL-VEN-ABD-FAB';</pre>
+  <p>De las 14.749 filas de stock, <b>ninguna</b> tiene
+  <span class="mono">pendiente_entrega</span> distinto de cero. La columna
+  sencillamente no se usa, así que hoy no hay error. Lo dejo anotado por si
+  algún día se empieza a usar: ahí sí se podría vender por encima de lo que hay.</p>
 </div>
 
-<h3>3.4 Leves</h3>
+<h3>4.4 Leves</h3>
 
 <div class="caja leve evita">
   <h4><span class="etq e-leve">LEVE</span><span class="etq e-cerrado">CORREGIDO</span>
   D-10 · Etiquetas de formulario sin asociar a su campo</h4>
-  <p>En la aplicación nueva, el componente <span class="mono">Campo</span>
-  pintaba <span class="mono">&lt;label&gt;</span> e
-  <span class="mono">&lt;input&gt;</span> sueltos. Un lector de pantalla leía la
-  caja sin decir para qué era, y tocar la etiqueta en el celular no daba el foco
-  al campo. Detectado al escribir las pruebas.</p>
-  <p><b>Corregido</b> con <span class="mono">id</span> / <span class="mono">htmlFor</span>.</p>
+  <p><b>Cómo lo encontré:</b> escribiendo las pruebas de Cypress. Al intentar
+  seleccionar un campo por su etiqueta me di cuenta de que no estaban ligados.
+  Un lector de pantalla leía la caja de texto sin decir para qué era, y tocar la
+  etiqueta en el celular no daba el foco al campo.</p>
+  <p><b>Cómo lo corregí:</b> con <span class="mono">id</span> y
+  <span class="mono">htmlFor</span>. Es un detalle chico, pero lo encontré
+  <b>gracias a escribir las pruebas</b>, que es justo para lo que sirven.</p>
 </div>
 
 <div class="caja leve evita">
@@ -380,194 +507,210 @@ SANTA CRUZ-WARNES · SATELITE · EL ALTO · LA PAZ - EL ALTO</pre>
   <p><span class="mono">F_ELIMINAR_DETALLE_PEDIDO</span> borra con
   <span class="mono">WHERE codigo_item = ...</span>, sin el número de línea. Si
   un producto ocupa varias líneas, se van todas.</p>
-  <p><b>No es un problema con el reparto por lotes</b> —al contrario, es justo
-  lo que se quiere: el vendedor quita «el producto», no «un lote»— pero conviene
-  saberlo, porque no hay forma de borrar una sola línea.</p>
+  <p><b>Con el reparto por lotes esto en realidad conviene</b> —el vendedor quita
+  «el producto», no «un lote»— pero hay que saberlo, porque no existe forma de
+  borrar una sola línea.</p>
 </div>
 
-<h2 class="salto">4. Qué se mejoró</h2>
+<h2 class="salto">5. Qué mejoré</h2>
 
-<h3>4.1 Lotes sumados y reparto automático</h3>
-<p>Es el cambio de fondo. Se pidió expresamente y se implementó así:</p>
+<h3>5.1 Lotes sumados y reparto automático</h3>
+<p>Es el cambio de fondo, el que me pidieron.</p>
 
-<div class="antes-despues">
-  <div class="col-antes">
-    <b>ANTES</b>
-    Tres filas de PT982, saldos 5, 120 y 200.<br>
+<div class="ad">
+  <div class="a1"><b>ANTES</b>
+    Tres filas del mismo producto, saldos 5, 120 y 200.<br>
     El vendedor elige el lote a mano.<br>
-    Pidiendo 300 parece que no hay stock.
-  </div>
-  <div class="col-despues">
-    <b>AHORA</b>
-    Una fila de PT982, saldo 325, marca «3 lotes».<br>
+    Pidiendo 300, parece que no hay stock.</div>
+  <div class="a2"><b>AHORA</b>
+    Una sola fila, saldo 325, con la marca «3 lotes».<br>
     El vendedor solo escribe la cantidad.<br>
-    El sistema reparte solo.
-  </div>
+    El sistema reparte solo.</div>
 </div>
 
-<p><b>La regla de despacho</b> (FEFO — sale antes lo que caduca antes):</p>
+<p><b>La regla de despacho</b> es FEFO: sale antes lo que caduca antes.</p>
 <ol>
   <li>Primero el lote que <b>vence antes</b>.</li>
-  <li>Si dos vencen el mismo día, primero el de <b>menor saldo</b>, para
-      liquidar los restos.</li>
-  <li>Un lote sin fecha legible se deja para el final: no se puede afirmar que
-      venza pronto y sacarlo primero sería arriesgado.</li>
+  <li>Si dos vencen el mismo día, primero el de <b>menor saldo</b>, para liquidar
+      los restos.</li>
+  <li>Un lote sin fecha legible va al final: no puedo afirmar que venza pronto, y
+      sacarlo primero sería arriesgado.</li>
 </ol>
 
-<p>Pidiendo 300 unidades de PT982:</p>
+<p>Pidiendo 300 unidades de PT982 queda así:</p>
 <table>
-  <thead><tr><th>Lote</th><th>Vence</th><th class="num">Saldo</th><th class="num">Sale</th><th>Motivo</th></tr></thead>
+  <thead><tr><th>Lote</th><th>Vence</th><th class="num">Saldo</th><th class="num">Sale</th><th>Por qué</th></tr></thead>
   <tbody>
-    <tr><td class="mono">F244</td><td>30/09/26</td><td class="num">5</td><td class="num"><b>5</b></td><td>vence antes; de los dos del 30/09 es el más pequeño</td></tr>
+    <tr><td class="mono">F244</td><td>30/09/26</td><td class="num">5</td><td class="num"><b>5</b></td><td>vence antes, y de los dos del 30/09 es el más chico</td></tr>
     <tr><td class="mono">F245</td><td>30/09/26</td><td class="num">120</td><td class="num"><b>120</b></td><td>mismo vencimiento, más saldo</td></tr>
     <tr><td class="mono">F250</td><td>31/12/26</td><td class="num">200</td><td class="num"><b>175</b></td><td>vence después, se usa al final</td></tr>
   </tbody>
 </table>
 
-<p>Detalles de implementación que importan:</p>
+<p><b>Cuatro decisiones que tomé y por qué:</b></p>
 <ul>
-  <li><b>El servidor relee el producto al confirmar.</b> No se fía de lo que
-      manda el navegador: entre que el vendedor busca y confirma pueden pasar
-      minutos y otro puede haberse llevado el lote.</li>
+  <li><b>El servidor vuelve a leer el producto al confirmar.</b> No me fío de lo
+      que manda el navegador: entre que el vendedor busca y le da a guardar pueden
+      pasar minutos, y otro vendedor puede haberse llevado el lote. El reparto se
+      calcula con el saldo de ese instante.</li>
   <li><b>Cada lote es una línea del pedido</b>, porque cada fila de
-      <span class="mono">LIN_PEDIDOS</span> guarda un solo lote. Pedir 300
-      genera tres líneas.</li>
-  <li><b>Si el saldo total no alcanza, no se reparte nada</b> y se avisa cuánto
-      falta. Es preferible a dejar el pedido a medias.</li>
+      <span class="mono">LIN_PEDIDOS</span> guarda un solo lote. Pedir 300 genera
+      tres líneas, y el vendedor las ve así.</li>
+  <li><b>Si el saldo total no alcanza, no reparto nada</b> y aviso cuánto falta.
+      Prefiero eso a dejar el pedido a medias.</li>
   <li><b>El vendedor ve el reparto antes de confirmar</b>, mientras escribe la
-      cantidad. No es una caja negra.</li>
+      cantidad. No quería una caja negra que decide sola sin explicar.</li>
 </ul>
 
 <div class="caja medio">
-  <p><b>Limitación conocida.</b> Los procedimientos de Oracle hacen
+  <p><b>Una limitación que no pude evitar.</b> Los procedimientos de Oracle hacen
   <span class="mono">COMMIT</span> dentro de sí mismos, así que un reparto en
-  varios lotes <b>no puede envolverse en una transacción</b>. Si un tramo falla
-  a mitad se compensa borrando las líneas del producto —y solo si el producto no
-  estaba ya en el pedido, porque si estaba se llevaría líneas buenas—. Cuando no
-  se puede compensar, se informa el estado real y decide la persona.</p>
+  varios lotes <b>no se puede envolver en una transacción</b>. Si un tramo falla
+  a mitad, lo compenso borrando las líneas del producto —y solo si el producto no
+  estaba ya en el pedido, porque si estaba me llevaría líneas buenas—. Cuando no
+  se puede compensar, informo el estado real y que decida la persona.</p>
 </div>
 
-<h3>4.2 Interfaz</h3>
+<h3>5.2 La interfaz</h3>
 <table>
-  <thead><tr><th style="width:32%">Aspecto</th><th>Antes (JSF)</th><th>Ahora (React)</th></tr></thead>
+  <thead><tr><th style="width:30%">Aspecto</th><th>Antes</th><th>Ahora</th></tr></thead>
   <tbody>
-    <tr><td>Elegir cliente o producto</td><td>seleccionar arriba, bajar y pulsar un botón al pie</td><td>se toca la fila y se abre su ficha, se confirma ahí mismo</td></tr>
-    <tr><td>Tablas en celular</td><td>se cortaban, con desplazamiento horizontal</td><td>se convierten en tarjetas con etiqueta y valor</td></tr>
+    <tr><td>Elegir cliente o producto</td><td>seleccionar arriba, bajar y pulsar un botón al pie</td><td>se toca la fila, se abre su ficha y se confirma ahí mismo</td></tr>
+    <tr><td>Tablas en celular</td><td>se cortaban, había que desplazar de lado</td><td>se convierten en tarjetas con etiqueta y valor</td></tr>
     <tr><td>Fecha de entrega</td><td>se escribía a mano</td><td>calendario del propio teléfono, con hoy como mínimo, más atajos «Hoy» y «Mañana»</td></tr>
-    <tr><td>Avisos</td><td>mensajes de JSF fáciles de pasar por alto</td><td>los errores en modal centrado; los éxitos en aviso que se va solo</td></tr>
+    <tr><td>Avisos</td><td>mensajes fáciles de pasar por alto</td><td>los errores en modal centrado; los éxitos en aviso que se va solo</td></tr>
     <tr><td>Tema</td><td>único</td><td>arranca siempre en claro; el oscuro se recuerda si se elige</td></tr>
-    <tr><td>Almacén de trabajo</td><td>código en letra pequeña, solo en pantalla grande</td><td>nombre legible siempre visible, también en celular</td></tr>
-    <tr><td>Iconos</td><td>Font Awesome</td><td>SVG propios, sin librería externa ni emojis</td></tr>
+    <tr><td>Almacén de trabajo</td><td>código en letra chica, solo en pantalla grande</td><td>nombre legible siempre visible, también en celular</td></tr>
+    <tr><td>Iconos</td><td>Font Awesome</td><td>SVG propios, sin librería externa y sin emojis</td></tr>
     <tr><td>Instalación</td><td>solo navegador</td><td>instalable como aplicación (PWA), abre sin conexión</td></tr>
   </tbody>
 </table>
+<p class="nota">Sobre la PWA: los navegadores solo permiten instalar por HTTPS o
+desde <span class="mono">localhost</span>. Para ponerla en los celulares de los
+vendedores va a hacer falta servirla con certificado.</p>
 
-<p class="nota">Nota sobre la PWA: los navegadores solo permiten instalar por
-HTTPS o desde <span class="mono">localhost</span>. Para instalarla en los
-celulares de los vendedores hará falta servirla con certificado.</p>
-
-<h3>4.3 Seguridad y solidez</h3>
+<h3>5.3 Seguridad</h3>
 <ul>
-  <li><b>Variables de vínculo</b> en todas las consultas: se cierra la inyección SQL.</li>
+  <li><b>Variables de vínculo</b> en todas las consultas: cierra la inyección SQL.</li>
   <li><b>El almacén nunca llega del navegador.</b> Sale de
       <span class="mono">UNI_NEG</span> al iniciar sesión y vive en la sesión del
-      servidor. Manipular la petición no sirve para pedir stock de otro almacén.</li>
+      servidor. Aunque alguien manipule la petición, no puede pedir stock de otro
+      almacén: no hay forma de nombrarlo.</li>
   <li><b>Las credenciales salen del código</b> y pasan a un
       <span class="mono">.env</span> excluido del repositorio.</li>
-  <li><b>Validación también en el servidor.</b> Lo que valida el navegador es
-      comodidad; la validación que manda es la del servidor.</li>
-  <li><b>Los errores de Oracle no llegan al navegador:</b> se registran en el
-      servidor y al usuario le llega un mensaje neutro.</li>
+  <li><b>Valido también en el servidor.</b> Lo que valida el navegador es
+      comodidad; la validación que manda es la de atrás.</li>
+  <li><b>Los errores de Oracle no llegan al navegador.</b> Se registran en el
+      servidor y al usuario le llega un mensaje neutro, sin trazas.</li>
 </ul>
 
-<h3>4.4 Pruebas automáticas</h3>
-<p>El sistema original no tenía ninguna. Ahora hay <b>124</b>.</p>
+<h2>6. Cómo repetir este QA</h2>
 
+<p>Todo lo de este informe se puede volver a correr. Estos son los comandos:</p>
+<pre># 51 pruebas de reglas. No necesitan base de datos, tardan un segundo.
+cd pedidos-react/server && npm test
+
+# Levantar la interfaz
+cd pedidos-react/web && npm run dev
+
+# 63 pruebas de interfaz en navegador real. No tocan la base.
+cd pedidos-react/qa && npm run qa
+
+# 10 comprobaciones contra Oracle, en tablas de prueba.
+# Requiere MODO_PRUEBA=1 en el .env
+cd pedidos-react/server && npm run prueba:reparto</pre>
+
+<p>La última es la que da más confianza, porque busca sola un producto real con
+varios lotes, pide una cantidad que obligue a partirlo y comprueba diez cosas:</p>
+<pre>OK  hay una linea por cada lote del reparto
+OK  cada linea lleva su lote y su cantidad
+OK  la suma de las lineas es la cantidad pedida
+OK  las lineas van numeradas 1, 2, 3...
+OK  el primer lote es el que vence antes
+OK  el precio lo calculo Oracle, no viene en cero
+OK  la descripcion del producto se resuelve
+OK  al terminar, el total de la cabecera es la suma de las lineas
+OK  al terminar, el estado pasa a V
+OK  eliminar el producto borra sus lineas de todos los lotes</pre>
+
+<p class="nota">Si Cypress no arranca y dice
+<span class="mono">bad option: --smoke-test</span>, no es el programa: es la
+variable de entorno <span class="mono">ELECTRON_RUN_AS_NODE=1</span>, que la
+ponen los editores que a su vez son Electron y hace que Cypress arranque como si
+fuera Node. Se quita con <span class="mono">Remove-Item Env:\ELECTRON_RUN_AS_NODE</span>.
+Reinstalar el binario no sirve de nada; lo comprobé perdiendo un rato.</p>
+
+<h2>7. Qué falta y qué recomiendo</h2>
+
+<h3>7.1 Lo que no pude probar</h3>
+<p>El paquete <span class="mono">ABD.PCK_OPERACIONES</span> no queda ejercitado
+por la prueba de integración: sus <span class="mono">INSERT</span> están dentro
+del PL/SQL y apuntan a las tablas reales, así que no hay manera de redirigirlos
+desde afuera. Lo replico —incluido el borrado por código de ítem— y el precio sí
+sale de la función real.</p>
+<p>Lo que sí quedó probado de punta a punta es <b>el reparto en lotes</b>, que es
+lo que no existía. El paquete lleva años funcionando; lo nuevo es lo mío, y eso
+está cubierto.</p>
+<p>Para cubrir también el paquete haría falta una copia suya que escriba en las
+tablas de prueba —ya existe <span class="mono">PCK_OPERACIONES_BACK</span>, así
+que el equipo sabe duplicarlo—. Eso lo tiene que hacer quien administra la base.</p>
+
+<h3>7.2 Recomendaciones, por orden de urgencia</h3>
 <table>
-  <thead><tr><th>Suite</th><th class="num">Pruebas</th><th>Qué cubre</th><th>Cómo se lanza</th></tr></thead>
+  <thead><tr><th class="num" style="width:6%">#</th><th style="width:12%">Defecto</th><th>Qué hacer</th><th style="width:21%">Quién</th></tr></thead>
   <tbody>
-    <tr><td>Backend — reglas y lotes</td><td class="num">51</td><td>reparto FEFO, fechas, cantidades, regiones, bancos</td><td class="mono">npm test</td></tr>
-    <tr><td>Frontend — Cypress</td><td class="num">63</td><td>sesión, cliente, vendedor, lotes, pedido, pago, interfaz</td><td class="mono">npm run qa</td></tr>
-    <tr><td>Integración con Oracle</td><td class="num">10</td><td>el reparto contra la base real, en tablas de prueba</td><td class="mono">npm run prueba:reparto</td></tr>
-    <tr><td colspan="1"><b>Total</b></td><td class="num"><b>124</b></td><td colspan="2">todas en verde</td></tr>
-  </tbody>
-</table>
-
-<div class="caja bien">
-  <p><b>Las pruebas de Cypress no tocan la base.</b> Todas las llamadas a la API
-  se responden con datos de prueba. No es comodidad: el backend apunta a
-  producción y una prueba que creara un pedido crearía un pedido real.</p>
-  <p><b>La prueba de integración usa tablas aparte.</b> Escribe en
-  <span class="mono">IBSVENTA.PPEDIDOS</span> y
-  <span class="mono">PLIN_PEDIDOS</span>, copias exactas de las reales, y se
-  limpia sola al terminar. Verificado después de ejecutarla: las tablas de
-  prueba quedaron en cero y ninguno de los pedidos reales del día tenía el
-  usuario de pruebas.</p>
-</div>
-
-<h2>5. Qué falta y qué se recomienda</h2>
-
-<h3>5.1 No probado</h3>
-<p>El paquete <span class="mono">ABD.PCK_OPERACIONES</span> no se ha ejercitado
-en la prueba de integración: sus <span class="mono">INSERT</span> están dentro
-del PL/SQL y apuntan a las tablas reales, así que no se pueden redirigir desde
-el servidor. Lo que sí quedó probado de punta a punta es la orquestación nueva
-—el reparto en lotes—, que es lo que no existía antes. El paquete lleva años en
-producción.</p>
-
-<p>Para cubrirlo haría falta una copia del paquete que escriba en las tablas de
-prueba, como ya existe <span class="mono">PCK_OPERACIONES_BACK</span>. Eso lo
-debe hacer quien administre la base.</p>
-
-<h3>5.2 Recomendaciones, por orden de urgencia</h3>
-<table>
-  <thead><tr><th class="num" style="width:6%">#</th><th style="width:14%">Defecto</th><th>Acción</th><th style="width:22%">Quién</th></tr></thead>
-  <tbody>
-    <tr><td class="num">1</td><td>D-01</td><td>Revisar <span class="mono">F_VALIDA_USUARIO</span>: usar <span class="mono">NVL</span> o <span class="mono">IS NULL</span> para que una clave ausente deniegue el acceso en vez de concederlo</td><td>Administrador de la base</td></tr>
-    <tr><td class="num">2</td><td>D-03</td><td>Unificar la fecha de cálculo del precio: <span class="mono">F_CREAR_DETALLE_PEDIDO</span> debería recibir la fecha de entrega, no usar <span class="mono">SYSDATE</span></td><td>Administrador de la base</td></tr>
-    <tr><td class="num">3</td><td>D-06</td><td>Rotar las credenciales de Oracle y las claves de reCAPTCHA si el repositorio se comparte</td><td>Sistemas</td></tr>
+    <tr><td class="num">1</td><td>D-01</td><td>Corregir <span class="mono">F_VALIDA_USUARIO</span>: usar <span class="mono">NVL</span> o <span class="mono">IS NULL</span> para que una clave ausente <b>deniegue</b> el acceso en vez de concederlo</td><td>Administrador de la base</td></tr>
+    <tr><td class="num">2</td><td>D-03</td><td>Unificar la fecha del precio: <span class="mono">F_CREAR_DETALLE_PEDIDO</span> debería recibir la fecha de entrega, no usar <span class="mono">SYSDATE</span></td><td>Administrador de la base</td></tr>
+    <tr><td class="num">3</td><td>D-06</td><td>Rotar credenciales de Oracle y claves de reCAPTCHA si el repositorio se comparte</td><td>Sistemas</td></tr>
     <tr><td class="num">4</td><td>D-08</td><td>Cambiar <span class="mono">LIKE</span> por <span class="mono">=</span> en el filtro de almacén, o limpiar los almacenes con punto y número delante</td><td>Administrador de la base</td></tr>
     <tr><td class="num">5</td><td>D-07</td><td>Valorar una columna de almacén en <span class="mono">PERSONAS</span> si se quiere bloquear de verdad la venta entre departamentos</td><td>Decisión de negocio</td></tr>
     <tr><td class="num">6</td><td>D-09</td><td>Si se empieza a usar <span class="mono">pendiente_entrega</span>, restarlo también en el saldo que se muestra</td><td>Administrador de la base</td></tr>
-    <tr><td class="num">7</td><td>—</td><td>Revisar <span class="mono">server/src/zonas.js</span>: los almacenes LPZ, ORU, SC8 y ARG no tienen histórico y su región se dedujo del sufijo</td><td>Negocio</td></tr>
+    <tr><td class="num">7</td><td>—</td><td>Revisar <span class="mono">server/src/zonas.js</span>: los almacenes LPZ, ORU, SC8 y ARG no tienen histórico y su región la deduje del sufijo. Si alguna está mal, se corrige ahí y en un solo sitio</td><td>Negocio</td></tr>
     <tr><td class="num">8</td><td>—</td><td>Servir la aplicación por HTTPS para poder instalarla en los celulares</td><td>Sistemas</td></tr>
   </tbody>
 </table>
 
-<h3>5.3 Advertencias operativas</h3>
+<h3>7.3 Advertencias para quien tome esto después</h3>
 <div class="caja grave">
-  <p><b>El entorno apunta a producción.</b> El archivo
-  <span class="mono">.env</span> tiene
-  <span class="mono">192.168.0.5/PDBABD</span>. Cualquier pedido creado desde la
-  aplicación nueva es un pedido real, visible en el sistema JSF.</p>
-  <p><b>Para probar sin riesgo</b>, poner <span class="mono">MODO_PRUEBA=1</span>:
-  los pedidos se graban en las tablas de prueba. Los catálogos y saldos se
-  siguen leyendo de producción, que es lo que interesa. <b>Dejar vacío en
-  cualquier despliegue real.</b></p>
-  <p><b>La variable <span class="mono">ALMACEN_DEV</span> es solo para
-  desarrollo:</b> permite entrar a cuentas que no están en
+  <p><b>El entorno apunta a producción.</b> El <span class="mono">.env</span>
+  tiene <span class="mono">192.168.0.5/PDBABD</span>. Cualquier pedido creado
+  desde la aplicación es un pedido real, visible en el sistema JSF.</p>
+  <p><b>Para probar sin riesgo</b>, poner
+  <span class="mono">MODO_PRUEBA=1</span>. Los pedidos se graban en las tablas
+  de prueba y los catálogos se siguen leyendo de producción.
+  <b>Dejar vacío en cualquier despliegue real.</b></p>
+  <p><b><span class="mono">ALMACEN_DEV</span> es solo para desarrollo:</b>
+  permite entrar con cuentas que no están en
   <span class="mono">ABD.USUARIOS</span> asignándoles un almacén fijo. También
   debe quedar vacía en producción.</p>
 </div>
 
-<h2>6. Cómo comprobar todo esto</h2>
-<pre>cd pedidos-react/server && npm test              # 51 pruebas, sin base de datos
-cd pedidos-react/web    && npm run dev           # levantar la interfaz
-cd pedidos-react/qa     && npm run qa            # 63 pruebas de interfaz
+<h2>8. Resumen</h2>
+<table>
+  <thead><tr><th style="width:46%">Punto</th><th class="num">Antes</th><th class="num">Ahora</th></tr></thead>
+  <tbody>
+    <tr><td>Filas por producto en la búsqueda</td><td class="num">1 por lote</td><td class="num">1 por producto</td></tr>
+    <tr><td>Saldo que ve el vendedor</td><td class="num">el de un lote suelto</td><td class="num">la suma de todos</td></tr>
+    <tr><td>Elección de lote al vender</td><td class="num">manual</td><td class="num">automática (FEFO)</td></tr>
+    <tr><td>Paginación</td><td class="num">ninguna</td><td class="num">15 por página</td></tr>
+    <tr><td>Clientes devueltos en una búsqueda</td><td class="num">hasta 7.108</td><td class="num">15</td></tr>
+    <tr><td>Pruebas automáticas</td><td class="num">0</td><td class="num">124</td></tr>
+    <tr><td>Consultas con inyección SQL</td><td class="num">sí</td><td class="num">no</td></tr>
+    <tr><td>Uso en celular</td><td class="num">tabla cortada</td><td class="num">tarjetas</td></tr>
+  </tbody>
+</table>
 
-# Con MODO_PRUEBA=1 en el .env:
-cd pedidos-react/server && npm run prueba:reparto # 10 comprobaciones contra Oracle</pre>
-
-<p class="nota">Si Cypress no arranca y dice
-<span class="mono">bad option: --smoke-test</span>, la causa es la variable de
-entorno <span class="mono">ELECTRON_RUN_AS_NODE=1</span>, que hace que arranque
-como Node. Reinstalar el binario no sirve de nada.</p>
+<p><b>Once defectos encontrados:</b> cinco corregidos en la aplicación nueva,
+cuatro siguen abiertos porque están en la base o en el sistema JSF y no debía
+tocarlos, y dos son latentes: hoy no hacen daño, pero lo harán en cuanto cambien
+los datos.</p>
 
 <footer>
-  Informe generado a partir de verificaciones sobre la base de datos Oracle de
-  producción (solo lecturas) y sobre el código fuente de ambos sistemas.
-  Los datos de saldos, lotes, precios y pedidos citados son reales y estaban
-  vigentes el 4 de agosto de 2026.
+  Elaborado por el Ing. Edgar Rojas Apaza. Todo lo afirmado está verificado
+  contra la base de datos Oracle de producción —únicamente con consultas de
+  lectura— o contra el código fuente de ambos sistemas. Los saldos, lotes,
+  precios y pedidos citados son reales y estaban vigentes el 4 de agosto de 2026.
+  Ninguna comprobación modificó datos de producción.
 </footer>
 
 </body>
