@@ -64,7 +64,11 @@ export function PasoPago({
   }
 
   return (
-    <>
+    /* En escritorio el detalle ocupa la columna ancha y los datos de pago
+       quedan al lado, acompanando el desplazamiento: asi se ve lo que se
+       cobra mientras se llena el formulario. */
+    <div className="disposicion">
+      <div className="principal">
       <Tarjeta titulo={`Pedido Nº ${nroPedido}`}>
         <div className="tabla-scroll tarjetas-movil">
           <table className="tabla-tarjetas">
@@ -101,7 +105,9 @@ export function PasoPago({
           </table>
         </div>
       </Tarjeta>
+      </div>
 
+      <aside className="lateral">
       {pedido?.estado === 'PAGADO' || pedido?.pagado ? (
         <Tarjeta titulo="Estado">
           <dl className="datos">
@@ -199,6 +205,7 @@ export function PasoPago({
           </Boton>
         </Tarjeta>
       )}
-    </>
+      </aside>
+    </div>
   );
 }

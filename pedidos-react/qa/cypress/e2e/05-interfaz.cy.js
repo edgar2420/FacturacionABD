@@ -136,6 +136,83 @@ describe('Interfaz', () => {
     });
   });
 
+  /**
+   * En escritorio no basta con que "quepa": apilar el formulario y luego los
+   * resultados deja media pantalla vacia y obliga a bajar para ver lo que uno
+   * acaba de buscar. Estas pruebas cuidan que se use el ancho.
+   */
+  describe('escritorio', () => {
+    beforeEach(() => cy.viewport(1440, 900));
+
+    it('el formulario y los resultados van lado a lado, no uno debajo del otro', () => {
+      cy.entrar();
+      cy.campo('Dato a buscar').type('FAVIMA');
+      cy.contains('button', 'Buscar cliente').click();
+      cy.wait('@clientes');
+
+      cy.get('.disposicion.busqueda > .lateral').then(($form) => {
+        cy.get('.disposicion.busqueda > .principal').then(($res) => {
+          const f = $form[0].getBoundingClientRect();
+          const r = $res[0].getBoundingClientRect();
+
+          expect(r.left, 'los resultados van a la derecha del formulario')
+            .to.be.greaterThan(f.right - 2);
+          // Si estuvieran apilados, uno empezaria muy por debajo del otro.
+          expect(Math.abs(r.top - f.top), 'ambas columnas arrancan a la misma altura')
+            .to.be.lessThan(30);
+        });
+      });
+    });
+
+    it('mientras no se busca, la columna de resultados no queda vacia', () => {
+      cy.entrar();
+      cy.get('.espera-busqueda').should('be.visible').and('contain', 'Todavía no hay búsqueda');
+    });
+
+    it('ese aviso NO sale en celular, donde seria ruido', () => {
+      cy.viewport('samsung-note9');
+      cy.entrar();
+      cy.get('.espera-busqueda').should('not.be.visible');
+    });
+
+    it('el formulario acompaña el desplazamiento', () => {
+      cy.entrar();
+      cy.get('.disposicion.busqueda > .lateral').should('have.css', 'position', 'sticky');
+    });
+
+    it('el pedido en curso queda al lado del buscador de productos', () => {
+      cy.entrar();
+      cy.llegarAProductos();
+      cy.buscarProductos();
+      cy.abrirProducto(PRODUCTO_TRES_LOTES.nombre);
+      cy.get('[role="dialog"]').within(() => {
+        cy.get('input[type="number"]').type('3');
+        cy.contains('button', 'Crear pedido').click();
+      });
+      cy.wait('@crearPedido');
+
+      cy.get('.disposicion > .principal').then(($p) => {
+        cy.get('.disposicion > .lateral').then(($l) => {
+          expect($l[0].getBoundingClientRect().left, 'el pedido va a la derecha')
+            .to.be.greaterThan($p[0].getBoundingClientRect().right - 2);
+        });
+      });
+    });
+
+    it('la pagina tampoco se desplaza en horizontal en pantalla ancha', () => {
+      cy.entrar();
+      cy.campo('Dato a buscar').type('FAVIMA');
+      cy.contains('button', 'Buscar cliente').click();
+      cy.wait('@clientes');
+
+      cy.window().then((win) => {
+        expect(win.document.documentElement.scrollWidth).to.be.at.most(
+          win.document.documentElement.clientWidth + 1
+        );
+      });
+    });
+  });
+
   describe('instalable', () => {
     it('publica el manifest con los iconos', () => {
       simularApi();
