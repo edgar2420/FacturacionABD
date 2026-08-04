@@ -102,6 +102,32 @@ describe('Interfaz', () => {
       });
     });
 
+    it('la barra no se descuadra: el titulo no se parte letra por letra', () => {
+      cy.entrar();
+
+      // Si el titulo se aplasta, cada letra cae en una linea y la barra crece
+      // hasta ocupar un cuarto de la pantalla. Fue un fallo real.
+      // Dos filas: logo y titulo arriba, chapas y botones abajo. Con el fallo
+      // llegaba a rozar los 200 px.
+      cy.get('.barra').then(($b) => {
+        expect($b[0].getBoundingClientRect().height, 'alto de la barra').to.be.lessThan(120);
+      });
+
+      cy.contains('h1', 'Módulo Pedidos ABD').then(($h) => {
+        const caja = $h[0].getBoundingClientRect();
+        // Una sola linea de texto: si se partiera, el alto seria mucho mayor.
+        expect(caja.height, 'alto del titulo').to.be.lessThan(30);
+        expect(caja.width, 'ancho del titulo').to.be.greaterThan(90);
+      });
+    });
+
+    it('el almacen y el titulo siguen visibles en celular', () => {
+      cy.entrar();
+      cy.contains('h1', 'Módulo Pedidos ABD').should('be.visible');
+      cy.get('.chapa-almacen').should('be.visible').and('contain', 'Fábrica');
+      cy.get('button[aria-label="Cerrar sesión"]').should('be.visible');
+    });
+
     it('los botones tienen area tactil suficiente', () => {
       cy.entrar();
       cy.contains('button', 'Buscar cliente').then(($b) => {
