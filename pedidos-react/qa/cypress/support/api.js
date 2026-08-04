@@ -12,6 +12,7 @@ import {
   CLIENTE,
   CLIENTE_OTRA_REGION,
   PEDIDO,
+  PRODUCTO_CON_RESTOS,
   PRODUCTO_TRES_LOTES,
   PRODUCTO_UN_LOTE,
   USUARIO,
@@ -19,9 +20,16 @@ import {
   linea
 } from './datos';
 
-const PRODUCTOS = [PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE];
+const PRODUCTOS = [PRODUCTO_TRES_LOTES, PRODUCTO_UN_LOTE, PRODUCTO_CON_RESTOS];
 
-/** Espejo de server/src/lotes.js: vence antes -> menor saldo. */
+/**
+ * Espejo de server/src/lotes.js:
+ *   1. los restos (saldo <= 3) primero, para liquidarlos
+ *   2. luego por vencimiento: sale antes lo que caduca antes
+ *   3. a igual fecha, el de menor saldo
+ */
+const SALDO_RESTO = 3;
+
 function parsearVenc(texto) {
   const m = String(texto).match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
   if (!m) return null;
@@ -33,6 +41,10 @@ export function repartir(lotes, cantidad) {
   const orden = [...lotes]
     .filter((l) => l.saldo > 0)
     .sort((a, b) => {
+      const ra = a.saldo <= SALDO_RESTO;
+      const rb = b.saldo <= SALDO_RESTO;
+      if (ra !== rb) return ra ? -1 : 1;
+
       const fa = parsearVenc(a.fechaVencimiento);
       const fb = parsearVenc(b.fechaVencimiento);
       if (fa && fb && fa.getTime() !== fb.getTime()) return fa - fb;

@@ -47,16 +47,43 @@ function parsearVencimiento(valor) {
 }
 
 /**
+ * Hasta cuantas unidades se considera que un lote es un "resto" o migaja.
+ *
+ * Estos lotes salen ANTES que nada, para liquidarlos. En el almacen de Fabrica
+ * habia 21 lotes de 3 unidades o menos —30 unidades en total— y con el orden
+ * puro por vencimiento no salian nunca, porque casi siempre son los que vencen
+ * mas tarde: se quedaban ahi para siempre.
+ *
+ * Si hace falta ajustarlo, se cambia aqui y en un solo sitio.
+ */
+const SALDO_RESTO = 3;
+
+function esResto(lote) {
+  const s = Number(lote.saldo) || 0;
+  return s > 0 && s <= SALDO_RESTO;
+}
+
+/**
  * Orden de despacho, que es tambien el orden en que se muestran los lotes:
  *
- *   1. el que vence antes
- *   2. a igual vencimiento, el de menor saldo (para liquidar los restos)
- *   3. a igual saldo, por codigo de lote, para que el orden sea estable
+ *   1. los restos (saldo <= SALDO_RESTO), para liquidarlos; entre ellos, el
+ *      que vence antes
+ *   2. el resto de lotes por vencimiento: sale antes lo que caduca antes
+ *   3. a igual vencimiento, el de menor saldo
+ *   4. a igual saldo, por codigo de lote, para que el orden sea estable
+ *
+ * El limite es a proposito muy bajo. Con un limite alto, un lote grande que
+ * vence pronto se quedaria atras y se venceria, que es justo lo que hay que
+ * evitar; con tres unidades apenas se retrasa nada y se limpian las migajas.
  *
  * Un lote sin fecha de vencimiento legible se manda al final: no se puede
  * afirmar que venza pronto, y sacarlo primero seria arriesgado.
  */
 function compararLotes(a, b) {
+  const ra = esResto(a);
+  const rb = esResto(b);
+  if (ra !== rb) return ra ? -1 : 1;
+
   const fa = parsearVencimiento(a.fechaVencimiento);
   const fb = parsearVencimiento(b.fechaVencimiento);
 
@@ -115,9 +142,24 @@ function agruparPorProducto(filas) {
 
   for (const g of grupos) {
     g.lotes.sort(compararLotes);
-    // El vencimiento que se muestra es el del primer lote que saldria: es el
-    // dato que le importa al vendedor y al cliente.
-    g.vencimientoProximo = g.lotes.length ? g.lotes[0].fechaVencimiento : null;
+
+    /*
+     * El vencimiento que se muestra es el MAS PROXIMO de todos, no el del
+     * primer lote de la lista.
+     *
+     * Son cosas distintas desde que los restos salen primero: un lote de una
+     * unidad que caduca en 2030 puede encabezar el despacho, y poner esa fecha
+     * en la columna "Vence" haria creer que al producto le quedan años cuando
+     * el grueso del stock caduca el mes que viene.
+     */
+    const fechas = g.lotes
+      .map((l) => ({ texto: l.fechaVencimiento, fecha: parsearVencimiento(l.fechaVencimiento) }))
+      .filter((f) => f.fecha)
+      .sort((a, b) => a.fecha - b.fecha);
+
+    g.vencimientoProximo = fechas.length
+      ? fechas[0].texto
+      : (g.lotes[0]?.fechaVencimiento ?? null);
     g.cantidadLotes = g.lotes.length;
   }
 
@@ -194,6 +236,8 @@ function repartirEnLotes(lotes, cantidad) {
 }
 
 module.exports = {
+  SALDO_RESTO,
+  esResto,
   parsearVencimiento,
   compararLotes,
   agruparPorProducto,

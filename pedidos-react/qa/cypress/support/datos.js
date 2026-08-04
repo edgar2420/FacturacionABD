@@ -105,6 +105,31 @@ export const PRODUCTO_TRES_LOTES = {
   ]
 };
 
+/**
+ * Producto con "restos": dos lotes de 1 y 3 unidades que vencen mucho mas
+ * tarde que el grande. Copiado de PT026 del almacen de Fabrica.
+ *
+ * Con el orden puro por vencimiento esas migajas no salian nunca. Ahora salen
+ * primero, y por eso el orden de los lotes NO es el de las fechas.
+ */
+export const PRODUCTO_CON_RESTOS = {
+  almacen: 'AL-VEN-ABD-FAB',
+  producto: 'PT026',
+  nombre: 'SOL. GLUCOSA ISOTONICA AL 5% X 1000 ML INFUSOR FLEX',
+  unidad: 'PZA',
+  precio: 13.5,
+  saldoTotal: 1725,
+  vencimientoProximo: '30/11/27',
+  cantidadLotes: 4,
+  lotes: [
+    // Ya vienen en orden de despacho, como los manda el servidor.
+    { lote: '1030013', fechaVencimiento: '30/09/29', saldo: 1, precio: 13.5 },
+    { lote: '1030036', fechaVencimiento: '01/05/30', saldo: 3, precio: 13.5 },
+    { lote: '6080001', fechaVencimiento: '30/11/27', saldo: 520, precio: 13.5 },
+    { lote: '1030008', fechaVencimiento: '31/08/28', saldo: 1201, precio: 13.5 }
+  ]
+};
+
 /** Linea del detalle del pedido, tal como la devuelve F_OBTENER_DET_PEDIDO. */
 export function linea(item, producto, lote, cantidad, fechaVencimiento) {
   const neto = producto.precio * cantidad;

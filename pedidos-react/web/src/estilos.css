@@ -1209,6 +1209,14 @@ td {
     grid-template-columns: minmax(300px, 0.85fr) minmax(0, 2fr);
   }
 
+  /* Cuando todavia no hay pedido, el aside no se pinta y .principal se queda
+     solo. Sin esto la rejilla seguia reservando la segunda columna: la tabla
+     de productos se apretaba contra la mitad izquierda y la columna del saldo
+     quedaba cortada. */
+  .disposicion > .principal:only-child {
+    grid-column: 1 / -1;
+  }
+
   .disposicion > .lateral {
     position: sticky;
     top: 82px;
@@ -1707,6 +1715,20 @@ td {
   min-width: 0;
   font-size: 11.5px;
   color: var(--texto-tenue);
+}
+
+/* Marca el lote que sale por ser un resto y no por su fecha: sin esto parece
+   que el orden esta mal, porque suele ser el que vence mas tarde. */
+.reparto .resto {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--atencion-suave);
+  color: var(--atencion);
+  font-size: 10px;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.3px;
 }
 
 .subtotal-modal {
