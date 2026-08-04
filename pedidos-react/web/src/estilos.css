@@ -185,16 +185,66 @@ p {
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.2px;
-  line-height: 1.2;
-  /* En celular el titulo se parte en dos lineas antes que empujar los botones
-     de tema y salida fuera de la barra. */
-  min-width: 0;
+  line-height: 1.25;
   padding-left: 10px;
   border-left: 1px solid var(--borde);
+  /* Nunca se parte letra a letra: antes se corta con puntos suspensivos. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .barra .crece {
   flex: 1;
+}
+
+/*
+ * En celular no caben en una fila el logo, el titulo, las dos chapas y los dos
+ * botones: el titulo quedaba aplastado y se partia una letra por linea.
+ *
+ * Se reparte en dos filas usando el propio separador como salto: al darle
+ * ancho completo, todo lo que va detras baja a la segunda fila.
+ *
+ *   fila 1:  [logo] Módulo Pedidos ABD
+ *   fila 2:  [DEV] [Fábrica]              [tema] [salir]
+ */
+@media (max-width: 599px) {
+  .barra {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    padding: 8px 12px;
+    padding-top: calc(8px + env(safe-area-inset-top));
+  }
+
+  .barra .marca-app {
+    flex: 1 1 auto;
+  }
+
+  /* Dos filas ya ocupan sitio, asi que el logo y las chapas se achican un
+     poco. Los botones NO: su area tactil se respeta, que es mas importante
+     que ganar unos pixeles de barra. */
+  .barra .logo-abd {
+    height: 26px;
+  }
+
+  .chapa-almacen,
+  .barra .etiqueta {
+    padding: 3px 9px;
+    font-size: 11.5px;
+  }
+
+  .barra .crece {
+    flex-basis: 100%;
+    height: 0;
+    margin: 0;
+  }
+
+  /* El penultimo hijo es el boton de tema: empuja los dos botones a la
+     derecha, dejando las chapas a la izquierda. */
+  .barra > *:nth-last-child(2) {
+    margin-left: auto;
+  }
 }
 
 .barra .usuario {
