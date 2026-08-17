@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Acceso a la base de datos · Módulo Pedidos ABD</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Calibri, system-ui, sans-serif;
+         font-size: 10.3pt; line-height: 1.55; color: #1c2530; margin: 0; }
+  h1 { font-size: 20pt; margin: 0 0 4px; letter-spacing: -0.4px; color: #01579b; }
+  h2 { font-size: 13.5pt; margin: 24px 0 9px; padding-bottom: 5px;
+       border-bottom: 2px solid #0277bd; color: #01579b; page-break-after: avoid; }
+  h3 { font-size: 11.2pt; margin: 17px 0 6px; color: #024f7e; page-break-after: avoid; }
+  h4 { font-size: 10.3pt; margin: 12px 0 4px; page-break-after: avoid; }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 9px; padding-left: 19px; }
+  li { margin-bottom: 4px; }
+
+  .portada { border: 1px solid #b3e0f5; border-left: 5px solid #0277bd;
+             background: #f3faff; padding: 17px 19px; border-radius: 6px; }
+  .sub { color: #4a5b6b; font-size: 10.5pt; margin: 0; }
+  .meta { margin-top: 11px; font-size: 9pt; color: #4a5b6b; }
+  .meta b { color: #1c2530; }
+
+  table { width: 100%; border-collapse: collapse; margin: 9px 0 13px; font-size: 9.3pt; }
+  th, td { border: 1px solid #cfe3ef; padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: #e3f3fc; font-weight: 700; color: #01579b; }
+  tbody tr:nth-child(even) { background: #f8fcff; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.si { color: #c62828; font-weight: 700; }
+  td.no { color: #2e7d32; font-weight: 700; }
+
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.9pt; }
+  pre { background: #f4f7f9; border: 1px solid #dbe6ee; border-left: 3px solid #0277bd;
+        padding: 8px 11px; margin: 7px 0 11px; border-radius: 4px;
+        font-family: Consolas, "Courier New", monospace; font-size: 8.5pt;
+        line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+
+  .caja { padding: 10px 13px; border-radius: 5px; margin: 10px 0 13px; border: 1px solid; }
+  .grave { background: #fdecec; border-color: #e57373; }
+  .medio { background: #fff6e5; border-color: #ffb74d; }
+  .leve  { background: #f1f6f9; border-color: #b0c4d0; }
+  .bien  { background: #eaf7ee; border-color: #81c784; }
+  .caja p:last-child, .caja ul:last-child, .caja pre:last-child { margin-bottom: 0; }
+
+  .paso { border-left: 3px solid #0277bd; padding-left: 12px; margin: 13px 0; }
+  .paso h4 { color: #01579b; margin-top: 0; }
+
+  .cadena { background: #f4f7f9; border: 1px solid #dbe6ee; border-radius: 5px;
+            padding: 12px 14px; margin: 10px 0 13px; font-family: Consolas, monospace;
+            font-size: 8.6pt; line-height: 1.7; }
+
+  .nota { font-size: 9pt; color: #4a5b6b; font-style: italic; }
+  .salto { page-break-before: always; }
+  .evita { page-break-inside: avoid; }
+  footer { margin-top: 22px; padding-top: 9px; border-top: 1px solid #cfe3ef;
+           font-size: 8.6pt; color: #64757f; }
+</style>
+</head>
+<body>
+
+<div class="portada">
+  <h1>Acceso a la base de datos</h1>
+  <p class="sub">Cómo se conecta la aplicación, qué permite esa cuenta y cómo conectarse uno mismo</p>
+  <div class="meta">
+    <b>Base:</b> Oracle 12c Enterprise Edition 12.1.0.2.0 · 64-bit &nbsp;·&nbsp;
+    <b>Servidor:</b> serabd (192.168.0.5:1521)<br>
+    <b>Contenedor:</b> PDBABD &nbsp;·&nbsp;
+    <b>Cuenta que usa la aplicación:</b> ABD<br>
+    <b>Fecha de la revisión:</b> 4 de agosto de 2026 &nbsp;·&nbsp;
+    <b>Autor:</b> Ing. Edgar Rojas Apaza
+  </div>
+</div>
+
+<div class="caja grave">
+  <p><b>Lo primero, porque cambia todo lo demás.</b></p>
+  <p>La pregunta era «¿puedo tener acceso total a la base?». La respuesta es que
+  <b>ya lo tienes</b>. La cuenta <span class="mono">ABD</span> —la misma que usa
+  la aplicación y cuya contraseña está escrita en texto plano dentro del
+  repositorio— tiene <b>117 privilegios activos</b>, entre ellos
+  <span class="mono">DROP ANY TABLE</span>,
+  <span class="mono">CREATE USER</span>,
+  <span class="mono">ALTER DATABASE</span> y
+  <span class="mono">GRANT ANY PRIVILEGE</span>.</p>
+  <p>No falta acceso. <b>Sobra.</b> Y eso es un problema de seguridad, no una
+  comodidad. Está desarrollado en la sección 4.</p>
+</div>
+
+<h2>1. Cómo se conecta la aplicación</h2>
+
+<p>La conexión no está escrita en el código: se arma en cuatro escalones, cada
+uno con su archivo. Así se puede cambiar de servidor sin tocar nada de
+programación.</p>
+
+<div class="cadena">
+.env                    <b>las credenciales, fuera del repositorio</b><br>
+&nbsp;&nbsp;↓<br>
+src/config.js           lee las variables y avisa si falta alguna<br>
+&nbsp;&nbsp;↓<br>
+src/db.js               abre el pool de conexiones (modo Thick)<br>
+&nbsp;&nbsp;↓<br>
+oracledb + Instant Client → 192.168.0.5:1521/PDBABD
+</div>
+
+<div class="paso">
+<h4>Escalón 1 — El archivo <span class="mono">.env</span></h4>
+<p>Está en <span class="mono">pedidos-react/server/.env</span> y
+<b>no se sube al repositorio</b>: está en el
+<span class="mono">.gitignore</span>. Lo que hay dentro:</p>
+<pre>ORACLE_USER=abd
+ORACLE_PASSWORD=••••••
+ORACLE_CONNECT_STRING=192.168.0.5:1521/PDBABD
+ORACLE_CLIENT_DIR=C:\instantclient_23_26</pre>
+<p>Para que otra persona monte el proyecto, se copia
+<span class="mono">.env.example</span> a <span class="mono">.env</span> y se
+completa. El ejemplo sí está versionado, pero sin la contraseña.</p>
+</div>
+
+<div class="paso">
+<h4>Escalón 2 — <span class="mono">config.js</span>, que valida</h4>
+<p>No se limita a leer las variables: si falta alguna obligatoria, la aplicación
+<b>no arranca</b> y dice cuál falta. Es preferible a arrancar y fallar más
+tarde con un error confuso.</p>
+<pre>function requerido(nombre) {
+  const valor = process.env[nombre];
+  if (!valor) {
+    throw new Error(`Falta la variable de entorno ${nombre}. Copia .env.example a .env y completalo.`);
+  }
+  return valor;
+}</pre>
+</div>
+
+<div class="paso">
+<h4>Escalón 3 — <span class="mono">db.js</span> y el modo Thick</h4>
+<p>Aquí hay un detalle que costó tiempo entender. La librería
+<span class="mono">oracledb</span> tiene dos modos:</p>
+<ul>
+  <li><b>Thin</b> — habla con Oracle directamente. No hace falta instalar nada.</li>
+  <li><b>Thick</b> — se apoya en el Oracle Instant Client, un programa aparte
+      que hay que instalar en la máquina.</li>
+</ul>
+<p>Lo normal sería Thin. Pero con esta base falla:</p>
+<pre>NJS-116: password verifier type 0x939 is not supported in Thin mode</pre>
+<p>La causa: la contraseña de <span class="mono">ABD</span> está guardada con el
+<b>verificador antiguo de Oracle 10G</b>, que el modo Thin no acepta por ser
+inseguro. Por eso hay que indicar la ruta al Instant Client, lo que activa el
+modo Thick, que sí lo acepta.</p>
+<pre>if (config.oracle.clientDir) {
+  oracledb.initOracleClient({ libDir: config.oracle.clientDir });
+}</pre>
+<p class="nota">Dicho de otro modo: la aplicación necesita un rodeo porque la
+contraseña usa un cifrado obsoleto. Si algún día se cambia la contraseña de esa
+cuenta, Oracle la guardará con el verificador moderno y se podrá quitar el
+Instant Client y la variable <span class="mono">ORACLE_CLIENT_DIR</span>.</p>
+</div>
+
+<div class="paso">
+<h4>Escalón 4 — El pool de conexiones</h4>
+<p>No se abre una conexión por consulta, que sería lento. Se abre un
+<b>pool</b>: entre 1 y 10 conexiones que se prestan y se devuelven.</p>
+<pre>pool = await oracledb.createPool({
+  user: config.oracle.user,
+  password: config.oracle.password,
+  connectString: config.oracle.connectString,
+  poolMin: 1, poolMax: 10, poolIncrement: 1, poolTimeout: 60
+});</pre>
+<p>Y todo el código pide la conexión con una función que <b>siempre la
+devuelve</b>, haya error o no. Sin esto, un error dejaría conexiones colgadas
+hasta agotar el pool y la aplicación se quedaría muerta:</p>
+<pre>async function conectar(fn) {
+  let cn;
+  try {
+    cn = await pool.getConnection();
+    return await fn(cn);
+  } finally {
+    if (cn) { try { await cn.close(); } catch { /* ya estaba cerrada */ } }
+  }
+}</pre>
+<p>Además, <span class="mono">oracledb.autoCommit = false</span>: nada se graba
+salvo que se pida expresamente. Es lo que permitió probar cosas y deshacerlas
+con <span class="mono">rollback</span> sin dejar rastro.</p>
+</div>
+
+<h2 class="salto">2. Qué permite esa cuenta</h2>
+
+<p>Esto no es una suposición: se consultó a la propia base.</p>
+
+<h3>2.1 Cómo se comprueba</h3>
+<pre>-- Quién soy y dónde estoy
+SELECT USER,
+       SYS_CONTEXT('USERENV','DB_NAME')     AS base,
+       SYS_CONTEXT('USERENV','CON_NAME')    AS contenedor,
+       SYS_CONTEXT('USERENV','SERVER_HOST') AS servidor
+  FROM DUAL;
+
+-- Roles que tengo
+SELECT granted_role, admin_option, default_role FROM user_role_privs;
+
+-- TODOS los privilegios activos, incluidos los que llegan por rol
+SELECT privilege FROM session_privs ORDER BY 1;
+
+-- ¿Soy DBA?
+SELECT * FROM session_roles WHERE role = 'DBA';</pre>
+
+<h3>2.2 Los roles</h3>
+<table>
+  <thead><tr><th>Rol</th><th>Qué trae</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">CONNECT</td><td>Poder iniciar sesión</td></tr>
+    <tr><td class="mono">RESOURCE</td><td>Crear tablas, procedimientos y demás objetos propios</td></tr>
+    <tr><td class="mono">EXP_FULL_DATABASE</td><td><b>Exportar la base entera</b>, incluidos esquemas ajenos</td></tr>
+    <tr><td class="mono">IMP_FULL_DATABASE</td><td><b>Importar sobre la base entera</b></td></tr>
+  </tbody>
+</table>
+<p>Los cuatro con <span class="mono">ADMIN OPTION = YES</span>, o sea que
+además puede <b>concedérselos a otros</b>.</p>
+
+<h3>2.3 Los privilegios que importan</h3>
+<p>De los 117 activos, estos son los que deciden hasta dónde llega la cuenta:</p>
+<table>
+  <thead><tr><th style="width:36%">Privilegio</th><th class="num" style="width:10%">¿Lo tiene?</th><th>Qué permite hacer</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">SELECT ANY TABLE</td><td class="si">SÍ</td><td>Leer cualquier tabla de cualquier esquema</td></tr>
+    <tr><td class="mono">INSERT / UPDATE ANY TABLE</td><td class="si">SÍ</td><td>Modificar datos de cualquier esquema</td></tr>
+    <tr><td class="mono">DELETE ANY TABLE</td><td class="si">SÍ</td><td>Borrar filas de cualquier tabla</td></tr>
+    <tr><td class="mono">DROP ANY TABLE</td><td class="si">SÍ</td><td><b>Eliminar tablas completas, de quien sea</b></td></tr>
+    <tr><td class="mono">CREATE / ALTER ANY PROCEDURE</td><td class="si">SÍ</td><td>Cambiar la lógica de negocio de cualquier paquete</td></tr>
+    <tr><td class="mono">CREATE USER</td><td class="si">SÍ</td><td>Crear cuentas nuevas</td></tr>
+    <tr><td class="mono">ALTER USER</td><td class="si">SÍ</td><td><b>Cambiar la contraseña de cualquiera</b></td></tr>
+    <tr><td class="mono">DROP USER</td><td class="si">SÍ</td><td>Eliminar cuentas</td></tr>
+    <tr><td class="mono">BECOME USER</td><td class="si">SÍ</td><td>Actuar en nombre de otro usuario</td></tr>
+    <tr><td class="mono">GRANT ANY PRIVILEGE</td><td class="si">SÍ</td><td><b>Darse a sí misma cualquier permiso que le falte</b></td></tr>
+    <tr><td class="mono">GRANT ANY ROLE</td><td class="si">SÍ</td><td>Concederse el rol DBA</td></tr>
+    <tr><td class="mono">ALTER DATABASE</td><td class="si">SÍ</td><td>Cambiar la configuración de la base</td></tr>
+    <tr><td class="mono">AUDIT SYSTEM</td><td class="si">SÍ</td><td>Activar y desactivar la auditoría</td></tr>
+    <tr><td class="mono">SELECT ANY DICTIONARY</td><td class="si">SÍ</td><td>Ver toda la metainformación, incluidas las vistas DBA_*</td></tr>
+    <tr><td class="mono">BACKUP ANY TABLE</td><td class="si">SÍ</td><td>Respaldar cualquier tabla</td></tr>
+    <tr><td class="mono">SYSDBA</td><td class="no">no</td><td>Arrancar y parar la instancia. Es lo único que le falta</td></tr>
+    <tr><td class="mono">Rol DBA</td><td class="no">no</td><td>No lo tiene asignado… pero podría dárselo con GRANT ANY ROLE</td></tr>
+  </tbody>
+</table>
+
+<h3>2.4 Comprobado en la práctica</h3>
+<p>No basta con listar privilegios; se probó leer tablas de otros esquemas sin
+tener permiso explícito sobre ellas:</p>
+<table>
+  <thead><tr><th>Tabla</th><th class="num">¿Se pudo leer?</th><th class="num">Filas</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">IBSADM.ITEMS</td><td class="si">SÍ</td><td class="num">13.168</td></tr>
+    <tr><td class="mono">SYSTEM.HELP</td><td class="si">SÍ</td><td class="num">938</td></tr>
+    <tr><td class="mono">SCOTT.EMP</td><td class="si">SÍ</td><td class="num">14</td></tr>
+    <tr><td class="mono">DBA_USERS</td><td class="si">SÍ</td><td class="num">42 cuentas</td></tr>
+    <tr><td class="mono">V$SESSION</td><td class="si">SÍ</td><td class="num">82 sesiones activas</td></tr>
+  </tbody>
+</table>
+
+<h3>2.5 Qué hay dentro de la base</h3>
+<p>Con <span class="mono">SELECT ANY DICTIONARY</span> se puede inventariar todo:</p>
+<table>
+  <thead><tr><th>Esquema</th><th class="num">Tablas</th><th>Qué guarda</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">IBSADM</td><td class="num">230</td><td>Administración: ítems, precios, costos</td></tr>
+    <tr><td class="mono">IBSPLA</td><td class="num">103</td><td>Planta y producción</td></tr>
+    <tr><td class="mono">IBSVENTA</td><td class="num">28</td><td>Ventas: pedidos, líneas, saldos</td></tr>
+    <tr><td class="mono">ABD</td><td class="num">22</td><td>La capa propia: usuarios, personas, el paquete de operaciones</td></tr>
+    <tr><td class="mono">IBSAUX</td><td class="num">4</td><td>Auxiliar</td></tr>
+    <tr><td class="mono">SYS / SYSTEM / APEX…</td><td class="num">2.000+</td><td>Del propio Oracle</td></tr>
+  </tbody>
+</table>
+<p>Cuentas abiertas en la base: <span class="mono">ABD, IBSADM, IBSAUX, IBSPLA,
+IBSVENTA, PDBADMIN, SCOTT, SYS, SYSTEM</span>.</p>
+<p class="nota">Nota aparte: <span class="mono">SCOTT</span> es la cuenta de
+ejemplo que trae Oracle de fábrica. Que siga abierta en un servidor de
+producción no es buena señal; convendría cerrarla.</p>
+
+<h2 class="salto">3. Cómo conectarse uno mismo</h2>
+
+<p>Cualquier herramienta que hable con Oracle sirve. Los datos son siempre los
+mismos:</p>
+<table>
+  <tbody>
+    <tr><td style="width:26%"><b>Servidor</b></td><td class="mono">192.168.0.5</td></tr>
+    <tr><td><b>Puerto</b></td><td class="mono">1521</td></tr>
+    <tr><td><b>Servicio</b></td><td class="mono">PDBABD</td> </tr>
+    <tr><td><b>Usuario</b></td><td class="mono">ABD</td></tr>
+    <tr><td><b>Contraseña</b></td><td>la del <span class="mono">.env</span> — no se escribe aquí a propósito</td></tr>
+  </tbody>
+</table>
+
+<h3>3.1 Oracle SQL Developer — lo más cómodo</h3>
+<p>Es gratuito y de la propia Oracle. Al crear la conexión:</p>
+<ul>
+  <li><b>Connection Type:</b> Basic</li>
+  <li><b>Hostname:</b> <span class="mono">192.168.0.5</span> ·
+      <b>Port:</b> <span class="mono">1521</span></li>
+  <li>Marcar <b>Service name</b> (no SID) y poner <span class="mono">PDBABD</span></li>
+</ul>
+<p class="nota">Es importante marcar «Service name». Con «SID» no conecta,
+porque PDBABD es una base enchufable (<i>pluggable</i>), no una instancia.</p>
+
+<h3>3.2 DBeaver — si se prefiere algo más ligero</h3>
+<p>Nueva conexión → Oracle → pestaña «Basic», mismos datos, y en «Database»
+elegir <b>Service Name</b>.</p>
+
+<h3>3.3 Por línea de comandos</h3>
+<pre>sqlplus abd/LA_CONTRASEÑA@192.168.0.5:1521/PDBABD</pre>
+<p>O mejor, sin dejar la contraseña en el historial del terminal:</p>
+<pre>sqlplus abd@192.168.0.5:1521/PDBABD
+-- la pide al entrar, y no queda escrita en ningún lado</pre>
+
+<h3>3.4 Desde código, como lo hace la aplicación</h3>
+<pre>const oracledb = require('oracledb');
+oracledb.initOracleClient({ libDir: 'C:\\instantclient_23_26' });   // modo Thick
+
+const cn = await oracledb.getConnection({
+  user: 'abd',
+  password: process.env.ORACLE_PASSWORD,      // nunca escrita en el código
+  connectString: '192.168.0.5:1521/PDBABD'
+});
+
+const r = await cn.execute('SELECT COUNT(*) FROM IBSVENTA.PEDIDOS');
+console.log(r.rows[0][0]);
+await cn.close();</pre>
+
+<h3>3.5 Consultas útiles para empezar a explorar</h3>
+<pre>-- Qué esquemas hay y cuántas tablas tiene cada uno
+SELECT owner, COUNT(*) tablas FROM all_tables GROUP BY owner ORDER BY 2 DESC;
+
+-- Buscar una tabla por nombre
+SELECT owner, table_name FROM all_tables WHERE table_name LIKE '%PEDIDO%';
+
+-- Ver las columnas de una tabla
+SELECT column_name, data_type, data_length, nullable
+  FROM all_tab_columns
+ WHERE owner = 'IBSVENTA' AND table_name = 'PEDIDOS'
+ ORDER BY column_id;
+
+-- Leer el código fuente de un paquete PL/SQL
+SELECT line, text FROM all_source
+ WHERE owner = 'ABD' AND name = 'PCK_OPERACIONES' AND type = 'PACKAGE BODY'
+ ORDER BY line;
+
+-- Encontrar dónde se usa una tabla en todo el código de la base
+SELECT DISTINCT owner, name, type FROM all_source
+ WHERE UPPER(text) LIKE '%LIN_PEDIDOS%';</pre>
+
+<div class="caja medio">
+  <p><b>Antes de escribir nada.</b> Esta cuenta puede borrar tablas enteras de
+  cualquier esquema y no hay red de seguridad. Dos costumbres que evitan
+  disgustos:</p>
+  <ul style="margin-bottom:0">
+    <li>Escribir primero el <span class="mono">SELECT</span> con el mismo
+        <span class="mono">WHERE</span> que va a llevar el
+        <span class="mono">UPDATE</span> o el
+        <span class="mono">DELETE</span>, y mirar cuántas filas salen.</li>
+    <li>Trabajar con <span class="mono">autocommit</span> desactivado, y hacer
+        <span class="mono">COMMIT</span> solo cuando el resultado es el
+        esperado. Mientras tanto, <span class="mono">ROLLBACK</span> deshace
+        todo.</li>
+  </ul>
+</div>
+
+<h2 class="salto">4. El problema de seguridad</h2>
+
+<div class="caja grave">
+  <p><b>La contraseña de esta cuenta está en texto plano dentro del
+  repositorio</b>, en <span class="mono">src/java/hibernate.cfg.xml</span> y en
+  los <span class="mono">constantes*.properties</span>.</p>
+  <p>Cuando esto se reportó en el informe de QA se clasificó como riesgo
+  <b>medio</b>, dando por hecho que era una cuenta de aplicación con permisos
+  acotados. <b>No lo es.</b> Con esa contraseña cualquiera que llegue al
+  repositorio y a la red puede:</p>
+  <ul>
+    <li>Leer <b>toda</b> la base: ventas, costos, precios, personas</li>
+    <li>Modificar o borrar cualquier tabla de cualquier esquema</li>
+    <li>Cambiar la lógica de negocio dentro de los paquetes PL/SQL</li>
+    <li>Crear cuentas, cambiar contraseñas ajenas y concederse el rol DBA</li>
+    <li>Exportar la base entera (<span class="mono">EXP_FULL_DATABASE</span>)</li>
+    <li>Apagar la auditoría para no dejar rastro</li>
+  </ul>
+  <p><b>Se reclasifica a riesgo CRÍTICO.</b></p>
+</div>
+
+<h3>4.1 Por qué está así</h3>
+<p>No es descuido de nadie en particular: es lo que pasa cuando una aplicación
+se conecta con la cuenta <b>dueña del esquema</b> en vez de con una cuenta
+propia. La cuenta dueña necesita permisos amplios para crear y mantener sus
+objetos, y la aplicación hereda todos.</p>
+
+<h3>4.2 Qué se recomienda hacer</h3>
+<table>
+  <thead><tr><th class="num" style="width:6%">#</th><th>Acción</th><th style="width:24%">Quién</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td>
+        <td><b>Cambiar la contraseña de <span class="mono">ABD</span>.</b> Está
+        en un repositorio y se ha compartido; hay que darla por comprometida.
+        De paso, la nueva se guardará con el verificador moderno y se podrá
+        quitar el Instant Client.</td>
+        <td>Administrador de la base</td></tr>
+    <tr><td class="num">2</td>
+        <td><b>Crear una cuenta propia para la aplicación</b>, por ejemplo
+        <span class="mono">APP_PEDIDOS</span>, con lo mínimo:
+        <span class="mono">CREATE SESSION</span> y
+        <span class="mono">EXECUTE</span> sobre
+        <span class="mono">ABD.PCK_OPERACIONES</span>, más
+        <span class="mono">SELECT</span> sobre las tablas que consulta. Nada
+        más. Ese cambio es de una línea en el <span class="mono">.env</span>.</td>
+        <td>Administrador de la base</td></tr>
+    <tr><td class="num">3</td>
+        <td><b>Cuentas nominales para las personas.</b> Que cada quien entre con
+        su propio usuario y no con <span class="mono">ABD</span> compartido: si
+        algo se borra, se sabe quién fue. Hoy es imposible saberlo.</td>
+        <td>Administrador de la base</td></tr>
+    <tr><td class="num">4</td>
+        <td>Sacar del repositorio las credenciales del proyecto Java y pasarlas
+        a variables de entorno, como ya se hizo en el proyecto nuevo</td>
+        <td>Desarrollo</td></tr>
+    <tr><td class="num">5</td>
+        <td>Cerrar la cuenta de ejemplo <span class="mono">SCOTT</span>, que no
+        pinta nada en producción</td>
+        <td>Administrador de la base</td></tr>
+    <tr><td class="num">6</td>
+        <td>Revisar si <span class="mono">ABD</span> necesita de verdad
+        <span class="mono">GRANT ANY PRIVILEGE</span>,
+        <span class="mono">DROP ANY TABLE</span> y
+        <span class="mono">ALTER DATABASE</span>. Casi con seguridad no</td>
+        <td>Administrador de la base</td></tr>
+  </tbody>
+</table>
+
+<h3>4.3 Sobre pedir «acceso total»</h3>
+<p>Merece la pena decirlo con claridad: <b>no hace falta pedirlo, ya está
+concedido</b>. Y precisamente por eso, lo que conviene solicitar al
+administrador no es más acceso, sino:</p>
+<ul>
+  <li>Una <b>cuenta nominal propia</b> con nombre y apellido, con permisos de
+      lectura sobre lo que haga falta consultar.</li>
+  <li>Que la cuenta <span class="mono">ABD</span> deje de usarse a diario y
+      quede solo para mantenimiento del esquema.</li>
+</ul>
+<p>Es mejor para todos: se sabe quién hizo qué, un error con la cuenta personal
+tiene menos alcance, y si alguien deja la empresa se cierra su cuenta sin tocar
+la aplicación.</p>
+
+<h2>5. Resumen</h2>
+<table>
+  <thead><tr><th style="width:42%">Pregunta</th><th>Respuesta</th></tr></thead>
+  <tbody>
+    <tr><td>¿Cómo se conecta la aplicación?</td>
+        <td><span class="mono">.env</span> → <span class="mono">config.js</span> → pool en <span class="mono">db.js</span> → Instant Client → PDBABD</td></tr>
+    <tr><td>¿Por qué hace falta el Instant Client?</td>
+        <td>La contraseña usa el verificador antiguo 10G, que el modo Thin rechaza</td></tr>
+    <tr><td>¿Con qué cuenta entra?</td>
+        <td><span class="mono">ABD</span>, la dueña del esquema</td></tr>
+    <tr><td>¿Cuánto puede hacer esa cuenta?</td>
+        <td>117 privilegios: prácticamente todo dentro de PDBABD</td></tr>
+    <tr><td>¿Es DBA?</td>
+        <td>No formalmente, pero puede concederse el rol cuando quiera</td></tr>
+    <tr><td>¿Se puede tener acceso total?</td>
+        <td>Ya se tiene. El problema es ese, no la falta de acceso</td></tr>
+    <tr><td>¿Qué conviene hacer?</td>
+        <td>Cambiar la contraseña, cuenta propia para la aplicación y cuentas nominales para las personas</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  Todos los datos de este documento salen de consultar la base de producción
+  únicamente con sentencias de lectura, el 4 de agosto de 2026. Ninguna
+  comprobación modificó datos ni permisos. Las contraseñas no se reproducen en
+  ningún punto del documento.
+</footer>
+
+</body>
+</html>
